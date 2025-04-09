@@ -1,0 +1,46 @@
+# Node modules
+node_modules/
+
+# Output / cache / logs
+dist/
+.nuxt/
+.output/
+.nitro/
+.cache/
+*.log
+
+# IDE-specific stuff
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS/system files
+.DS_Store
+Thumbs.db
+
+# Environment variables (just in case)
+.env
+.env.*
+
+# Local user data
+*.local
+
+# Optional: Ignore .vercel, .netlify if using those
+.vercel/
+.netlify/
+
+# Optional: Ignore lockfile if you're okay regenerating it
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Git hooks (optional)
+.husky/
+
+# Optional: If you're generating Git commits automatically
+scripts/temp-commits/
+
+# Ignore Nuxt-generated types
+app/.nuxt/
+app/.output/
