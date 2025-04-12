@@ -7,30 +7,5 @@ export default defineNuxtConfig({
 	vite: {
 		plugins: [tailwindcss()]
 	},
-	components: [
-		{
-			path: '~/components/atoms',
-			pathPrefix: false,
-			extensions: ['.vue'],
-			watch: true
-		},
-		{
-			path: '~/components/molecules',
-			pathPrefix: false,
-			extensions: ['.vue'],
-			watch: true
-		},
-		{
-			path: '~/components/organisms',
-			pathPrefix: false,
-			extensions: ['.vue'],
-			watch: true
-		},
-		{
-			path: '~/components/layouts',
-			pathPrefix: false,
-			extensions: ['.vue'],
-			watch: true
-		}
-	]
+	modules: ['@nuxt/ui', '@nuxt/icon', '@nuxt/test-utils/module']
 });
