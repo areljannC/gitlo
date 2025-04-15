@@ -81,7 +81,7 @@ export default defineEventHandler(async event => {
 		writeFileSync(cardsJsonPath, JSON.stringify({}, null, '\t'));
 
 		// update board map
-		updateBoardMap(board.id, boardDirectoryPath);
+		updateBoardMap(board.id, boardDirectoryName);
 
 		setResponseStatus(event, 201);
 		return {
