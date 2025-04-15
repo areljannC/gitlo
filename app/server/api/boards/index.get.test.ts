@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { existsSync, mkdirSync, readdirSync, statSync, readFileSync } from 'fs';
 import { join } from 'path';
-import handler, { NO_BOARDS_FOUND } from './index.get';
+import { SERVER_ERROR } from '~/constants';
+import handler from './index.get';
 
 const MOCKED_TIMESTAMP = 'MOCKED_TIMESTAMP';
 const BOARDS = [
@@ -51,7 +52,7 @@ describe('GET /api/boards', () => {
 		const response = handler({} as any);
 		expect(mkdirSync).toBeCalled();
 		expect(response).toEqual({
-			message: NO_BOARDS_FOUND,
+			boards: [],
 			timestamp: MOCKED_TIMESTAMP
 		});
 	});
@@ -80,7 +81,7 @@ describe('GET /api/boards', () => {
 		vi.mocked(readdirSync).mockReturnValue([]);
 		const response = handler({} as any);
 		expect(response).toEqual({
-			message: NO_BOARDS_FOUND,
+			boards: [],
 			timestamp: MOCKED_TIMESTAMP
 		});
 	});
@@ -98,7 +99,7 @@ describe('GET /api/boards', () => {
 
 		const response = handler({} as any);
 		expect(response).toEqual({
-			message: NO_BOARDS_FOUND,
+			message: SERVER_ERROR,
 			timestamp: MOCKED_TIMESTAMP
 		});
 	});

@@ -1,29 +1,28 @@
 import { defineEventHandler } from 'h3';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from 'fs';
 import { join } from 'path';
+import { SERVER_ERROR } from '~/constants';
 import { getTimestamp } from '~/utils';
 import type { Board } from '~/types';
 
-export const NO_BOARDS_FOUND = 'No boards found.';
-
 export default defineEventHandler(event => {
 	try {
-		// check if `/data` exists
+		// check if `/data` directory exists
 		const dataDirectoryPath = join(process.cwd(), '..', 'data');
 		if (!existsSync(dataDirectoryPath)) {
 			mkdirSync(dataDirectoryPath, { recursive: true });
-			setResponseStatus(event, 404);
-			return { message: NO_BOARDS_FOUND, timestamp: getTimestamp() };
+			setResponseStatus(event, 200);
+			return { boards: [], timestamp: getTimestamp() };
 		}
 
 		// count the number of board directories
 		const boardDirectoryCount = readdirSync(dataDirectoryPath).filter(name => statSync(join(dataDirectoryPath, name)).isDirectory()).length;
 		if (boardDirectoryCount === 0) {
-			setResponseStatus(event, 404);
-			return { message: NO_BOARDS_FOUND, timestamp: getTimestamp() };
+			setResponseStatus(event, 200);
+			return { boards: [], timestamp: getTimestamp() };
 		}
 
-		// parse board JSON content for each directory
+		// parse board JSON content for each board directory
 		const boards: Board[] = [];
 		const boardDirectoryPaths = readdirSync(dataDirectoryPath).filter(name => statSync(join(dataDirectoryPath, name)).isDirectory());
 		for (const boardDirectoryPath of boardDirectoryPaths) {
@@ -42,7 +41,7 @@ export default defineEventHandler(event => {
 
 		return { boards, timestamp: getTimestamp() };
 	} catch (error) {
-		setResponseStatus(event, 404);
-		return { message: NO_BOARDS_FOUND, timestamp: getTimestamp() };
+		setResponseStatus(event, 500);
+		return { message: SERVER_ERROR, timestamp: getTimestamp() };
 	}
 });
