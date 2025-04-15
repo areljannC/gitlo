@@ -12,12 +12,13 @@ export default defineVitestConfig({
 				lines: 100,
 				functions: 100,
 				branches: 100,
-				statements: 100
+				statements: 100,
+				perFile: true
 			},
 			all: true,
 			clean: true,
 			cleanOnRerun: true,
-			include: ['components/**/*.{vue,ts}', 'utils/**/*.{vue,ts}', 'server/**/*.{vue,ts}'],
+			include: ['components/**/*.{vue,ts}', 'schemas/**/*.ts', 'utils/**/*.ts', 'server/**/*.ts'],
 			exclude: ['node_modules/', '.nuxt/', 'dist/', '**/*.d.ts', '**/*.test.ts', '**/*.spec.ts', '**/index.ts', '**/dev.vue']
 		}
 	}
