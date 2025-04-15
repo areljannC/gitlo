@@ -4,7 +4,7 @@ import { join } from 'path';
 import * as v from 'valibot';
 import { INVALID_REQUEST_ERROR, SERVER_ERROR, CREATE_BOARD_SUCCESS } from '~/constants';
 import * as createBoard from '~/schemas/createBoard';
-import { generateHash, getTimestamp } from '~/utils';
+import { generateHash, getTimestamp, updateBoardMap } from '~/utils';
 import type { Board, Column } from '~/types';
 
 const createBoardSchema = v.object({
@@ -79,6 +79,9 @@ export default defineEventHandler(async event => {
 		writeFileSync(boardJsonPath, JSON.stringify(board, null, '\t'));
 		writeFileSync(columnsJsonPath, JSON.stringify(columns, null, '\t'));
 		writeFileSync(cardsJsonPath, JSON.stringify({}, null, '\t'));
+
+		// update board map
+		updateBoardMap(board.id, boardDirectoryPath);
 
 		setResponseStatus(event, 201);
 		return {

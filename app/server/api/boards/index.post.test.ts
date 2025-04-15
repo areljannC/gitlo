@@ -21,7 +21,8 @@ vi.mock('fs');
 vi.mock('path');
 vi.mock('~/utils', () => ({
 	getTimestamp: () => MOCKED_TIMESTAMP,
-	generateHash: () => MOCKED_HASH
+	generateHash: () => MOCKED_HASH,
+	updateBoardMap: vi.fn()
 }));
 
 describe('POST /api/boards', () => {
