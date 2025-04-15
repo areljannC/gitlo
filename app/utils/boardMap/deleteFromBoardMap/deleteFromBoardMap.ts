@@ -19,7 +19,7 @@ export const deleteFromBoardMap = (id: string) => {
 
 		if (boardMap[id]) {
 			delete boardMap[id];
-			writeFileSync(boardMapJsonPath, JSON.stringify(boardMap));
+			writeFileSync(boardMapJsonPath, JSON.stringify(boardMap, null, '\t'));
 		}
 	});
 };

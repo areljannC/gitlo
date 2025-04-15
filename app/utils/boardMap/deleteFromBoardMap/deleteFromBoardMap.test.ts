@@ -20,7 +20,7 @@ describe('deleteFromBoardMap', () => {
 			.mockImplementationOnce(() => MOCK_DATA_DIRECTORY_PATH)
 			.mockImplementationOnce(() => MOCK_BOARD_MAP_JSON_PATH);
 		vi.mocked(existsSync).mockReturnValue(true);
-		vi.mocked(readFileSync).mockImplementation(() => JSON.stringify({ [MOCK_BOARD_ID]: MOCK_BOARD_DIRECTORY_PATH }));
+		vi.mocked(readFileSync).mockImplementation(() => JSON.stringify({ [MOCK_BOARD_ID]: MOCK_BOARD_DIRECTORY_PATH }, null, '\t'));
 		vi.mocked(writeFileSync).mockImplementation(NO_OP);
 		vi.spyOn(console, 'warn').mockImplementation(NO_OP);
 	});
@@ -29,7 +29,7 @@ describe('deleteFromBoardMap', () => {
 		const withLock = vi.mocked((await import('~/utils')).withLock);
 		withLock.mockImplementation((_, fn) => fn());
 		deleteFromBoardMap(MOCK_BOARD_ID);
-		expect(writeFileSync).toHaveBeenCalledWith(MOCK_BOARD_MAP_JSON_PATH, JSON.stringify({}));
+		expect(writeFileSync).toHaveBeenCalledWith(MOCK_BOARD_MAP_JSON_PATH, JSON.stringify({}, null, '\t'));
 	});
 
 	it('does nothing if `boardMap.json `does not exist', async () => {
@@ -43,7 +43,7 @@ describe('deleteFromBoardMap', () => {
 	it('skips write if ID is not found in `boardMap.json`', async () => {
 		const withLock = vi.mocked((await import('~/utils')).withLock);
 		withLock.mockImplementation((_, fn) => fn());
-		vi.mocked(readFileSync).mockReturnValue(JSON.stringify({ somethingElse: 'value' }));
+		vi.mocked(readFileSync).mockReturnValue(JSON.stringify({ somethingElse: 'value' }, null, '\t'));
 		deleteFromBoardMap(MOCK_BOARD_ID);
 		expect(writeFileSync).not.toHaveBeenCalled();
 	});

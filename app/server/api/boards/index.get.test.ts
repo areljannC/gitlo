@@ -65,7 +65,7 @@ describe('GET /api/boards', () => {
 
 		// mock board data
 		for (const board of BOARDS) {
-			vi.mocked(readFileSync).mockReturnValueOnce(JSON.stringify(board) as any);
+			vi.mocked(readFileSync).mockReturnValueOnce(JSON.stringify(board, null, '\t') as any);
 		}
 
 		const response = handler({} as any);

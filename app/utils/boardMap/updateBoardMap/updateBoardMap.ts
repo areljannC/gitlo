@@ -17,6 +17,6 @@ export const updateBoardMap = (id: string, directoryPath: string) => {
 		}
 
 		boardMap[id] = directoryPath;
-		writeFileSync(boardMapJsonPath, JSON.stringify(boardMap));
+		writeFileSync(boardMapJsonPath, JSON.stringify(boardMap, null, '\t'));
 	});
 };

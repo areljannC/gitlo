@@ -28,7 +28,7 @@ describe('updateBoardMap', () => {
 	it('creates a new `boardMap.json` if none exists', () => {
 		vi.mocked(withLock).mockImplementation((_, fn) => fn());
 		updateBoardMap(MOCK_BOARD_ID, MOCK_BOARD_DIRECTORY_PATH);
-		expect(writeFileSync).toHaveBeenCalledWith(MOCK_BOARD_MAP_JSON_PATH, JSON.stringify({ [MOCK_BOARD_ID]: MOCK_BOARD_DIRECTORY_PATH }));
+		expect(writeFileSync).toHaveBeenCalledWith(MOCK_BOARD_MAP_JSON_PATH, JSON.stringify({ [MOCK_BOARD_ID]: MOCK_BOARD_DIRECTORY_PATH }, null, '\t'));
 	});
 
 	it('updates an existing `boardMap.json` with new ID', () => {
@@ -36,10 +36,10 @@ describe('updateBoardMap', () => {
 		const MOCK_OLD_BOARD_DIRECTORY_PATH = 'MOCK_OLD_BOARD_DIRECTORY_PATH';
 		const MOCK_EXISTING_BOARD_MAP = { MOCK_OLD_BOARD_ID: MOCK_OLD_BOARD_DIRECTORY_PATH };
 		vi.mocked(existsSync).mockReturnValue(true);
-		vi.mocked(readFileSync).mockReturnValue(JSON.stringify(MOCK_EXISTING_BOARD_MAP));
+		vi.mocked(readFileSync).mockReturnValue(JSON.stringify(MOCK_EXISTING_BOARD_MAP, null, '\t'));
 		vi.mocked(withLock).mockImplementation((_lockName, fn) => fn());
 		updateBoardMap(MOCK_BOARD_ID, MOCK_BOARD_DIRECTORY_PATH);
-		expect(writeFileSync).toHaveBeenCalledWith(MOCK_BOARD_MAP_JSON_PATH, JSON.stringify({ ...MOCK_EXISTING_BOARD_MAP, [MOCK_BOARD_ID]: MOCK_BOARD_DIRECTORY_PATH }));
+		expect(writeFileSync).toHaveBeenCalledWith(MOCK_BOARD_MAP_JSON_PATH, JSON.stringify({ ...MOCK_EXISTING_BOARD_MAP, [MOCK_BOARD_ID]: MOCK_BOARD_DIRECTORY_PATH }, null, '\t'));
 	});
 
 	it('handles invalid `boardMap.json` with a warning', () => {
@@ -49,7 +49,7 @@ describe('updateBoardMap', () => {
 		vi.mocked(withLock).mockImplementation((_lockName, fn) => fn());
 		updateBoardMap(MOCK_BOARD_ID, MOCK_BOARD_DIRECTORY_PATH);
 		expect(warnSpy).toHaveBeenCalledWith('Invalid `boardMap.json` format.');
-		expect(writeFileSync).toHaveBeenCalledWith(MOCK_BOARD_MAP_JSON_PATH, JSON.stringify({ [MOCK_BOARD_ID]: MOCK_BOARD_DIRECTORY_PATH }));
+		expect(writeFileSync).toHaveBeenCalledWith(MOCK_BOARD_MAP_JSON_PATH, JSON.stringify({ [MOCK_BOARD_ID]: MOCK_BOARD_DIRECTORY_PATH }, null, '\t'));
 	});
 
 	it('uses `withLock` with `boardMap` as lock name', () => {
