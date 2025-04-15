@@ -8,7 +8,7 @@ describe('getTimestamp', () => {
 	});
 	it('returns a valid ISO timestamp', () => {
 		const timestamp = getTimestamp();
-		const currentDate = new Date();
-		expect(currentDate.toISOString()).toBe(timestamp);
+		const currentTimestamp = new Date().toISOString();
+		expect(currentTimestamp).toBe(timestamp);
 	});
 });
