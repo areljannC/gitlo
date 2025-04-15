@@ -86,7 +86,7 @@ describe('GET /api/boards', () => {
 		});
 	});
 
-	it('returns a `404` if `readFileSync` throws an error', () => {
+	it('returns a `500` if `readFileSync` throws an error', () => {
 		// mock board directories
 		vi.mocked(existsSync).mockReturnValue(true);
 		vi.mocked(readdirSync).mockReturnValue(BOARDS.map(board => board.id) as any);
