@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { readdirSync, statSync, readFileSync } from 'fs';
+import { existsSync, mkdirSync, readdirSync, statSync, readFileSync } from 'fs';
 import { join } from 'path';
-import handler from './index.get';
+import handler, { NO_BOARDS_FOUND } from './index.get';
 
 const MOCKED_TIMESTAMP = 'MOCKED_TIMESTAMP';
 const BOARDS = [
@@ -36,7 +36,6 @@ const BOARDS = [
 	}
 ];
 
-
 vi.mock('fs');
 vi.mock('path');
 vi.mock('~/utils', () => ({ getTimestamp: () => MOCKED_TIMESTAMP }));
@@ -47,8 +46,19 @@ describe('GET /api/boards', () => {
 		vi.mocked(join).mockImplementation((...paths: string[]) => paths.join('/'));
 	});
 
+	it('return a `404` if `/data` does not exist', () => {
+		vi.mocked(existsSync).mockReturnValue(false);
+		const response = handler({} as any);
+		expect(mkdirSync).toBeCalled();
+		expect(response).toEqual({
+			message: NO_BOARDS_FOUND,
+			timestamp: MOCKED_TIMESTAMP
+		});
+	});
+
 	it('returns an array of boards if directories exist', () => {
 		// mock board directories
+		vi.mocked(existsSync).mockReturnValue(true);
 		vi.mocked(readdirSync).mockReturnValue(BOARDS.map(board => board.id) as any);
 		vi.mocked(statSync).mockReturnValue({ isDirectory: () => true } as any);
 
@@ -66,16 +76,18 @@ describe('GET /api/boards', () => {
 
 	it('return a message if no board directories exist', () => {
 		// mock board directories
+		vi.mocked(existsSync).mockReturnValue(true);
 		vi.mocked(readdirSync).mockReturnValue([]);
 		const response = handler({} as any);
 		expect(response).toEqual({
-			message: 'No boards found.',
+			message: NO_BOARDS_FOUND,
 			timestamp: MOCKED_TIMESTAMP
 		});
 	});
 
 	it('returns a `404` if `readFileSync` throws an error', () => {
 		// mock board directories
+		vi.mocked(existsSync).mockReturnValue(true);
 		vi.mocked(readdirSync).mockReturnValue(BOARDS.map(board => board.id) as any);
 		vi.mocked(statSync).mockReturnValue({ isDirectory: () => true } as any);
 
@@ -86,7 +98,7 @@ describe('GET /api/boards', () => {
 
 		const response = handler({} as any);
 		expect(response).toEqual({
-			message: 'No boards found.',
+			message: NO_BOARDS_FOUND,
 			timestamp: MOCKED_TIMESTAMP
 		});
 	});
