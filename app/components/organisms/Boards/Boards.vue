@@ -2,24 +2,19 @@
 import { ref } from 'vue';
 import * as v from 'valibot';
 import type { FormSubmitEvent } from '@nuxt/ui';
+import * as createBoard from '~/schemas/createBoard';
 import type { Board } from '~/types';
 
 const { data, status, error, refresh } = await useFetch<{ boards: Board[] }>('/api/boards');
 
 const isCreateBoardModalOpen = ref(false);
 const createBoardForm = useTemplateRef('createBoardForm');
-const createBoardFormSchema = v.object({
-	name: v.pipe(
-		v.string(),
-		v.trim(),
-		v.nonEmpty('Please enter a board name.'),
-		v.minLength(4, 'Board name must be longer than 4 characters.'),
-		v.maxLength(32, 'Board name must be shorter than 32 characters.')
-	),
-	description: v.optional(v.pipe(v.string(), v.trim(), v.maxLength(64, 'Board description must be shorter than 64 characters.'))),
-	tag: v.optional(v.pipe(v.string(), v.trim(), v.minLength(2, 'Tag must be longer than 2 characters.'), v.maxLength(16, 'Tag must be shorter than 16 characters.'))),
-	columns: v.pipe(v.number(), v.minValue(1, 'There must be at least 1 column.'), v.maxValue(16, 'There can only be up to 16 columns.'))
-});
+const createBoardSchema = v.object({
+	name: createBoard.getNameValidator(),
+	description: createBoard.getDescriptionValidator(),
+	tag: createBoard.getTagValidator(),
+	columns: createBoard.getColumnsValidator()
+})
 const createBoardFormState = reactive({
 	name: '',
 	description: undefined,
@@ -63,7 +58,7 @@ const handleClickCreateBoard = () => {
 	createBoardForm.value?.submit();
 };
 
-const handleCreateBoard = async (event: FormSubmitEvent<v.InferOutput<typeof createBoardFormSchema>>) => {
+const handleCreateBoard = async (event: FormSubmitEvent<v.InferOutput<typeof createBoardSchema>>) => {
 	await $fetch('/api/boards', {
 		method: 'POST',
 		body: {
@@ -112,7 +107,7 @@ const handleGoToBoard = (id: string) => {
 			<h1 class="font-bold text-xl">Create a board</h1>
 		</template>
 		<template #body>
-			<UForm ref="createBoardForm" :schema="createBoardFormSchema" :state="createBoardFormState" class="space-y-4"
+			<UForm ref="createBoardForm" :schema="createBoardSchema" :state="createBoardFormState" class="space-y-4"
 				@submit="handleCreateBoard">
 				<UFormField name="name" label="Name" description="A short, clear title for this board." size="lg"
 					class="text-md">
