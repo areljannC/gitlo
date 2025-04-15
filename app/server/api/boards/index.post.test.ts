@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { readBody } from 'h3';
 import { mkdirSync, existsSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { INVALID_REQUEST_ERROR, SERVER_ERROR, CREATE_BOARD_SUCCESS } from '~/constants';
 import handler from './index.post';
 
 const MOCKED_TIMESTAMP = 'MOCKED_TIMESTAMP';
@@ -42,7 +43,7 @@ describe('POST /api/boards', () => {
 		vi.mocked(readBody).mockResolvedValue(NEW_BOARD);
 		const response = await handler({} as any);
 		expect(response).toEqual({
-			message: 'Board created successfully!',
+			message: CREATE_BOARD_SUCCESS,
 			timestamp: MOCKED_TIMESTAMP
 		});
 	});
@@ -55,9 +56,21 @@ describe('POST /api/boards', () => {
 			columns: 3
 		};
 		vi.mocked(readBody).mockResolvedValue(NEW_BOARD);
-		await expect(handler({} as any)).rejects.toMatchObject({
-			statusCode: 400,
-			statusMessage: 'Validation failed.'
+		const response = await handler({} as any);
+		expect(response).toEqual({
+			message: INVALID_REQUEST_ERROR,
+			timestamp: MOCKED_TIMESTAMP
+		});
+	});
+
+	it('returns a `500` if `readBody` throws an error', async () => {
+		vi.mocked(readBody).mockImplementation(() => {
+			throw new Error('ERROR');
+		});
+		const response = await handler({} as any);
+		expect(response).toEqual({
+			message: SERVER_ERROR,
+			timestamp: MOCKED_TIMESTAMP
 		});
 	});
 });
