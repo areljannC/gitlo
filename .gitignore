@@ -8,6 +8,7 @@ dist/
 .nitro/
 .cache/
 *.log
+coverage/
 
 # IDE-specific stuff
 .vscode/
