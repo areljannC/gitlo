@@ -1,9 +1,9 @@
 import { defineEventHandler, getRouterParam } from 'h3';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from 'fs';
 import { join } from 'path';
-import { BOARD_ID_REQUIRED_ERROR, NO_BOARDS_FOUND_ERROR, NO_BOARD_FOUND_ERROR, SERVER_ERROR } from '~/constants';
+import { BOARD_ID_REQUIRED_ERROR, NO_BOARDS_FOUND_ERROR, NO_BOARD_FOUND_ERROR, INCOMPLETE_BOARD_DATA_ERROR, SERVER_ERROR } from '~/constants';
 import { getTimestamp, parsify } from '~/utils';
-import type { Board } from '~/types';
+import type { Board, Column, Card } from '~/types';
 
 export default defineEventHandler(event => {
 	try {
@@ -35,6 +35,7 @@ export default defineEventHandler(event => {
 			return { message: NO_BOARDS_FOUND_ERROR, timestamp: getTimestamp() };
 		}
 
+		// check if the board directory path exists
 		const boardMap: Record<string, string> = parsify(readFileSync(boardMapJsonPath, 'utf-8'));
 		const boardDirectoryPath = boardMap[id];
 		if (!boardDirectoryPath) {
@@ -42,17 +43,37 @@ export default defineEventHandler(event => {
 			return { message: NO_BOARD_FOUND_ERROR, timestamp: getTimestamp() };
 		}
 
+		// get the path to the board's `board.json` file
 		const boardJsonPath = join(dataDirectoryPath, boardDirectoryPath, 'board.json');
 		if (!existsSync(boardJsonPath)) {
 			setResponseStatus(event, 404);
 			return { message: NO_BOARD_FOUND_ERROR, timestamp: getTimestamp() };
 		}
 
+		// get the path to the board's `columns.json`
+		const columnsJsonPath = join(dataDirectoryPath, boardDirectoryPath, 'columns.json');
+		if (!existsSync(columnsJsonPath)) {
+			setResponseStatus(event, 404);
+			return { message: INCOMPLETE_BOARD_DATA_ERROR, timestamp: getTimestamp() };
+		}
+
+		// get the path to the board's `cards.json`
+		const cardsJsonPath = join(dataDirectoryPath, boardDirectoryPath, 'cards.json');
+		if (!existsSync(cardsJsonPath)) {
+			setResponseStatus(event, 404);
+			return { message: INCOMPLETE_BOARD_DATA_ERROR, timestamp: getTimestamp() };
+		}
+
+		// read and parse the JSON files
 		const boardJsonContent = readFileSync(boardJsonPath, 'utf-8');
+		const columnsJsonContent = readFileSync(columnsJsonPath, 'utf-8');
+		const cardsJsonContent = readFileSync(cardsJsonPath, 'utf-8');
 		const board: Board = parsify<Board>(boardJsonContent);
+		const columns = parsify<Column[]>(columnsJsonContent);
+		const cards = parsify<Card[]>(cardsJsonContent);
 
 		setResponseStatus(event, 200);
-		return { board, timestamp: getTimestamp() };
+		return { board, columns, cards, timestamp: getTimestamp() };
 	} catch {
 		setResponseStatus(event, 500);
 		return { message: SERVER_ERROR, timestamp: getTimestamp() };
