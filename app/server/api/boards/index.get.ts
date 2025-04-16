@@ -2,7 +2,7 @@ import { defineEventHandler } from 'h3';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from 'fs';
 import { join } from 'path';
 import { SERVER_ERROR } from '~/constants';
-import { getTimestamp } from '~/utils';
+import { getTimestamp, parsify } from '~/utils';
 import type { Board } from '~/types';
 
 export default defineEventHandler(event => {
@@ -27,7 +27,7 @@ export default defineEventHandler(event => {
 		const boardDirectoryPaths = readdirSync(dataDirectoryPath).filter(name => statSync(join(dataDirectoryPath, name)).isDirectory());
 		for (const boardDirectoryPath of boardDirectoryPaths) {
 			const boardJsonContent = readFileSync(join(dataDirectoryPath, boardDirectoryPath, 'board.json'), 'utf-8');
-			const board: Board = JSON.parse(boardJsonContent);
+			const board: Board = parsify<Board>(boardJsonContent);
 			boards.push({
 				id: board.id,
 				name: board.name,

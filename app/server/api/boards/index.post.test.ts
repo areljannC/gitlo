@@ -19,11 +19,15 @@ vi.mock('h3', async () => {
 });
 vi.mock('fs');
 vi.mock('path');
-vi.mock('~/utils', () => ({
-	getTimestamp: () => MOCKED_TIMESTAMP,
-	generateHash: () => MOCKED_HASH,
-	updateBoardMap: vi.fn()
-}));
+vi.mock('~/utils', async () => {
+	const actual = await vi.importActual<typeof import('~/utils')>('~/utils');
+	return {
+		...actual,
+		getTimestamp: () => MOCKED_TIMESTAMP,
+		generateHash: () => MOCKED_HASH,
+		updateBoardMap: vi.fn()
+	};
+});
 
 describe('POST /api/boards', () => {
 	beforeEach(() => {

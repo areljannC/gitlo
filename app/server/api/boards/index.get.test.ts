@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { existsSync, mkdirSync, readdirSync, statSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { SERVER_ERROR } from '~/constants';
+import { stringify } from '~/utils';
 import handler from './index.get';
 
 const MOCKED_TIMESTAMP = 'MOCKED_TIMESTAMP';
@@ -39,7 +40,13 @@ const BOARDS = [
 
 vi.mock('fs');
 vi.mock('path');
-vi.mock('~/utils', () => ({ getTimestamp: () => MOCKED_TIMESTAMP }));
+vi.mock('~/utils', async () => {
+	const actual = await vi.importActual<typeof import('~/utils')>('~/utils');
+	return {
+		...actual,
+		getTimestamp: () => MOCKED_TIMESTAMP
+	};
+});
 
 describe('GET /api/boards', () => {
 	beforeEach(() => {
@@ -65,7 +72,7 @@ describe('GET /api/boards', () => {
 
 		// mock board data
 		for (const board of BOARDS) {
-			vi.mocked(readFileSync).mockReturnValueOnce(JSON.stringify(board, null, '\t') as any);
+			vi.mocked(readFileSync).mockReturnValueOnce(stringify(board) as any);
 		}
 
 		const response = handler({} as any);

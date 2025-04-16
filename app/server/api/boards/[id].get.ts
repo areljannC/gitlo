@@ -2,7 +2,7 @@ import { defineEventHandler, getRouterParam } from 'h3';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from 'fs';
 import { join } from 'path';
 import { BOARD_ID_REQUIRED_ERROR, NO_BOARDS_FOUND_ERROR, NO_BOARD_FOUND_ERROR, SERVER_ERROR } from '~/constants';
-import { getTimestamp } from '~/utils';
+import { getTimestamp, parsify } from '~/utils';
 import type { Board } from '~/types';
 
 export default defineEventHandler(event => {
@@ -35,7 +35,7 @@ export default defineEventHandler(event => {
 			return { message: NO_BOARDS_FOUND_ERROR, timestamp: getTimestamp() };
 		}
 
-		const boardMap: Record<string, string> = JSON.parse(readFileSync(boardMapJsonPath, 'utf-8'));
+		const boardMap: Record<string, string> = parsify(readFileSync(boardMapJsonPath, 'utf-8'));
 		const boardDirectoryPath = boardMap[id];
 		if (!boardDirectoryPath) {
 			setResponseStatus(event, 404);
@@ -49,7 +49,7 @@ export default defineEventHandler(event => {
 		}
 
 		const boardJsonContent = readFileSync(boardJsonPath, 'utf-8');
-		const board: Board = JSON.parse(boardJsonContent);
+		const board: Board = parsify<Board>(boardJsonContent);
 
 		setResponseStatus(event, 200);
 		return { board, timestamp: getTimestamp() };

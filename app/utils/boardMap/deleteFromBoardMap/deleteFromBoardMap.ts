@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { withLock } from '~/utils';
+import { withLock, parsify, stringify } from '~/utils';
 
 export const deleteFromBoardMap = (id: string) => {
 	withLock('boardMap', () => {
@@ -11,7 +11,7 @@ export const deleteFromBoardMap = (id: string) => {
 		let boardMap: Record<string, string> = {};
 		if (existsSync(boardMapJsonPath)) {
 			try {
-				boardMap = JSON.parse(readFileSync(boardMapJsonPath, 'utf-8'));
+				boardMap = parsify(readFileSync(boardMapJsonPath, 'utf-8'));
 			} catch {
 				console.warn('Invalid `boardMap.json` format... skipping deletion.');
 			}
@@ -19,7 +19,7 @@ export const deleteFromBoardMap = (id: string) => {
 
 		if (boardMap[id]) {
 			delete boardMap[id];
-			writeFileSync(boardMapJsonPath, JSON.stringify(boardMap, null, '\t'));
+			writeFileSync(boardMapJsonPath, stringify(boardMap));
 		}
 	});
 };

@@ -11,7 +11,13 @@ const MOCK_LOCK_FILE_PATH = `${MOCK_DATA_DIRECTORY_PATH}/${MOCK_LOCK_NAME}.lock`
 
 vi.mock('fs');
 vi.mock('path');
-vi.mock('~/utils', () => ({ getTimestamp: () => MOCKED_TIMESTAMP }));
+vi.mock('~/utils', async () => {
+	const actual = await vi.importActual<typeof import('~/utils')>('~/utils');
+	return {
+		...actual,
+		getTimestamp: () => MOCKED_TIMESTAMP
+	};
+});
 
 describe('withLock', () => {
 	beforeEach(() => {

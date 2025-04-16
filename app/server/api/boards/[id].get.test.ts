@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from 'fs';
 import { join } from 'path';
 import { BOARD_ID_REQUIRED_ERROR, NO_BOARDS_FOUND_ERROR, NO_BOARD_FOUND_ERROR, SERVER_ERROR } from '~/constants';
+import { stringify } from '~/utils';
 import handler from './[id].get';
 
 const MOCKED_TIMESTAMP = 'MOCKED_TIMESTAMP';
@@ -24,7 +25,13 @@ const MOCKED_BOARD = {
 
 vi.mock('fs');
 vi.mock('path');
-vi.mock('~/utils', () => ({ getTimestamp: () => MOCKED_TIMESTAMP }));
+vi.mock('~/utils', async () => {
+	const actual = await vi.importActual<typeof import('~/utils')>('~/utils');
+	return {
+		...actual,
+		getTimestamp: () => MOCKED_TIMESTAMP
+	};
+});
 
 describe('GET /api/boards/:id', () => {
 	beforeEach(() => {
@@ -64,7 +71,7 @@ describe('GET /api/boards/:id', () => {
 	it('returns a `404` if the board is not found in the board map', () => {
 		vi.mocked(existsSync).mockReturnValue(true);
 		vi.mocked(readdirSync).mockReturnValue([MOCKED_BOARD_ID] as any);
-		vi.mocked(readFileSync).mockReturnValueOnce(JSON.stringify({}, null, '\t'));
+		vi.mocked(readFileSync).mockReturnValueOnce(stringify({}));
 		const response = handler({ context: { params: { id: 'NON_EXISTENT_ID' } } } as any);
 		expect(response).toEqual({
 			message: NO_BOARD_FOUND_ERROR,
@@ -91,7 +98,7 @@ describe('GET /api/boards/:id', () => {
 			if (String(path).includes('board.json')) return false; // Convert path to string
 			return true;
 		});
-		vi.mocked(readFileSync).mockReturnValueOnce(JSON.stringify({ MOCKED_BOARD_ID: MOCKED_BOARD_DIRECTORY_PATH }, null, '\t'));
+		vi.mocked(readFileSync).mockReturnValueOnce(stringify({ MOCKED_BOARD_ID: MOCKED_BOARD_DIRECTORY_PATH }));
 		const response = handler({ context: { params: { id: MOCKED_BOARD_ID } } } as any);
 		expect(response).toEqual({
 			message: NO_BOARD_FOUND_ERROR,
@@ -103,8 +110,8 @@ describe('GET /api/boards/:id', () => {
 		vi.mocked(existsSync).mockReturnValue(true);
 		vi.mocked(readdirSync).mockReturnValue([MOCKED_BOARD_ID] as any);
 		vi.mocked(readFileSync)
-			.mockReturnValueOnce(JSON.stringify({ MOCKED_BOARD_ID: MOCKED_BOARD_DIRECTORY_PATH }, null, '\t'))
-			.mockReturnValueOnce(JSON.stringify(MOCKED_BOARD, null, '\t'));
+			.mockReturnValueOnce(stringify({ MOCKED_BOARD_ID: MOCKED_BOARD_DIRECTORY_PATH }))
+			.mockReturnValueOnce(stringify(MOCKED_BOARD));
 		const response = handler({ context: { params: { id: MOCKED_BOARD_ID } } } as any);
 		expect(response).toEqual({
 			board: MOCKED_BOARD,
