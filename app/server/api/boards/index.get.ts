@@ -2,7 +2,7 @@ import { defineEventHandler } from 'h3';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from 'fs';
 import { join } from 'path';
 import { SERVER_ERROR } from '~/constants';
-import { getTimestamp, parsify } from '~/utils';
+import { getTimestamp, parsify } from '~/shared/utils';
 import type { Board } from '~/types';
 
 export default defineEventHandler(event => {

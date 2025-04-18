@@ -2,7 +2,7 @@ import { defineEventHandler, getRouterParam } from 'h3';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from 'fs';
 import { join } from 'path';
 import { BOARD_ID_REQUIRED_ERROR, NO_BOARDS_FOUND_ERROR, NO_BOARD_FOUND_ERROR, INCOMPLETE_BOARD_DATA_ERROR, SERVER_ERROR } from '~/constants';
-import { getTimestamp, parsify } from '~/utils';
+import { getTimestamp, parsify } from '~/shared/utils';
 import type { Board, Column, Card } from '~/types';
 
 export default defineEventHandler(event => {
