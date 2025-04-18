@@ -1,0 +1,42 @@
+<script setup lang="ts">
+defineProps({
+	name: {
+		type: String,
+		required: true
+	},
+	description: {
+		type: String
+	},
+	tags: {
+		type: Array as PropType<string[]>,
+		default: []
+	}
+});
+
+const emit = defineEmits(['view']);
+const handleViewBoard = (() => {
+	emit('view')
+});
+const dimensionsClass = 'w-full h-fit sm:w-[calc(50%-1rem)] md:w-[calc(33.33%-1rem)] lg:w-[calc(25%-1rem)]';
+const hoverEffectClass = 'hover:shadow-md hover:-translate-y-0.25 transition-transform duration-50 ease-in-out';
+const nameClass = 'font-bold text-sm md:text-md lg:text-lg xl:text-xl';
+const descriptionClass = 'text-sm md:text-md lg:text-lg break-all';
+</script>
+
+<template>
+	<UCard :class="[dimensionsClass, hoverEffectClass]">
+		<template #header>
+			<h1 :class="nameClass">{{ name }}</h1>
+		</template>
+		<div class="flex flex-col gap-4">
+			<p v-if="description" :class="descriptionClass">{{ description }}</p>
+			<div v-if="tags.length > 0" class="flex flex-wrap gap-2">
+				<Tag v-for="tag in [...tags]" :key="tag" :label="tag" />
+			</div>
+		</div>
+		<template #footer>
+			<UButton label="View" color="secondary" variant="ghost" class="w-full flex justify-center"
+				@click="handleViewBoard" />
+		</template>
+	</UCard>
+</template>
