@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { existsSync, mkdirSync, readdirSync, statSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { SERVER_ERROR } from '~/constants';
-import { stringify } from '~/utils';
+import { stringify } from '~/shared/utils';
 import handler from './index.get';
 
 const MOCKED_TIMESTAMP = 'MOCKED_TIMESTAMP';
@@ -40,8 +40,8 @@ const BOARDS = [
 
 vi.mock('fs');
 vi.mock('path');
-vi.mock('~/utils', async () => {
-	const actual = await vi.importActual<typeof import('~/utils')>('~/utils');
+vi.mock('~/shared/utils', async () => {
+	const actual = await vi.importActual<typeof import('~/shared/utils')>('~/shared/utils');
 	return {
 		...actual,
 		getTimestamp: () => MOCKED_TIMESTAMP

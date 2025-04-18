@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync } from 'fs';
 import { join } from 'path';
 import { BOARD_ID_REQUIRED_ERROR, NO_BOARDS_FOUND_ERROR, NO_BOARD_FOUND_ERROR, INCOMPLETE_BOARD_DATA_ERROR, SERVER_ERROR } from '~/constants';
-import { stringify } from '~/utils';
+import { stringify } from '~/shared/utils';
 import handler from './[id].get';
 
 const MOCKED_TIMESTAMP = 'MOCKED_TIMESTAMP';
@@ -60,8 +60,8 @@ const MOCKED_CARDS = [
 
 vi.mock('fs');
 vi.mock('path');
-vi.mock('~/utils', async () => {
-	const actual = await vi.importActual<typeof import('~/utils')>('~/utils');
+vi.mock('~/shared/utils', async () => {
+	const actual = await vi.importActual<typeof import('~/shared/utils')>('~/shared/utils');
 	return {
 		...actual,
 		getTimestamp: () => MOCKED_TIMESTAMP

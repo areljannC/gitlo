@@ -3,7 +3,7 @@ import handler from './ping.get';
 
 const MOCKED_TIMESTAMP = 'MOCKED_TIMESTAMP';
 
-vi.mock('~/utils', () => ({ getTimestamp: () => MOCKED_TIMESTAMP }));
+vi.mock('~/shared/utils', () => ({ getTimestamp: () => MOCKED_TIMESTAMP }));
 
 describe('GET /api/ping', () => {
 	it('returns a response of pong with a timestamp', () => {
