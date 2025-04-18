@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import BoardCard from './BoardCard.vue';
+import BoardPreview from './BoardPreview.vue';
 
-describe('BoardCard', () => {
+describe('BoardPreview', () => {
 	it('renders a header for name prop', () => {
 		const NAME = 'TEST_NAME';
-		const wrapper = mount(BoardCard, {
+		const wrapper = mount(BoardPreview, {
 			props: { name: NAME }
 		});
 		expect(wrapper.text()).toContain(NAME);
@@ -14,7 +14,7 @@ describe('BoardCard', () => {
 	it('renders a description if provided', () => {
 		const NAME = 'TEST_NAME';
 		const DESCRIPTION = 'TEST_DESCRIPTION';
-		const wrapper = mount(BoardCard, {
+		const wrapper = mount(BoardPreview, {
 			props: { name: NAME, description: DESCRIPTION }
 		});
 		expect(wrapper.text()).toContain(NAME);
@@ -24,7 +24,7 @@ describe('BoardCard', () => {
 	it('renders tags if provided', () => {
 		const NAME = 'TEST_NAME';
 		const TAGS = ['TEST_TAG_1', 'TEST_TAG_2', 'TEST_TAG_3'];
-		const wrapper = mount(BoardCard, {
+		const wrapper = mount(BoardPreview, {
 			props: { name: NAME, tags: TAGS }
 		});
 
@@ -37,7 +37,7 @@ describe('BoardCard', () => {
 		const NAME = 'TEST_NAME';
 		const DESCRIPTION = 'TEST_DESCRIPTION';
 		const TAGS = ['TEST_TAG_1', 'TEST_TAG_2', 'TEST_TAG_3'];
-		const wrapper = mount(BoardCard, {
+		const wrapper = mount(BoardPreview, {
 			props: { name: NAME, description: DESCRIPTION, tags: TAGS }
 		});
 
@@ -46,10 +46,10 @@ describe('BoardCard', () => {
 		expect(wrapper.text()).toContain(DESCRIPTION);
 		expect(tagComponents.length).toBe(TAGS.length);
 
-		const boardCardComponent = wrapper.getComponent({ name: 'BoardCard' });
-		await boardCardComponent.trigger('click');
-		await boardCardComponent.trigger('click');
-		await boardCardComponent.trigger('click');
+		const boardPreviewComponent = wrapper.getComponent({ name: 'BoardPreview' });
+		await boardPreviewComponent.trigger('click');
+		await boardPreviewComponent.trigger('click');
+		await boardPreviewComponent.trigger('click');
 
 		expect(wrapper.emitted('click')).toBeTruthy();
 		expect(wrapper.emitted('click')!.length).toBe(3);
