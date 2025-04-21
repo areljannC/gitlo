@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useBoardsStore } from '~/stores';
 import { sleep } from '~/shared/utils';
 
 const boardsStore = useBoardsStore();
-const boardsCount = boardsStore.boardsCount;
+const boardsCount = computed(() => boardsStore.boardsCount);
 
 const isSavingChanges = ref(false);
 const handleSaveChanges = async () => {
