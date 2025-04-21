@@ -24,8 +24,13 @@ const handleStartEditingColumnName = () => {
 
 // TODO: use `valibot` to validate the name
 const handleStopEditingColumnName = () => {
-	columnsStore.columnMap[props.columnId].name = columnNameInput.value;
-	isEditingColumnName.value = false;
+	const columnName = columnNameInput.value.trim();
+	if (columnName !== '' && columnName.length > 0) {
+		columnsStore.columnMap[props.columnId].name = columnName;
+		isEditingColumnName.value = false;
+	} else {
+		console.warn('Invalid column name.');
+	}
 }
 
 const handleTabKey = (event: KeyboardEvent) => {
