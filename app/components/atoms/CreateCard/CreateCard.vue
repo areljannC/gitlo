@@ -25,10 +25,15 @@ const handleStartEditingCardName = () => {
 
 // TODO: use`valibot` to validate the name
 const handleStopEditingCardName = () => {
-	const newCardId = cardsStore.createCardWithName(props.columnId, cardNameInput.value);
-	columnsStore.columnMap[props.columnId]?.cardIds?.push(newCardId);
-	cardNameInput.value = '';
-	isEditingCardName.value = false;
+	const cardName = cardNameInput.value.trim();
+	if (cardName !== '' && cardName.length > 0) {
+		const newCardId = cardsStore.createCardWithName(props.columnId, cardName);
+		columnsStore.columnMap[props.columnId]?.cardIds?.push(newCardId);
+		cardNameInput.value = '';
+		isEditingCardName.value = false;
+	} else {
+		console.warn('Invalid card name.');
+	}
 }
 
 const handleKeyUp = (event: KeyboardEvent) => {

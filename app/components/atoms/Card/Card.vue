@@ -24,8 +24,13 @@ const handleStartEditingCardName = () => {
 
 // TODO: use `valibot` to validate the name
 const handleStopEditingCardName = () => {
-	cardsStore.cardMap[props.cardId].name = cardNameInput.value;
-	isEditingCardName.value = false;
+	const cardName = cardNameInput.value.trim();
+	if (cardName !== '' && cardName.length > 0) {
+		cardsStore.cardMap[props.cardId].name = cardNameInput.value;
+		isEditingCardName.value = false;
+	} else {
+		console.warn('Invalid card name.');
+	}
 }
 
 const handleTabKey = (event: KeyboardEvent) => {
@@ -40,6 +45,7 @@ const handleEnterKey = (event: KeyboardEvent) => {
 		handleStopEditingCardName();
 	}
 }
+
 onClickOutside(editCardNameInputRef, () => {
 	if (!isEditingCardName.value) return;
 	handleStopEditingCardName();
@@ -57,7 +63,7 @@ const NOOP = () => { };
 	<div :class="[baseClass, dimensionClass, lightThemeClass, darkThemeClass]">
 		<div class="w-full flex justify-between items-center gap-2">
 			<UInput ref="editCardNameInputRef" v-model="cardNameInput" type="text" placeholder="Enter card name..."
-				color="secondary" :highlight="isEditingCardName" class='w-full font-bold' size="lg"
+				color="secondary" :highlight="isEditingCardName" class='max-width-full font-bold' size="lg"
 				:variant="false ? 'soft' : 'ghost'" @click="handleStartEditingCardName" @keydown="handleTabKey"
 				@keyup="handleEnterKey" />
 			<UIcon name="heroicons:arrows-up-down-solid"
