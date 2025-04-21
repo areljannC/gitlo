@@ -24,10 +24,15 @@ const handleStartEditingColumnName = () => {
 
 // TODO: use `valibot` to validate the name
 const handleStopEditingColumnName = () => {
-	const newColumnId = columnsStore.createColumnWithName(props.boardId, columnNameInput.value);
-	boardsStore.boardMap[props.boardId]?.columnIds?.push(newColumnId);
-	columnNameInput.value = '';
-	isEditingColumnName.value = false;
+	const columnName = columnNameInput.value.trim();
+	if (columnName !== '' && columnName.length > 0) {
+		const newColumnId = columnsStore.createColumnWithName(props.boardId, columnName);
+		boardsStore.boardMap[props.boardId]?.columnIds?.push(newColumnId);
+		columnNameInput.value = '';
+		isEditingColumnName.value = false;
+	} else {
+		console.warn('Invalid column name.');
+	}
 }
 
 const handleKeyUp = (event: KeyboardEvent) => {
