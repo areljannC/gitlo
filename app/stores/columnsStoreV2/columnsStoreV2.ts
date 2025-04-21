@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { generateHash, getTimestamp } from '~/shared/utils';
 import type { Column } from '~/types';
 
-export const useColumnsStore = defineStore('columnsV2', {
+export const useColumnsStore = defineStore('Columns', {
 	persist: { pick: ['columnMap'] },
 	state: () => ({
 		columnMap: {} as Record<string, Column>
@@ -25,6 +25,20 @@ export const useColumnsStore = defineStore('columnsV2', {
 				boardId: boardId,
 				id: columnId,
 				name: '',
+				cardIds: [],
+				archived: false,
+				createdAt: currentTimestamp,
+				updatedAt: currentTimestamp
+			};
+			return columnId;
+		},
+		createColumnWithName(boardId: string, columnName: string): string {
+			const columnId = generateHash();
+			const currentTimestamp = getTimestamp();
+			this.columnMap[columnId] = {
+				boardId: boardId,
+				id: columnId,
+				name: columnName,
 				cardIds: [],
 				archived: false,
 				createdAt: currentTimestamp,
