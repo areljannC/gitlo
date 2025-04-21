@@ -1,7 +1,7 @@
 export interface Card {
 	columnId: string;
 	id: string;
-	title: string;
+	name: string;
 	description?: string;
 	archived: boolean;
 	createdAt: string;
