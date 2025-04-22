@@ -2,6 +2,7 @@
 import { computed, useTemplateRef, ref } from 'vue';
 import { onClickOutside } from '@vueuse/core'
 import { useColumnsStore } from '~/stores';
+import { updateColumn } from '~/services';
 
 const props = defineProps({
 	columnId: {
@@ -26,7 +27,7 @@ const handleStartEditingColumnName = () => {
 const handleStopEditingColumnName = () => {
 	const columnName = columnNameInput.value.trim();
 	if (columnName !== '' && columnName.length > 0) {
-		columnsStore.columnMap[props.columnId].name = columnName;
+		updateColumn(props.columnId, { name: columnName });
 		isEditingColumnName.value = false;
 	} else {
 		console.warn('Invalid column name.');

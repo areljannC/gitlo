@@ -1,18 +1,14 @@
 <script setup lang="ts">
-import { computed, useTemplateRef, ref } from 'vue';
+import { useTemplateRef, ref } from 'vue';
 import { onClickOutside } from '@vueuse/core'
-import { useColumnsStore, useCardsStore } from '~/stores';
+import { createCardWithName } from '~/services';
 
 const props = defineProps({
 	columnId: {
 		type: String,
 		required: true,
-	},
+	}
 });
-
-
-const columnsStore = useColumnsStore();
-const cardsStore = useCardsStore();
 
 const createCardInputRef = useTemplateRef<HTMLInputElement>('createCardInputRef');
 const cardNameInput = ref('');
@@ -27,8 +23,7 @@ const handleStartEditingCardName = () => {
 const handleStopEditingCardName = () => {
 	const cardName = cardNameInput.value.trim();
 	if (cardName !== '' && cardName.length > 0) {
-		const newCardId = cardsStore.createCardWithName(props.columnId, cardName);
-		columnsStore.columnMap[props.columnId]?.cardIds?.push(newCardId);
+		createCardWithName(props.columnId, cardName)
 		cardNameInput.value = '';
 		isEditingCardName.value = false;
 	} else {
@@ -47,7 +42,7 @@ onClickOutside(createCardInputRef, () => {
 	handleStopEditingCardName();
 })
 
-const baseClass = 'rounded-md flex-shrink-0 p-2 opacity-50 hover:opacity-100 transition-opacity duration-200 ease-in-out';
+const baseClass = 'rounded-md flex-shrink-0 p-2 mt-4 opacity-50 hover:opacity-100 transition-opacity duration-200 ease-in-out';
 const dimensionClass = 'w-full h-fit min-h-13'
 const lightThemeClass = 'bg-gray-100'
 const darkThemeClass = 'dark:bg-gray-600';

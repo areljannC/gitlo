@@ -19,24 +19,5 @@ export const useBoardsStore = defineStore('Boards', {
 			state =>
 			(boardId: string): Board | undefined =>
 				state.boardMap[boardId]
-	},
-	actions: {
-		createBoard(newBoard: NewBoard): string {
-			const boardId = generateHash();
-			const currentTimestamp = getTimestamp();
-			const columnsStore = useColumnsStore();
-			this.boardIds.push(boardId);
-			this.boardMap[boardId] = {
-				id: boardId,
-				name: newBoard.name,
-				description: newBoard.description,
-				tags: newBoard.tags,
-				columnIds: Array.from({ length: newBoard.columns }, () => columnsStore.createColumn(boardId)),
-				archived: false,
-				createdAt: currentTimestamp,
-				updatedAt: currentTimestamp
-			};
-			return boardId
-		}
 	}
 });
