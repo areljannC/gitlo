@@ -45,6 +45,11 @@ export const useCardsStore = defineStore('Cards', {
 				updatedAt: currentTimestamp
 			};
 			return cardId;
+		},
+		updateCardColumnId(cardId: string, columnId: string) {
+			if (this.isValidCardId(cardId)) {
+				this.cardMap[cardId].columnId = columnId;
+			}
 		}
 	}
 });
