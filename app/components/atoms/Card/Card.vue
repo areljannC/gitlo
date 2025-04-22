@@ -62,16 +62,19 @@ const NOOP = () => { };
 
 <template>
 	<div :class="[baseClass, dimensionClass, lightThemeClass, darkThemeClass]">
-		<div class="w-full flex justify-between items-center gap-2">
+		<div class="w-full flex justify-between items-center gap-1 pr-2">
 			<UInput ref="editCardNameInputRef" v-model="cardNameInput" type="text" placeholder="Enter card name..."
-				color="secondary" :highlight="isEditingCardName" class='max-width-full font-bold' size="lg"
+				color="secondary" :highlight="isEditingCardName" class='w-full font-bold' size="lg"
 				:variant="false ? 'soft' : 'ghost'" @click="handleStartEditingCardName" @keydown="handleTabKey"
 				@keyup="handleEnterKey" />
-			<UIcon name="heroicons:arrows-pointing-out-solid" class="size-5" />
-			<UIcon name="heroicons:arrows-up-down-solid"
-				class="size-5 draggable-card cursor-move ml-1 mr-2 md:hidden" />
-			<UIcon name="icon-park-outline:direction-adjustment-two"
-				class="size-5 draggable-card cursor-move ml-1 mr-2 hidden md:block" />
+			<div class="flex gap-1 items-center">
+				<UButton icon="heroicons:arrows-pointing-out-20-solid" class="size-5 w-fit h-fit cursor-pointer"
+					variant="ghost" color="neutral" />
+				<UIcon name="heroicons:arrows-up-down-solid"
+					class="size-5 draggable-card md:hidden hover:cursor-grab active:cursor-grabbing" />
+				<UIcon name="icon-park-outline:direction-adjustment-two"
+					class="size-5 draggable-card cursor-move hidden md:block hover:cursor-grab active:cursor-grabbing" />
+			</div>
 		</div>
 	</div>
 </template>

@@ -66,9 +66,9 @@ const darkThemeClass = 'dark:bg-gray-800';
 				class='w-full font-bold' size="lg" :variant="isEditingColumnName ? 'soft' : 'ghost'"
 				@click="handleStartEditingColumnName" @keydown="handleTabKey" @keyup="handleEnterKey" />
 			<UIcon name="heroicons:arrows-up-down-solid"
-				class="size-5 draggable-column cursor-move ml-1 mr-3 md:hidden" />
+				class="size-5 draggable-column cursor-move ml-1 mr-3 md:hidden hover:cursor-grab active:cursor-grabbing" />
 			<UIcon name="heroicons:arrows-right-left-solid"
-				class="size-5 draggable-column cursor-move ml-1 mr-3 hidden md:block" />
+				class="size-5 draggable-column cursor-move ml-1 mr-3 hidden md:block hover:cursor-grab active:cursor-grabbing" />
 		</div>
 		<Cards :columnId="column.id" :cardIds="column.cardIds" />
 	</div>
