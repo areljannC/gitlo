@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useBoardsStore } from '~/stores';
+import { createBoard } from '~/services';
 import type { NewBoard } from '~/types';
 
 const boardsStore = useBoardsStore();
@@ -17,8 +18,8 @@ const handleCloseCreateBoardModal = () => {
 	isCreateBoardModalOpen.value = false;
 };
 
-const handleCreateBoard = async (board: NewBoard) => {
-	boardsStore.createBoard(board);
+const handleCreateBoard = async (newBoard: NewBoard) => {
+	createBoard(newBoard);
 	isCreateBoardModalOpen.value = false;
 };
 

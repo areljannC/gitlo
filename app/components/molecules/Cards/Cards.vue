@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import draggable from 'vuedraggable';
-import { useCardsStore } from '~/stores';
+import { moveCardToColumn } from '~/services';
 
 const props = defineProps({
 	columnId: {
@@ -14,12 +14,10 @@ const props = defineProps({
 	}
 })
 
-const cardsStore = useCardsStore();
-
 // TODO: add better logging
 const handleMoveCardToColumn = (event: any) => {
 	if ('added' in event) {
-		cardsStore.updateCardColumnId(event.added.element, props.columnId);
+		moveCardToColumn(event.added.element, props.columnId)
 	}
 }
 </script>

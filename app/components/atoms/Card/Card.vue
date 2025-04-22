@@ -2,6 +2,7 @@
 import { computed, useTemplateRef, ref } from 'vue';
 import { onClickOutside } from '@vueuse/core'
 import { useCardsStore } from '~/stores';
+import { updateCard } from '~/services';
 
 const props = defineProps({
 	cardId: {
@@ -26,7 +27,7 @@ const handleStartEditingCardName = () => {
 const handleStopEditingCardName = () => {
 	const cardName = cardNameInput.value.trim();
 	if (cardName !== '' && cardName.length > 0) {
-		cardsStore.cardMap[props.cardId].name = cardNameInput.value;
+		updateCard(props.cardId, { name: cardName });
 		isEditingCardName.value = false;
 	} else {
 		console.warn('Invalid card name.');
@@ -66,9 +67,10 @@ const NOOP = () => { };
 				color="secondary" :highlight="isEditingCardName" class='max-width-full font-bold' size="lg"
 				:variant="false ? 'soft' : 'ghost'" @click="handleStartEditingCardName" @keydown="handleTabKey"
 				@keyup="handleEnterKey" />
+			<UIcon name="heroicons:arrows-pointing-out-solid" class="size-5" />
 			<UIcon name="heroicons:arrows-up-down-solid"
 				class="size-5 draggable-card cursor-move ml-1 mr-2 md:hidden" />
-			<UIcon name="icon-park-solid:direction-adjustment-two"
+			<UIcon name="icon-park-outline:direction-adjustment-two"
 				class="size-5 draggable-card cursor-move ml-1 mr-2 hidden md:block" />
 		</div>
 	</div>

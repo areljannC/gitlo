@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTemplateRef, ref } from 'vue';
 import { onClickOutside } from '@vueuse/core'
-import { useBoardsStore, useColumnsStore } from '~/stores';
+import { createColumnWithName } from '~/services';
 
 const props = defineProps({
 	boardId: {
@@ -9,9 +9,6 @@ const props = defineProps({
 		required: true,
 	}
 });
-
-const boardsStore = useBoardsStore();
-const columnsStore = useColumnsStore();
 
 const createColumnInputRef = useTemplateRef<HTMLInputElement>('createColumnInputRef');
 const columnNameInput = ref('');
@@ -26,8 +23,7 @@ const handleStartEditingColumnName = () => {
 const handleStopEditingColumnName = () => {
 	const columnName = columnNameInput.value.trim();
 	if (columnName !== '' && columnName.length > 0) {
-		const newColumnId = columnsStore.createColumnWithName(props.boardId, columnName);
-		boardsStore.boardMap[props.boardId]?.columnIds?.push(newColumnId);
+		createColumnWithName(props.boardId, columnName);
 		columnNameInput.value = '';
 		isEditingColumnName.value = false;
 	} else {
@@ -55,7 +51,8 @@ const darkThemeClass = 'dark:bg-gray-800';
 <template>
 	<div :class="[baseClass, dimensionClass, lightThemeClass, darkThemeClass]">
 		<UInput ref="createColumnInputRef" v-model="columnNameInput" type="text" placeholder="Enter new column name..."
-			color="secondary" icon="heroicons:plus-solid" :highlight="isEditingColumnName" class='w-full font-bold' size="lg"
-			:variant="isEditingColumnName ? 'soft' : 'ghost'" @click="handleStartEditingColumnName" @keyup="handleKeyUp" />
+			color="secondary" icon="heroicons:plus-solid" :highlight="isEditingColumnName" class='w-full font-bold'
+			size="lg" :variant="isEditingColumnName ? 'soft' : 'ghost'" @click="handleStartEditingColumnName"
+			@keyup="handleKeyUp" />
 	</div>
 </template>
