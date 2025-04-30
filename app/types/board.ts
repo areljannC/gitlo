@@ -4,6 +4,7 @@ export interface Board {
 	description?: string;
 	tags?: string[];
 	columnIds?: string[];
+	columns?: number;
 	archived: boolean;
 	createdAt: string;
 	updatedAt: string;
