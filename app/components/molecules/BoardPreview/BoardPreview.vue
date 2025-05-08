@@ -5,7 +5,8 @@ defineProps({
 		required: true
 	},
 	description: {
-		type: String
+		type: String,
+		default: ''
 	},
 	tags: {
 		type: Array as PropType<string[]>,
