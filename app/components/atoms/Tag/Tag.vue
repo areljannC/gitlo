@@ -28,10 +28,6 @@ const props = defineProps({
 	deleteable: {
 		type: Boolean,
 		default: false
-	},
-	deleteIcon: {
-		type: String,
-		default: 'heroicons:x-mark-solid'
 	}
 })
 
@@ -39,17 +35,18 @@ const color = props.color as "primary" | "secondary" | "info" | "success" | "war
 const variant = props.variant as "solid" | "outline" | "subtle" | "soft"
 const size = props.size as "xs" | "sm" | "md" | "lg" | "xl"
 
-const emit = defineEmits(['click'])
+const emit = defineEmits(['delete'])
 
-const handleOnClick = () => {
-	emit('click')
+const handleDelete = () => {
+	emit('delete')
 }
 </script>
 
 <template>
 	<UBadge :label="label" :color="color" :variant="variant" :size="size">
 		<template v-if="deleteable" #trailing>
-			<UButton :size="size" :color="color" :icon="deleteIcon" variant="ghost" square @click="handleOnClick" />
+			<UButton :size="size" :color="color" icon="heroicons:x-mark-solid" variant="ghost" square
+				@click="handleDelete" />
 		</template>
 	</UBadge>
 </template>
