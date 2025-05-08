@@ -4,7 +4,7 @@ import { useBoardsStore } from '~/stores';
 import { sleep } from '~/shared/utils';
 
 const boardsStore = useBoardsStore();
-const boardsCount = computed(() => boardsStore.boardsCount);
+const boardsCount = computed(() => boardsStore.boardIds.length);
 
 const isSavingChanges = ref(false);
 const handleSaveChanges = async () => {
