@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const emit = defineEmits(['click']);
-const handleClick = () => {
-	emit('click');
+const emit = defineEmits(['create']);
+const handleCreate = () => {
+	emit('create');
 };
 
 const buttonClass = 'text-lg';
@@ -10,5 +10,5 @@ const hoverEffectClass = 'hover:shadow-md hover:-translate-y-0.25 transition-tra
 
 <template>
 	<UButton label="Create a board" color="secondary" size="md" :class="[buttonClass, hoverEffectClass]"
-		trailing-icon="heroicons:plus-solid" @click="handleClick" />
+		trailing-icon="heroicons:plus-solid" @click="handleCreate" />
 </template>
