@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { computed, useTemplateRef, ref } from 'vue';
-import { onClickOutside } from '@vueuse/core'
+import { computed, useTemplateRef, ref, watch } from 'vue';
 import { useColumnsStore } from '~/stores';
-import { updateColumn } from '~/services';
 
 const props = defineProps({
 	columnId: {
@@ -12,11 +10,15 @@ const props = defineProps({
 });
 
 const columnsStore = useColumnsStore();
-const column = computed(() => columnsStore.columnMap[props.columnId]);
+const column = computed(() => columnsStore.getColumnById(props.columnId)!);
 
 const editColumnNameInputRef = useTemplateRef<HTMLInputElement>('editColumnNameInputRef');
 const columnNameInput = ref(column.value.name);
 const isEditingColumnName = ref(false);
+
+watch(column, updatedColumn => {
+	columnNameInput.value = updatedColumn.name
+});
 
 const handleStartEditingColumnName = () => {
 	columnNameInput.value = column.value.name;
@@ -25,32 +27,21 @@ const handleStartEditingColumnName = () => {
 
 // TODO: use `valibot` to validate the name
 const handleStopEditingColumnName = () => {
-	const columnName = columnNameInput.value.trim();
-	if (columnName !== '' && columnName.length > 0) {
-		updateColumn(props.columnId, { name: columnName });
+	try {
+		const columnName = columnNameInput.value.trim();
+		columnsStore.updateColumn(props.columnId, { name: columnName });
 		isEditingColumnName.value = false;
-	} else {
-		console.warn('Invalid column name.');
+	} catch (error) {
+		console.error(error);
 	}
 }
 
-const handleTabKey = (event: KeyboardEvent) => {
-	if (event.key === 'Tab') {
-		handleStopEditingColumnName();
-	}
-}
-
-const handleEnterKey = (event: KeyboardEvent) => {
+const handleKeyDown = (event: KeyboardEvent) => {
 	if (event.key === 'Enter') {
 		event.preventDefault();
 		handleStopEditingColumnName();
 	}
 }
-
-onClickOutside(editColumnNameInputRef, () => {
-	if (!isEditingColumnName.value) return;
-	handleStopEditingColumnName();
-})
 
 const baseClass = 'rounded-md flex flex-col flex-shrink-0 overflow-y-auto gap-2 p-2';
 const dimensionClass = 'w-full md:w-68 h-fit min-h-13 max-h-full ';
@@ -64,7 +55,7 @@ const darkThemeClass = 'dark:bg-gray-800';
 			<UInput ref="editColumnNameInputRef" v-model="columnNameInput" type="text"
 				placeholder="Enter column name..." color="secondary" :highlight="isEditingColumnName"
 				class='w-full font-bold' size="lg" :variant="isEditingColumnName ? 'soft' : 'ghost'"
-				@click="handleStartEditingColumnName" @keydown="handleTabKey" @keyup="handleEnterKey" />
+				@focus="handleStartEditingColumnName" @blur="handleStopEditingColumnName" @keydown="handleKeyDown" />
 			<UIcon name="heroicons:arrows-up-down-solid"
 				class="size-5 draggable-column cursor-move ml-1 mr-3 md:hidden hover:cursor-grab active:cursor-grabbing" />
 			<UIcon name="heroicons:arrows-right-left-solid"
