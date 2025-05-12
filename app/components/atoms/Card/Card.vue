@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, useTemplateRef, ref, watch } from 'vue';
-import { onClickOutside } from '@vueuse/core'
 import { useCardsStore } from '~/stores';
 
 const props = defineProps({
@@ -11,7 +10,7 @@ const props = defineProps({
 });
 
 const cardsStore = useCardsStore();
-const card = computed(() => cardsStore.cardMap[props.cardId]);
+const card = computed(() => cardsStore.getCardById(props.cardId)!);
 
 const editCardNameInputRef = useTemplateRef<HTMLInputElement>('editCardNameInputRef');
 const cardNameInput = ref(card.value.name);
@@ -29,12 +28,12 @@ const handleStartEditingCardName = () => {
 // TODO: use `valibot` to validate the name
 // TODO: wrap this in a try-catch block
 const handleStopEditingCardName = () => {
-	const cardName = cardNameInput.value.trim();
-	if (cardName !== '' && cardName.length > 0) {
+	try {
+		const cardName = cardNameInput.value.trim();
 		cardsStore.updateCard(props.cardId, { name: cardName });
 		isEditingCardName.value = false;
-	} else {
-		console.warn('Invalid card name.');
+	} catch (error) {
+		console.error(error);
 	}
 }
 
@@ -44,15 +43,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
 		event.preventDefault();
 		handleStopEditingCardName();
 	}
-	if (event.key === 'Tab') {
-		handleStopEditingCardName();
-	}
 }
-
-onClickOutside(editCardNameInputRef, () => {
-	if (!isEditingCardName.value) return;
-	handleStopEditingCardName();
-})
 
 const handleExpandCard = () => {
 	cardsStore.expandCard(props.cardId);
@@ -70,7 +61,7 @@ const darkThemeClass = 'dark:bg-gray-600';
 			<UTextarea ref="editCardNameInputRef" v-model="cardNameInput" placeholder="Enter card name..."
 				color="secondary" :highlight="isEditingCardName" class="w-full font-bold" size="lg"
 				:variant="isEditingCardName ? 'soft' : 'ghost'" :rows="1" :maxrows="0" autoresize :autoresizeDelay="0"
-				@click="handleStartEditingCardName" @keydown="handleKeyDown" />
+				@focus="handleStartEditingCardName" @blur="handleStopEditingCardName" @keydown="handleKeyDown" />
 			<div class="w-fit h-fit flex gap-1 items-center">
 				<UButton icon="heroicons:arrows-pointing-out-20-solid" class="size-5 w-fit h-fit cursor-pointer"
 					variant="ghost" color="neutral" @click="handleExpandCard" />
