@@ -136,7 +136,7 @@ describe('CreateCard', () => {
 		});
 		const cardNameInput = wrapper.find('textarea');
 		expect(cardNameInput.exists()).toBe(true);
-		expect(cardNameInput.attributes('placeholder')).toBe('Add a new card...');
+		expect(cardNameInput.attributes('placeholder')).toBe('Add a card...');
 		expect(cardNameInput.element.value).toBe('');
 	});
 
