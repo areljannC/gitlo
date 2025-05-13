@@ -18,7 +18,7 @@ const handleStartEditingCardName = () => {
 	isEditingCardName.value = true;
 }
 
-// TODO: use`valibot` to validate the name
+// TODO: use `valibot` to validate the name
 const handleStopEditingCardName = () => {
 	try {
 		const cardName = cardNameInput.value.trim();
