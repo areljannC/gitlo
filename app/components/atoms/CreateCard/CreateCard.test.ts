@@ -4,7 +4,8 @@ import { mountSuspended } from '@nuxt/test-utils/runtime';
 import { useBoardsStore, useColumnsStore, useCardsStore } from '~/stores';
 import { generateHash, getTimestamp } from '~/shared/utils';
 import { MOCK_HASH, MOCK_TIMESTAMP, MOCK_BOARD, MOCK_COLUMN, MOCK_CARD } from '~/constants';
-import Column from './Column.vue';
+import CreateCard from './CreateCard.vue';
+import { text } from 'stream/consumers';
 
 vi.mock('~/shared/utils', async () => {
 	const actual = await vi.importActual<typeof import('~/shared/utils')>('~/shared/utils');
@@ -17,7 +18,7 @@ vi.mock('~/shared/utils', async () => {
 
 let pinia: any;
 
-describe('Column', () => {
+describe('CreateCard', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 
@@ -129,97 +130,139 @@ describe('Column', () => {
 		expect(MOCK_BOARD_UPDATED?.updatedAt).toBe(MOCK_TIMESTAMP[5]);
 	});
 
-	it('should render a column with a name', async () => {
-		const wrapper = await mountSuspended(Column, {
+	it('should render a textarea for the name of the card', async () => {
+		const wrapper = await mountSuspended(CreateCard, {
+			global: { plugins: [pinia] },
+			props: { columnId: MOCK_HASH[2] }
+		});
+		const cardNameInput = wrapper.find('textarea');
+		expect(cardNameInput.exists()).toBe(true);
+	});
+
+	it('should update the textarea value when typing', async () => {
+		const wrapper = await mountSuspended(CreateCard, {
 			global: { plugins: [pinia] },
 			props: { columnId: MOCK_HASH[2] }
 		});
 
-		const columnNameInput = wrapper.get('input[type="text"]');
-		expect((columnNameInput.element as HTMLInputElement).value).toBe(MOCK_COLUMN[1].name);
+		const cardNameInput = wrapper.find('textarea');
+		cardNameInput.trigger('focus');
+		await wrapper.vm.$nextTick();
+
+		cardNameInput.setValue('New Card Name');
+		await wrapper.vm.$nextTick();
+		expect(cardNameInput.element.value).toBe('New Card Name');
 	});
 
-	it('should render a card with a name in the column', async () => {
-		const wrapper = await mountSuspended(Column, {
-			global: { plugins: [pinia] },
-			props: { columnId: MOCK_HASH[2] }
-		});
-
-		const columnNameInput = wrapper.get('input[type="text"]');
-		expect((columnNameInput.element as HTMLInputElement).value).toBe(MOCK_COLUMN[1].name);
-
-		const cardNameInput = wrapper.get('textarea');
-		expect(cardNameInput.element.value).toBe(MOCK_CARD[1].name);
-	});
-
-	it('should update the column name', async () => {
+	it('should create a card when pressing `Enter` key', async () => {
 		const columnsStore = useColumnsStore();
-		const wrapper = await mountSuspended(Column, {
+		const cardsStore = useCardsStore();
+		const wrapper = await mountSuspended(CreateCard, {
 			global: { plugins: [pinia] },
 			props: { columnId: MOCK_HASH[2] }
 		});
 
-		const columnNameInput = wrapper.get('input[type="text"]');
-		expect((columnNameInput.element as HTMLInputElement).value).toBe(MOCK_COLUMN[1].name);
-
-		columnNameInput.trigger('focus');
+		const cardNameInput = wrapper.find('textarea');
+		cardNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.setValue('Updated Column Name');
+		cardNameInput.setValue('New Card Name');
+		await wrapper.vm.$nextTick();
+		expect(cardNameInput.element.value).toBe('New Card Name');
+		expect(columnsStore.getColumnById(MOCK_HASH[2])?.cardIds).toHaveLength(1);
+		expect(cardsStore.isValidCardId(MOCK_HASH[6])).toBe(false);
+
+		vi.mocked(generateHash).mockReturnValueOnce(MOCK_HASH[6]);
+		cardNameInput.trigger('keydown', { key: 'Enter' });
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.trigger('blur');
-		await wrapper.vm.$nextTick();
-
-		expect((columnNameInput.element as HTMLInputElement).value).toBe('Updated Column Name');
-		expect(columnsStore.getColumnById(MOCK_HASH[2])?.name).toBe('Updated Column Name');
+		expect(cardNameInput.element.value).toBe('');
+		expect(cardsStore.isValidCardId(MOCK_HASH[6])).toBe(true);
+		expect(cardsStore.getCardById(MOCK_HASH[6])?.columnId).toBe(MOCK_HASH[2]);
+		expect(cardsStore.getCardById(MOCK_HASH[6])?.name).toBe('New Card Name');
+		expect(columnsStore.getColumnById(MOCK_HASH[2])?.cardIds).toHaveLength(2);
 	});
 
-	it('should update the column name when `Enter` is pressed', async () => {
+	it('should create a card when textarea is blurred', async () => {
 		const columnsStore = useColumnsStore();
-		const wrapper = await mountSuspended(Column, {
+		const cardsStore = useCardsStore();
+		const wrapper = await mountSuspended(CreateCard, {
 			global: { plugins: [pinia] },
 			props: { columnId: MOCK_HASH[2] }
 		});
 
-		const columnNameInput = wrapper.get('input[type="text"]');
-		expect((columnNameInput.element as HTMLInputElement).value).toBe(MOCK_COLUMN[1].name);
-
-		columnNameInput.trigger('focus');
+		const cardNameInput = wrapper.find('textarea');
+		cardNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.setValue('Updated Column Name');
+		cardNameInput.setValue('New Card Name');
+		await wrapper.vm.$nextTick();
+		expect(cardNameInput.element.value).toBe('New Card Name');
+		expect(columnsStore.getColumnById(MOCK_HASH[2])?.cardIds).toHaveLength(1);
+		expect(cardsStore.isValidCardId(MOCK_HASH[6])).toBe(false);
+
+		vi.mocked(generateHash).mockReturnValueOnce(MOCK_HASH[6]);
+		cardNameInput.trigger('blur');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.trigger('keydown', { key: 'Enter' });
-		await wrapper.vm.$nextTick();
-
-		expect((columnNameInput.element as HTMLInputElement).value).toBe('Updated Column Name');
-		expect(columnsStore.getColumnById(MOCK_HASH[2])?.name).toBe('Updated Column Name');
+		expect(cardNameInput.element.value).toBe('');
+		expect(cardsStore.isValidCardId(MOCK_HASH[6])).toBe(true);
+		expect(cardsStore.getCardById(MOCK_HASH[6])?.columnId).toBe(MOCK_HASH[2]);
+		expect(cardsStore.getCardById(MOCK_HASH[6])?.name).toBe('New Card Name');
+		expect(columnsStore.getColumnById(MOCK_HASH[2])?.cardIds).toHaveLength(2);
 	});
 
-	it('should log an error if updating the column name fails', async () => {
+	it('should not create a card when textarea is empty', async () => {
 		const columnsStore = useColumnsStore();
+		const cardsStore = useCardsStore();
+		const wrapper = await mountSuspended(CreateCard, {
+			global: { plugins: [pinia] },
+			props: { columnId: MOCK_HASH[2] }
+		});
+
+		const cardNameInput = wrapper.find('textarea');
+		cardNameInput.trigger('focus');
+		await wrapper.vm.$nextTick();
+
+		cardNameInput.setValue('New Card Name');
+		await wrapper.vm.$nextTick();
+		expect(cardNameInput.element.value).toBe('New Card Name');
+		expect(columnsStore.getColumnById(MOCK_HASH[2])?.cardIds).toHaveLength(1);
+		expect(cardsStore.isValidCardId(MOCK_HASH[6])).toBe(false);
+
+		cardNameInput.setValue('');
+		await wrapper.vm.$nextTick();
+		expect(cardNameInput.element.value).toBe('');
+
+		cardNameInput.trigger('blur');
+		await wrapper.vm.$nextTick();
+
+		expect(cardNameInput.element.value).toBe('');
+		expect(columnsStore.getColumnById(MOCK_HASH[2])?.cardIds).toHaveLength(1);
+	});
+
+	it('should log an error if creating a card fails', async () => {
+		const cardsStore = useCardsStore();
 		const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-		vi.spyOn(columnsStore, 'updateColumn').mockImplementation(() => {
-			throw new Error('Update failed');
+		vi.spyOn(cardsStore, 'createCard').mockImplementation(() => {
+			throw new Error('Failed to create card');
 		});
 
-		const wrapper = await mountSuspended(Column, {
+		const wrapper = await mountSuspended(CreateCard, {
 			global: { plugins: [pinia] },
 			props: { columnId: MOCK_HASH[2] }
 		});
 
-		const columnNameInput = wrapper.get('input[type="text"]');
-		expect((columnNameInput.element as HTMLInputElement).value).toBe(MOCK_COLUMN[1].name);
-
-		columnNameInput.trigger('focus');
+		const cardNameInput = wrapper.find('textarea');
+		cardNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.setValue('Updated Column Name');
+		cardNameInput.setValue('New Card Name');
 		await wrapper.vm.$nextTick();
+		expect(cardNameInput.element.value).toBe('New Card Name');
 
-		columnNameInput.trigger('blur');
+		vi.mocked(generateHash).mockReturnValueOnce(MOCK_HASH[6]);
+		cardNameInput.trigger('keydown', { key: 'Enter' });
 		await wrapper.vm.$nextTick();
 
 		expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error));
