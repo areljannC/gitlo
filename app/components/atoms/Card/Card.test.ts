@@ -183,11 +183,10 @@ describe('Card', () => {
 
 	it('should log an error if updating the card name fails', async () => {
 		const cardsStore = useCardsStore();
+		const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 		vi.spyOn(cardsStore, 'updateCard').mockImplementation(() => {
 			throw new Error('Update failed');
 		});
-
-		const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
 		const wrapper = await mountSuspended(Card, {
 			global: { plugins: [pinia] },
