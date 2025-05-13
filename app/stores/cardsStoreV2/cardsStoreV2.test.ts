@@ -31,7 +31,7 @@ vi.mock('~/shared/utils', async () => {
 	return {
 		...actual,
 		generateHash: vi.fn(),
-		getTimestamp: vi.fn(() => MOCK_TIMESTAMP)
+		getTimestamp: vi.fn()
 	};
 });
 
