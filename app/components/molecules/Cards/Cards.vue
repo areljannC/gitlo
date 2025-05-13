@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import draggable from 'vuedraggable';
-import { moveCardToColumn } from '~/services';
+import { useCardsStore } from '~/stores';
 
 const props = defineProps({
 	columnId: {
@@ -14,18 +14,24 @@ const props = defineProps({
 	}
 })
 
+const cardsStore = useCardsStore();
+
 // TODO: add better logging
-const handleMoveCardToColumn = (event: any) => {
+const handleMoveCard = (event: any) => {
 	if ('added' in event) {
-		moveCardToColumn(event.added.element, props.columnId)
+		cardsStore.moveCardToColumn(event.added.element, props.columnId)
 	}
+	// TODO: update column and card timestamps
+	//if ('moved' in event) {
+	//	// DO SOMETHING
+	//}
 }
 </script>
 
 <template>
 	<div class="w-full h-full flex flex-col mb-2">
 		<draggable :list="cardIds" :item-key="(cardId: string) => cardId" handle=".draggable-card" group="cards"
-			class="flex flex-col gap-4" @change="handleMoveCardToColumn">
+			class="flex flex-col gap-4 mb-4" @change="handleMoveCard">
 			<template #item="{ element }">
 				<Card :cardId="element" />
 			</template>
