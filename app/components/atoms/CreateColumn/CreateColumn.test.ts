@@ -4,7 +4,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime';
 import { useBoardsStore, useColumnsStore, useCardsStore } from '~/stores';
 import { generateHash, getTimestamp } from '~/shared/utils';
 import { MOCK_HASH, MOCK_TIMESTAMP, MOCK_BOARD, MOCK_COLUMN, MOCK_CARD } from '~/constants';
-import CreateCard from './CreateCard.vue';
+import CreateColumn from './CreateColumn.vue';
 
 vi.mock('~/shared/utils', async () => {
 	const actual = await vi.importActual<typeof import('~/shared/utils')>('~/shared/utils');
@@ -17,7 +17,7 @@ vi.mock('~/shared/utils', async () => {
 
 let pinia: any;
 
-describe('CreateCard', () => {
+describe('CreateColumn', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 
@@ -129,141 +129,143 @@ describe('CreateCard', () => {
 		expect(MOCK_BOARD_UPDATED?.updatedAt).toBe(MOCK_TIMESTAMP[5]);
 	});
 
-	it('should render a textarea for the name of the card', async () => {
-		const wrapper = await mountSuspended(CreateCard, {
+	it('should render an input field for the name of the column', async () => {
+		const wrapper = await mountSuspended(CreateColumn, {
 			global: { plugins: [pinia] },
-			props: { columnId: MOCK_HASH[2] }
+			props: { boardId: MOCK_HASH[1] }
 		});
-		const cardNameInput = wrapper.find('textarea');
-		expect(cardNameInput.exists()).toBe(true);
-		expect(cardNameInput.attributes('placeholder')).toBe('Add a new card...');
-		expect(cardNameInput.element.value).toBe('');
+		const columnNameInput = wrapper.find('input');
+		expect(columnNameInput.exists()).toBe(true);
+		expect(columnNameInput.attributes('placeholder')).toBe('Enter new column name...');
+		expect(columnNameInput.element.value).toBe('');
 	});
 
-	it('should update the textarea value when typing', async () => {
-		const wrapper = await mountSuspended(CreateCard, {
+	it('should update the input field value when typing', async () => {
+		const wrapper = await mountSuspended(CreateColumn, {
 			global: { plugins: [pinia] },
-			props: { columnId: MOCK_HASH[2] }
+			props: { boardId: MOCK_HASH[1] }
 		});
 
-		const cardNameInput = wrapper.find('textarea');
-		cardNameInput.trigger('focus');
+		const columnNameInput = wrapper.find('input');
+		columnNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		cardNameInput.setValue('New Card Name');
+		columnNameInput.setValue('New Column');
 		await wrapper.vm.$nextTick();
-		expect(cardNameInput.element.value).toBe('New Card Name');
+		expect(columnNameInput.element.value).toBe('New Column');
 	});
 
-	it('should create a card when pressing `Enter` key', async () => {
+	it('should create a column when pressing `Enter` key', async () => {
+		const boardsStore = useBoardsStore();
 		const columnsStore = useColumnsStore();
-		const cardsStore = useCardsStore();
-		const wrapper = await mountSuspended(CreateCard, {
+		const wrapper = await mountSuspended(CreateColumn, {
 			global: { plugins: [pinia] },
-			props: { columnId: MOCK_HASH[2] }
+			props: { boardId: MOCK_HASH[1] }
 		});
 
-		const cardNameInput = wrapper.find('textarea');
-		cardNameInput.trigger('focus');
+		const columnNameInput = wrapper.find('input');
+		columnNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		cardNameInput.setValue('New Card Name');
+		columnNameInput.setValue('New Column');
 		await wrapper.vm.$nextTick();
-		expect(cardNameInput.element.value).toBe('New Card Name');
-		expect(columnsStore.getColumnById(MOCK_HASH[2])?.cardIds).toHaveLength(1);
-		expect(cardsStore.isValidCardId(MOCK_HASH[6])).toBe(false);
+		expect(columnNameInput.element.value).toBe('New Column');
+		expect(boardsStore.getBoardById(MOCK_HASH[1])?.columnIds).toHaveLength(2);
+		expect(columnsStore.isValidColumnId(MOCK_HASH[6])).toBe(false);
 
 		vi.mocked(generateHash).mockReturnValueOnce(MOCK_HASH[6]);
-		cardNameInput.trigger('keydown', { key: 'Enter' });
+		columnNameInput.trigger('keydown', { key: 'Enter' });
 		await wrapper.vm.$nextTick();
 
-		expect(cardNameInput.element.value).toBe('');
-		expect(cardsStore.isValidCardId(MOCK_HASH[6])).toBe(true);
-		expect(cardsStore.getCardById(MOCK_HASH[6])?.columnId).toBe(MOCK_HASH[2]);
-		expect(cardsStore.getCardById(MOCK_HASH[6])?.name).toBe('New Card Name');
-		expect(columnsStore.getColumnById(MOCK_HASH[2])?.cardIds).toHaveLength(2);
+		expect(columnNameInput.element.value).toBe('');
+		expect(columnsStore.isValidColumnId(MOCK_HASH[6])).toBe(true);
+		expect(columnsStore.getColumnById(MOCK_HASH[6])?.name).toBe('New Column');
+		expect(columnsStore.getColumnById(MOCK_HASH[6])?.boardId).toBe(MOCK_HASH[1]);
+		expect(boardsStore.getBoardById(MOCK_HASH[1])?.columnIds).toEqual([MOCK_HASH[2], MOCK_HASH[3], MOCK_HASH[6]]);
 	});
 
-	it('should create a card when textarea is blurred', async () => {
+	it('should create a column when input field is blurred', async () => {
+		const boardsStore = useBoardsStore();
 		const columnsStore = useColumnsStore();
-		const cardsStore = useCardsStore();
-		const wrapper = await mountSuspended(CreateCard, {
+		const wrapper = await mountSuspended(CreateColumn, {
 			global: { plugins: [pinia] },
-			props: { columnId: MOCK_HASH[2] }
+			props: { boardId: MOCK_HASH[1] }
 		});
 
-		const cardNameInput = wrapper.find('textarea');
-		cardNameInput.trigger('focus');
+		const columnNameInput = wrapper.find('input');
+		columnNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		cardNameInput.setValue('New Card Name');
+		columnNameInput.setValue('New Column');
 		await wrapper.vm.$nextTick();
-		expect(cardNameInput.element.value).toBe('New Card Name');
-		expect(columnsStore.getColumnById(MOCK_HASH[2])?.cardIds).toHaveLength(1);
-		expect(cardsStore.isValidCardId(MOCK_HASH[6])).toBe(false);
+		expect(columnNameInput.element.value).toBe('New Column');
+		expect(boardsStore.getBoardById(MOCK_HASH[1])?.columnIds).toHaveLength(2);
+		expect(columnsStore.isValidColumnId(MOCK_HASH[6])).toBe(false);
 
 		vi.mocked(generateHash).mockReturnValueOnce(MOCK_HASH[6]);
-		cardNameInput.trigger('blur');
+		columnNameInput.trigger('blur');
 		await wrapper.vm.$nextTick();
 
-		expect(cardNameInput.element.value).toBe('');
-		expect(cardsStore.isValidCardId(MOCK_HASH[6])).toBe(true);
-		expect(cardsStore.getCardById(MOCK_HASH[6])?.columnId).toBe(MOCK_HASH[2]);
-		expect(cardsStore.getCardById(MOCK_HASH[6])?.name).toBe('New Card Name');
-		expect(columnsStore.getColumnById(MOCK_HASH[2])?.cardIds).toHaveLength(2);
+		expect(columnNameInput.element.value).toBe('');
+		expect(columnsStore.isValidColumnId(MOCK_HASH[6])).toBe(true);
+		expect(columnsStore.getColumnById(MOCK_HASH[6])?.name).toBe('New Column');
+		expect(columnsStore.getColumnById(MOCK_HASH[6])?.boardId).toBe(MOCK_HASH[1]);
+		expect(boardsStore.getBoardById(MOCK_HASH[1])?.columnIds).toEqual([MOCK_HASH[2], MOCK_HASH[3], MOCK_HASH[6]]);
 	});
 
-	it('should not create a card when textarea is empty', async () => {
+	it('should not create a column when input field is empty', async () => {
+		const boardsStore = useBoardsStore();
 		const columnsStore = useColumnsStore();
-		const cardsStore = useCardsStore();
-		const wrapper = await mountSuspended(CreateCard, {
+		const wrapper = await mountSuspended(CreateColumn, {
 			global: { plugins: [pinia] },
-			props: { columnId: MOCK_HASH[2] }
+			props: { boardId: MOCK_HASH[1] }
 		});
 
-		const cardNameInput = wrapper.find('textarea');
-		cardNameInput.trigger('focus');
+		const columnNameInput = wrapper.find('input');
+		columnNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		cardNameInput.setValue('New Card Name');
+		columnNameInput.setValue('New Column');
 		await wrapper.vm.$nextTick();
-		expect(cardNameInput.element.value).toBe('New Card Name');
-		expect(columnsStore.getColumnById(MOCK_HASH[2])?.cardIds).toHaveLength(1);
-		expect(cardsStore.isValidCardId(MOCK_HASH[6])).toBe(false);
+		expect(columnNameInput.element.value).toBe('New Column');
+		expect(boardsStore.getBoardById(MOCK_HASH[1])?.columnIds).toHaveLength(2);
+		expect(columnsStore.isValidColumnId(MOCK_HASH[6])).toBe(false);
 
-		cardNameInput.setValue('');
+		columnNameInput.setValue('');
 		await wrapper.vm.$nextTick();
-		expect(cardNameInput.element.value).toBe('');
+		expect(columnNameInput.element.value).toBe('');
 
-		cardNameInput.trigger('blur');
+		vi.mocked(generateHash).mockReturnValueOnce(MOCK_HASH[6]);
+		columnNameInput.trigger('blur');
 		await wrapper.vm.$nextTick();
 
-		expect(cardNameInput.element.value).toBe('');
-		expect(columnsStore.getColumnById(MOCK_HASH[2])?.cardIds).toHaveLength(1);
+		expect(columnNameInput.element.value).toBe('');
+		expect(columnsStore.isValidColumnId(MOCK_HASH[6])).toBe(false);
+		expect(boardsStore.getBoardById(MOCK_HASH[1])?.columnIds).toEqual([MOCK_HASH[2], MOCK_HASH[3]]);
 	});
 
-	it('should log an error if creating a card fails', async () => {
-		const cardsStore = useCardsStore();
+	it('should log an error if creating a column fails', async () => {
+		const columnStore = useColumnsStore();
 		const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-		vi.spyOn(cardsStore, 'createCard').mockImplementation(() => {
-			throw new Error('Failed to create card');
+		vi.spyOn(columnStore, 'createColumn').mockImplementation(() => {
+			throw new Error('Failed to create column');
 		});
 
-		const wrapper = await mountSuspended(CreateCard, {
+		const wrapper = await mountSuspended(CreateColumn, {
 			global: { plugins: [pinia] },
-			props: { columnId: MOCK_HASH[2] }
+			props: { boardId: MOCK_HASH[1] }
 		});
 
-		const cardNameInput = wrapper.find('textarea');
-		cardNameInput.trigger('focus');
+		const columnNameInput = wrapper.find('input');
+		columnNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		cardNameInput.setValue('New Card Name');
+		columnNameInput.setValue('New Column');
 		await wrapper.vm.$nextTick();
-		expect(cardNameInput.element.value).toBe('New Card Name');
+		expect(columnNameInput.element.value).toBe('New Column');
 
 		vi.mocked(generateHash).mockReturnValueOnce(MOCK_HASH[6]);
-		cardNameInput.trigger('keydown', { key: 'Enter' });
+		columnNameInput.trigger('keydown', { key: 'Enter' });
 		await wrapper.vm.$nextTick();
 
 		expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error));
