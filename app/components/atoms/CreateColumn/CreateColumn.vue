@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useTemplateRef, ref } from 'vue';
-import { onClickOutside } from '@vueuse/core'
-import { createColumnWithName } from '~/services';
+import { useColumnsStore } from '~/stores';
 
 const props = defineProps({
 	boardId: {
@@ -10,37 +9,37 @@ const props = defineProps({
 	}
 });
 
+const columnsStore = useColumnsStore();
 const createColumnInputRef = useTemplateRef<HTMLInputElement>('createColumnInputRef');
 const columnNameInput = ref('');
 const isEditingColumnName = ref(false);
 
 const handleStartEditingColumnName = () => {
-	columnNameInput.value = '';
 	isEditingColumnName.value = true;
 }
 
 // TODO: use `valibot` to validate the name
 const handleStopEditingColumnName = () => {
-	const columnName = columnNameInput.value.trim();
-	if (columnName !== '' && columnName.length > 0) {
-		createColumnWithName(props.boardId, columnName);
+	try {
+		const columnName = columnNameInput.value.trim();
+		if (columnName.length === 0) {
+			isEditingColumnName.value = false;
+			return;
+		}
+		columnsStore.createColumn(props.boardId, { name: columnName });
 		columnNameInput.value = '';
 		isEditingColumnName.value = false;
-	} else {
-		console.warn('Invalid column name.');
+	} catch (error) {
+		console.error(error);
 	}
 }
 
-const handleKeyUp = (event: KeyboardEvent) => {
-	event.preventDefault();
-	if (event.key !== 'Enter') return;
-	handleStopEditingColumnName();
+const handleKeyDown = (event: KeyboardEvent) => {
+	if (event.key === 'Enter') {
+		event.preventDefault();
+		handleStopEditingColumnName();
+	}
 }
-
-onClickOutside(createColumnInputRef, () => {
-	if (!isEditingColumnName.value) return;
-	handleStopEditingColumnName();
-})
 
 const baseClass = 'rounded-md flex-shrink-0 overflow-y-auto p-2 opacity-50 hover:opacity-100 transition-opacity duration-200 ease-in-out';
 const dimensionClass = 'w-full md:w-68 h-fit min-h-13';
@@ -52,7 +51,7 @@ const darkThemeClass = 'dark:bg-gray-800';
 	<div :class="[baseClass, dimensionClass, lightThemeClass, darkThemeClass]">
 		<UInput ref="createColumnInputRef" v-model="columnNameInput" type="text" placeholder="Enter new column name..."
 			color="secondary" icon="heroicons:plus-solid" :highlight="isEditingColumnName" class='w-full font-bold'
-			size="lg" :variant="isEditingColumnName ? 'soft' : 'ghost'" @click="handleStartEditingColumnName"
-			@keyup="handleKeyUp" />
+			size="lg" :variant="isEditingColumnName ? 'soft' : 'ghost'" @focus="handleStartEditingColumnName"
+			@blur="handleStopEditingColumnName" @keydown="handleKeyDown" />
 	</div>
 </template>
