@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useBoardsStore } from '~/stores';
-import { sleep } from '~/shared/utils';
 
 const boardsStore = useBoardsStore();
 const boardsCount = computed(() => boardsStore.boardIds.length);
@@ -10,7 +9,6 @@ const isSavingChanges = ref(false);
 const handleSaveChanges = async () => {
 	isSavingChanges.value = true;
 	try {
-		await sleep(2000);
 		//boardsStore.syncUnsyncedBoards(); // Uncomment if needed for actual logic
 	} catch (error) {
 		console.error('Failed to save changes:', error);
