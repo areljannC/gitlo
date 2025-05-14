@@ -41,7 +41,7 @@ const handleStartEditing = () => {
 	isEditing.value = true;
 }
 
-const handleSaveChanges = () => {
+const handleUpdate = () => {
 	form.value?.submit();
 }
 
@@ -86,7 +86,7 @@ const handleSubmit = () => {
 		</template>
 		<template v-if="isEditing" #footer>
 			<UButton label="Cancel" color="error" variant="soft" @click="handleCancelChanges" />
-			<UButton label="Save changes" :color="'primary'" @click="handleSaveChanges" />
+			<UButton label="Update" :color="'primary'" @click="handleUpdate" />
 		</template>
 		<template v-else #footer>
 			<UButton label="Close" color="error" variant="soft" @click="handleCollapseCard" />
