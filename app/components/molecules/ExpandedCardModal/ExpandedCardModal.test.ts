@@ -1,4 +1,4 @@
-import { vi, describe, beforeEach, afterEach, it, expect } from 'vitest';
+import { vi, describe, beforeEach, it, expect } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { mountSuspended } from '@nuxt/test-utils/runtime';
 import { DOMWrapper } from '@vue/test-utils';
