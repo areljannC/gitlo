@@ -15,7 +15,7 @@ const props = defineProps({
 		required: true
 	}
 });
-const emit = defineEmits(['cancel', 'archive', 'unarchive', 'update']);
+const emit = defineEmits(['cancel', 'archive', 'unarchive', 'update', 'delete']);
 
 const boardsStore = useBoardsStore();
 const board = computed(() => boardsStore.getBoardById(props.boardId));
@@ -75,6 +75,10 @@ const handleUnarchiveBoard = () => {
 	emit('unarchive');
 };
 
+const handleDeleteBoard = () => {
+	emit('delete');
+};
+
 const handleUpdateBoard = () => {
 	form.value?.submit();
 };
@@ -124,10 +128,11 @@ const handleSubmit = (event: FormSubmitEvent<v.InferOutput<typeof schema>>) => {
 					@click="handleArchiveBoard" />
 				<UButton v-else label="Unarchive" color="secondary" variant="ghost"
 					@click="handleUnarchiveBoard" />
-				<div class="flex gap-2">
+				<div v-if="!board?.archived" class="flex gap-2">
 					<UButton label="Cancel" color="error" variant="soft" @click="handleCancel" />
 					<UButton label="Update" color="primary" @click="handleUpdateBoard" />
 				</div>
+				<UButton v-else label="Delete" color="error" variant="soft" @click="handleDeleteBoard" />
 			</div>
 		</template>
 	</UModal>

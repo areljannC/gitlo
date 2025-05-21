@@ -396,5 +396,45 @@ describe('EditBoardModal', () => {
 				expect(modal.emitted().update).toHaveLength(1);
 			});
 		});
+
+		describe('delete', () => {
+			it('should emit `delete` when the delete button is clicked', async () => {
+				const modal = await mountSuspended(EditBoardModal, {
+					global: { plugins: [pinia] },
+					props: {
+						open: true,
+						boardId: MOCK_HASH[1]
+					}
+				});
+				const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
+				expect(wrapper.exists()).toBe(true);
+				expect(wrapper.findAll('input')).toHaveLength(3);
+
+				let buttons = wrapper.findAll('button');
+				expect(buttons).toHaveLength(6);
+
+				const cancelButton = buttons[3];
+				expect(cancelButton.exists()).toBe(true);
+				expect(cancelButton.text()).toBe('Archive');
+
+				await cancelButton.trigger('click');
+				expect(modal.emitted()).toHaveProperty('archive');
+				expect(modal.emitted().archive).toHaveLength(1);
+
+				const boardsStore = useBoardsStore();
+				boardsStore.archiveBoard(MOCK_HASH[1]);
+				await modal.vm.$nextTick();
+				expect(boardsStore.getBoardById(MOCK_HASH[1])?.archived).toBe(true);
+
+				buttons = wrapper.findAll('button');
+				const deleteButton = buttons[4];
+				expect(deleteButton.exists()).toBe(true);
+				expect(deleteButton.text()).toBe('Delete');
+
+				await deleteButton.trigger('click');
+				expect(modal.emitted()).toHaveProperty('delete');
+				expect(modal.emitted().delete).toHaveLength(1);
+			});
+		});
 	});
 });
