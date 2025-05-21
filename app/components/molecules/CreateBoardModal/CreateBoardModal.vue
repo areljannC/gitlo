@@ -35,7 +35,7 @@ const resetState = () => {
 	state.columns = 3;
 };
 
-const handleCreateTag = (_: KeyboardEvent) => {
+const handleCreateTag = () => {
 	form.value?.validate({ name: 'tag', silent: true });
 	const rawTag = (state.tag ?? '').trim();
 	const result = v.safeParse(v.pipe(v.string(), v.trim(), v.minLength(2), v.maxLength(16)), rawTag);
