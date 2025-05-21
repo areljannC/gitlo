@@ -84,13 +84,11 @@ const handleSubmit = () => {
 				</UFormField>
 			</UForm>
 		</template>
-		<template v-if="isEditing" #footer>
-			<UButton label="Cancel" color="error" variant="soft" @click="handleCancelChanges" />
-			<UButton label="Update" :color="'primary'" @click="handleUpdate" />
-		</template>
-		<template v-else #footer>
-			<UButton label="Close" color="error" variant="soft" @click="handleCollapseCard" />
-			<UButton label="Edit" color="secondary" @click="handleStartEditing" />
+		<template #footer>
+			<UButton v-if="isEditing" label="Cancel" color="error" variant="soft" @click="handleCancelChanges" />
+			<UButton v-if="isEditing" label="Update" :color="'primary'" @click="handleUpdate" />
+			<UButton v-if="!isEditing" label="Close" color="error" variant="soft" @click="handleCollapseCard" />
+			<UButton v-if="!isEditing" label="Edit" color="secondary" @click="handleStartEditing" />
 		</template>
 	</UModal>
 </template>
