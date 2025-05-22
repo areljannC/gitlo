@@ -14,15 +14,15 @@ if (!boardsStore.isValidBoardId(route.params.id as string)) {
 	navigateTo('/boards')
 }
 
-const board = computed(() => boardsStore.getBoardById(boardId)!);
 const isEditBoardModalOpen = ref(false);
 const isEditingBoardName = ref(false);
-const form = useTemplateRef('form');
-const schema = v.object({ name: boardSchema.getNameValidator() });
-const state = reactive({ name: board.value.name });
+const board = computed(() => boardsStore.getBoardById(boardId)!);
+const boardForm = useTemplateRef<HTMLFormElement>('boardForm');
+const boardFormSchema = v.object({ name: boardSchema.getNameValidator() });
+const boardFormState = reactive({ name: board.value.name });
 
 watch(board, updatedBoard => {
-	state.name = updatedBoard.name;
+	boardFormState.name = updatedBoard.name;
 });
 
 const handleStartEditingBoardName = () => {
@@ -31,10 +31,10 @@ const handleStartEditingBoardName = () => {
 
 const handleStopEditingBoardName = () => {
 	isEditingBoardName.value = false;
-	form.value?.submit();
+	boardForm.value?.submit();
 };
 
-const handleSubmit = (event: FormSubmitEvent<v.InferOutput<typeof schema>>) => {
+const handleSubmit = (event: FormSubmitEvent<v.InferOutput<typeof boardFormSchema>>) => {
 	boardsStore.updateBoard(boardId, { name: event.data.name });
 };
 
@@ -76,10 +76,10 @@ const handleUpdateBoard = (updatedBoard: Partial<Board>) => {
 <template>
 	<div class="w-screen h-screen flex flex-col items-center gap-4 p-4">
 		<div class="w-fit min-w-68">
-			<UForm ref="form" :schema="schema" :state="state" @submit="handleSubmit">
+			<UForm ref="boardForm" :schema="boardFormSchema" :state="boardFormState" @submit="handleSubmit">
 				<UFormField name="name" size="lg" :ui="{ error: 'text-center' }">
-					<UInput v-model="state.name" type="text" placeholder="Enter board name..." color="secondary"
-						:highlight="isEditingBoardName" class='w-full font-bold' size="xl"
+					<UInput v-model="boardFormState.name" type="text" placeholder="Enter board name..."
+						color="secondary" :highlight="isEditingBoardName" class='w-full font-bold' size="xl"
 						:variant="isEditingBoardName ? 'soft' : 'ghost'" :ui="{ base: 'text-2xl text-center' }"
 						@focus="handleStartEditingBoardName" @blur="handleStopEditingBoardName" />
 				</UFormField>
