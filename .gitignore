@@ -45,6 +45,3 @@ scripts/temp-commits/
 # Ignore Nuxt-generated types
 app/.nuxt/
 app/.output/
-
-# Data directory
-data/
