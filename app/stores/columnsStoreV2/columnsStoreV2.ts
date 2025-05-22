@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { useBoardsStore, useCardsStore } from '~/stores';
+import { useDataStore, useBoardsStore, useCardsStore } from '~/stores';
 import { generateHash, getTimestamp } from '~/shared/utils';
 import { BoardError, ColumnError } from '~/shared/errors';
 import { BOARD_ERROR, COLUMN_ERROR } from '~/constants';
@@ -51,6 +51,9 @@ export const useColumnsStore = defineStore('columns', {
 					updatedAt: currentTimestamp
 				};
 
+				const dataStore = useDataStore();
+				dataStore.recordChange();
+
 				return newColumnId;
 			} catch (error) {
 				console.error(COLUMN_ERROR.CREATE_COLUMN);
@@ -78,6 +81,9 @@ export const useColumnsStore = defineStore('columns', {
 					throw new BoardError(BOARD_ERROR.ID_INVALID);
 				}
 				boardsStore.boardMap[boardId]!.updatedAt = currentTimestamp;
+
+				const dataStore = useDataStore();
+				dataStore.recordChange();
 			} catch (error) {
 				console.error(COLUMN_ERROR.UPDATE_COLUMN);
 				throw error;
@@ -86,6 +92,9 @@ export const useColumnsStore = defineStore('columns', {
 		archiveColumn(columnId: string): void {
 			try {
 				this.updateColumn(columnId, { archived: true });
+
+				const dataStore = useDataStore();
+				dataStore.recordChange();
 			} catch (error) {
 				console.error(COLUMN_ERROR.ARCHIVE_COLUMN);
 				throw error;
@@ -94,6 +103,9 @@ export const useColumnsStore = defineStore('columns', {
 		unarchiveColumn(columnId: string): void {
 			try {
 				this.updateColumn(columnId, { archived: false });
+
+				const dataStore = useDataStore();
+				dataStore.recordChange();
 			} catch (error) {
 				console.error(COLUMN_ERROR.UNARCHIVE_COLUMN);
 				throw error;
@@ -125,6 +137,9 @@ export const useColumnsStore = defineStore('columns', {
 
 				const currentTimestamp = getTimestamp();
 				boardsStore.boardMap[boardId]!.updatedAt = currentTimestamp;
+
+				const dataStore = useDataStore();
+				dataStore.recordChange();
 			} catch (error) {
 				console.error(COLUMN_ERROR.DELETE_COLUMN);
 				throw error;

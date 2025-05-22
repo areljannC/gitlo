@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { useColumnsStore, useCardsStore } from '~/stores';
+import { useDataStore, useColumnsStore, useCardsStore } from '~/stores';
 import { generateHash, getTimestamp } from '~/shared/utils';
 import { BoardError, ColumnError } from '~/shared/errors';
 import { BOARD_ERROR, COLUMN_ERROR } from '~/constants';
@@ -67,6 +67,9 @@ export const useBoardsStore = defineStore('boards', {
 					};
 				}
 
+				const dataStore = useDataStore();
+				dataStore.recordChange();
+
 				return newBoardId;
 			} catch (error) {
 				console.error(BOARD_ERROR.CREATE_BOARD);
@@ -87,6 +90,9 @@ export const useBoardsStore = defineStore('boards', {
 					createdAt: oldBoard.createdAt,
 					updatedAt: currentTimestamp
 				};
+
+				const dataStore = useDataStore();
+				dataStore.recordChange();
 			} catch (error) {
 				console.error(BOARD_ERROR.UPDATE_BOARD);
 				throw error;
@@ -95,6 +101,9 @@ export const useBoardsStore = defineStore('boards', {
 		archiveBoard(boardId: string): void {
 			try {
 				this.updateBoard(boardId, { archived: true });
+
+				const dataStore = useDataStore();
+				dataStore.recordChange();
 			} catch (error) {
 				console.error(BOARD_ERROR.ARCHIVE_BOARD);
 				throw error;
@@ -103,6 +112,9 @@ export const useBoardsStore = defineStore('boards', {
 		unarchiveBoard(boardId: string): void {
 			try {
 				this.updateBoard(boardId, { archived: false });
+
+				const dataStore = useDataStore();
+				dataStore.recordChange();
 			} catch (error) {
 				console.error(BOARD_ERROR.UNARCHIVE_BOARD);
 				throw error;
@@ -126,6 +138,9 @@ export const useBoardsStore = defineStore('boards', {
 				}
 				this.boardIds = this.boardIds.filter(id => id !== boardId);
 				delete this.boardMap[boardId];
+
+				const dataStore = useDataStore();
+				dataStore.recordChange();
 			} catch (error) {
 				console.error(BOARD_ERROR.DELETE_BOARD);
 				throw error;
