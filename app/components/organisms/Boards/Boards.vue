@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useBoardsStore } from '~/stores';
-import { createBoard } from '~/services';
-import type { NewBoard } from '~/types';
+import type { Board } from '~/types';
 
 const boardsStore = useBoardsStore();
-const boardIds = computed(() => boardsStore.boardIds);
+const boardIds = computed(() => boardsStore.getBoardIds());
+//const archivedBoardIds = computed(() => boardsStore.getArchivedBoardIds());
 const boardMap = computed(() => boardsStore.boardMap);
-const boardsCount = computed(() => boardsStore.boardsCount);
 
 const isCreateBoardModalOpen = ref(false);
 
@@ -18,9 +17,13 @@ const handleCloseCreateBoardModal = () => {
 	isCreateBoardModalOpen.value = false;
 };
 
-const handleCreateBoard = async (newBoard: NewBoard) => {
-	createBoard(newBoard);
-	isCreateBoardModalOpen.value = false;
+const handleCreateBoard = (newBoard: Partial<Board>) => {
+	try {
+		boardsStore.createBoard(newBoard);
+		isCreateBoardModalOpen.value = false;
+	} catch (error) {
+		console.error("Error creating board:", error);
+	}
 };
 
 const handleViewBoard = (boardId: string) => {
@@ -30,14 +33,15 @@ const handleViewBoard = (boardId: string) => {
 
 <template>
 	<!-- no boards -->
-	<UContainer v-if="boardsCount === 0" class="w-screen h-screen flex flex-col justify-center items-center space-y-4">
+	<UContainer v-if="boardIds.length === 0"
+		class="w-screen h-screen flex flex-col justify-center items-center text-center gap-4 p-4">
 		<h1 class="font-bold text-3xl">Boards</h1>
 		<p class="text-lg">You have <span class="font-bold">no boards</span>.</p>
 		<UButton label="Create a board" color="secondary" class="text-lg" @click="handleOpenCreateBoardModal" />
 	</UContainer>
 
 	<!-- boards -->
-	<UContainer v-else class="w-screen flex flex-col items-center space-x-4 space-y-4">
+	<UContainer v-else class="w-screen flex flex-col items-center gap-4 p-4">
 		<h1 class="font-bold text-3xl">Boards</h1>
 		<div class="w-full flex flex-wrap gap-4 justify-start">
 			<BoardPreview v-for="boardId of boardIds" :key="boardId" :name="boardMap[boardId].name"
@@ -49,10 +53,10 @@ const handleViewBoard = (boardId: string) => {
 	<!-- action menu -->
 	<ActionMenu>
 		<SaveChangesButton />
-		<CreateBoardButton @click="handleOpenCreateBoardModal" />
+		<CreateBoardButton @create="handleOpenCreateBoardModal" />
 	</ActionMenu>
 
-	<!-- modal -->
+	<!-- modals -->
 	<CreateBoardModal v-model:open="isCreateBoardModalOpen" @cancel="handleCloseCreateBoardModal"
 		@create="handleCreateBoard" />
 </template>
