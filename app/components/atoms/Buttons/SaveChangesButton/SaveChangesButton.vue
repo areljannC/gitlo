@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { useBoardsStore } from '~/stores';
+import { ref } from 'vue';
+import { useDataStore } from '~/stores';
 
-const boardsStore = useBoardsStore();
-const boardsCount = computed(() => boardsStore.boardIds.length);
+const dataStore = useDataStore();
+const changes = computed(() => dataStore.changes);
 
 const isSavingChanges = ref(false);
 const handleSaveChanges = async () => {
 	isSavingChanges.value = true;
 	try {
-		//boardsStore.syncUnsyncedBoards(); // Uncomment if needed for actual logic
+		await dataStore.save();
 	} catch (error) {
 		console.error('Failed to save changes:', error);
 	} finally {
@@ -22,7 +22,10 @@ const hoverEffectClass = 'hover:shadow-md hover:-translate-y-0.25 transition-tra
 </script>
 
 <template>
-	<UButton v-if="boardsCount > 0" label="TODO: Save changes" :loading="isSavingChanges" trailing :color="isSavingChanges ? 'neutral' : 'primary'"
-		size="md" :class="[buttonClass, hoverEffectClass]" trailing-icon="heroicons:document-arrow-down-solid"
-		@click="handleSaveChanges" :disabled="isSavingChanges" />
+	<UChip v-if="changes > 0" :text="changes" size="3xl" color="warning" :class="[hoverEffectClass]">
+		<UButton label="Save changes" :loading="isSavingChanges" trailing
+			:color="isSavingChanges ? 'neutral' : 'primary'" size="md" :class="[buttonClass]"
+			trailing-icon="heroicons:document-arrow-down-solid" @click="handleSaveChanges"
+			:disabled="isSavingChanges" />
+	</UChip>
 </template>
