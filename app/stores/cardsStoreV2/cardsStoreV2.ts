@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { useBoardsStore, useColumnsStore } from '~/stores';
+import { useDataStore, useBoardsStore, useColumnsStore } from '~/stores';
 import { generateHash, getTimestamp } from '~/shared/utils';
 import { BoardError, ColumnError, CardError } from '~/shared/errors';
 import { BOARD_ERROR, COLUMN_ERROR, CARD_ERROR } from '~/constants';
@@ -59,6 +59,9 @@ export const useCardsStore = defineStore('cards', {
 					updatedAt: currentTimestamp
 				};
 
+				const dataStore = useDataStore();
+				dataStore.recordChange();
+
 				return newCardId;
 			} catch (error) {
 				console.error(CARD_ERROR.CREATE_CARD);
@@ -94,6 +97,9 @@ export const useCardsStore = defineStore('cards', {
 
 				columnsStore.columnMap[columnId]!.updatedAt = currentTimestamp;
 				boardsStore.boardMap[boardId]!.updatedAt = currentTimestamp;
+
+				const dataStore = useDataStore();
+				dataStore.recordChange();
 			} catch (error) {
 				console.error(CARD_ERROR.UPDATE_CARD);
 				throw error;
@@ -102,6 +108,9 @@ export const useCardsStore = defineStore('cards', {
 		archiveCard(cardId: string): void {
 			try {
 				this.updateCard(cardId, { archived: true });
+
+				const dataStore = useDataStore();
+				dataStore.recordChange();
 			} catch (error) {
 				console.error(CARD_ERROR.ARCHIVE_CARD);
 				throw error;
@@ -110,6 +119,9 @@ export const useCardsStore = defineStore('cards', {
 		unarchiveCard(cardId: string): void {
 			try {
 				this.updateCard(cardId, { archived: false });
+
+				const dataStore = useDataStore();
+				dataStore.recordChange();
 			} catch (error) {
 				console.error(CARD_ERROR.UNARCHIVE_CARD);
 				throw error;
@@ -140,6 +152,9 @@ export const useCardsStore = defineStore('cards', {
 				const currentTimestamp = getTimestamp();
 				columnsStore.columnMap[columnId]!.updatedAt = currentTimestamp;
 				boardsStore.boardMap[boardId]!.updatedAt = currentTimestamp;
+
+				const dataStore = useDataStore();
+				dataStore.recordChange();
 			} catch (error) {
 				console.error(CARD_ERROR.DELETE_CARD);
 				throw error;
@@ -185,6 +200,9 @@ export const useCardsStore = defineStore('cards', {
 				columnsStore.columnMap[currentColumnId]!.updatedAt = currentTimestamp;
 				columnsStore.columnMap[targetColumnId]!.updatedAt = currentTimestamp;
 				this.cardMap[cardId].updatedAt = currentTimestamp;
+
+				const dataStore = useDataStore();
+				dataStore.recordChange();
 			} catch (error) {
 				console.error(CARD_ERROR.MOVE_CARD);
 				throw error;

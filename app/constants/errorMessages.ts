@@ -30,3 +30,8 @@ export const CARD_ERROR = Object.freeze({
 	EXPAND_CARD: 'Error expanding card.',
 	COLLAPSE_CARD: 'Error collapsing card.'
 });
+
+export const DATA_ERROR = Object.freeze({
+	SAVE: 'Error saving data.',
+	LOAD: 'Error loading data.'
+});
