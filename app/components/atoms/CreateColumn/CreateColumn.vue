@@ -13,10 +13,10 @@ const props = defineProps({
 });
 
 const columnsStore = useColumnsStore();
-const isEditingColumnName = ref(false);
 const createColumnForm = useTemplateRef<HTMLFormElement>('createColumnForm');
 const createColumnFormSchema = v.object({ name: columnSchema.getNameValidator() });
 const createColumnFormState = reactive({ name: '' });
+const isEditingColumnName = ref(false);
 
 const handleStartEditingColumnName = () => {
 	isEditingColumnName.value = true;
