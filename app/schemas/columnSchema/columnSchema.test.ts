@@ -3,10 +3,6 @@ import * as v from 'valibot';
 import * as columnSchema from './columnSchema';
 
 describe('Column Schema Validators', () => {
-	it('should pass', () => {
-		expect(true).toBe(true);
-	});
-
 	describe('getIdValidator', () => {
 		it('should validate a valid ID', () => {
 			const result = v.safeParse(columnSchema.getIdValidator(), 'valid-id');
