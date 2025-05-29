@@ -162,13 +162,14 @@ describe('Column', () => {
 		const columnNameInput = wrapper.get('input[type="text"]');
 		expect((columnNameInput.element as HTMLInputElement).value).toBe(MOCK_COLUMN[1].name);
 
-		columnNameInput.trigger('focus');
+		await columnNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.setValue('Updated Column Name');
+		await columnNameInput.setValue('Updated Column Name');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.trigger('blur');
+		await columnNameInput.trigger('blur');
+		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
 
 		expect((columnNameInput.element as HTMLInputElement).value).toBe('Updated Column Name');
@@ -185,13 +186,14 @@ describe('Column', () => {
 		const columnNameInput = wrapper.get('input[type="text"]');
 		expect((columnNameInput.element as HTMLInputElement).value).toBe(MOCK_COLUMN[1].name);
 
-		columnNameInput.trigger('focus');
+		await columnNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.setValue('Updated Column Name');
+		await columnNameInput.setValue('Updated Column Name');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.trigger('keydown', { key: 'Enter' });
+		await columnNameInput.trigger('keyup', { key: 'Enter' });
+		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
 
 		expect((columnNameInput.element as HTMLInputElement).value).toBe('Updated Column Name');
@@ -213,13 +215,14 @@ describe('Column', () => {
 		const columnNameInput = wrapper.get('input[type="text"]');
 		expect((columnNameInput.element as HTMLInputElement).value).toBe(MOCK_COLUMN[1].name);
 
-		columnNameInput.trigger('focus');
+		await columnNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.setValue('Updated Column Name');
+		await columnNameInput.setValue('Updated Column Name');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.trigger('blur');
+		await columnNameInput.trigger('blur');
+		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
 
 		expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error));
