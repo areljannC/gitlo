@@ -27,7 +27,8 @@ const handleStartEditingColumnName = () => {
 	isEditingColumnName.value = true;
 };
 
-const handleStopEditingColumnName = () => {
+const handleStopEditingColumnName = (event: KeyboardEvent) => {
+	(event.target as HTMLTextAreaElement).blur();
 	isEditingColumnName.value = false;
 	columnForm.value?.submit();
 };
