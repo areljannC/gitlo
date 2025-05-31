@@ -192,7 +192,7 @@ describe('Column', () => {
 		await columnNameInput.setValue('Updated Column Name');
 		await wrapper.vm.$nextTick();
 
-		await columnNameInput.trigger('keyup', { key: 'Enter' });
+		await columnNameInput.trigger('keydown', { key: 'Enter' });
 		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
 
