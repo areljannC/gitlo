@@ -53,7 +53,7 @@ const darkThemeClass = 'dark:bg-gray-800';
 					color="secondary" icon="heroicons:plus-solid" :highlight="isEditingColumnName"
 					class='w-full font-bold' size="lg" :variant="isEditingColumnName ? 'soft' : 'ghost'"
 					@focus="handleStartEditingColumnName" @blur="handleStopEditingColumnName"
-					@keyup.enter="handleStopEditingColumnName" />
+					@keydown.enter.prevent="handleStopEditingColumnName" />
 			</UFormField>
 		</UForm>
 	</div>
