@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { useTemplateRef, ref } from 'vue';
+import { reactive, useTemplateRef, ref } from 'vue';
+import * as v from 'valibot';
 import { useCardsStore } from '~/stores';
+import * as cardSchema from '~/schemas/cardSchema';
+import type { FormSubmitEvent } from '@nuxt/ui';
 
 const props = defineProps({
 	columnId: {
@@ -10,36 +13,30 @@ const props = defineProps({
 });
 
 const cardsStore = useCardsStore();
-const createCardInputRef = useTemplateRef<HTMLInputElement>('createCardInputRef');
-const cardNameInput = ref('');
+const createCardForm = useTemplateRef<HTMLFormElement>('createCardForm');
+const createCardFormSchema = v.object({ name: cardSchema.getNameValidator() });
+const createCardFormState = reactive({ name: '' });
 const isEditingCardName = ref(false);
 
 const handleStartEditingCardName = () => {
 	isEditingCardName.value = true;
-}
+};
 
-// TODO: use `valibot` to validate the name
 const handleStopEditingCardName = () => {
+	isEditingCardName.value = false;
+	createCardForm.value?.submit();
+};
+
+const handleSubmit = (event: FormSubmitEvent<v.InferOutput<typeof createCardFormSchema>>) => {
 	try {
-		const cardName = cardNameInput.value.trim();
-		if (cardName.length === 0) {
-			isEditingCardName.value = false;
-			return;
+		if (event.data.name.trim().length > 0) {
+			cardsStore.createCard(props.columnId, { name: event.data.name.trim() });
+			createCardFormState.name = '';
 		}
-		cardsStore.createCard(props.columnId, { name: cardName });
-		cardNameInput.value = '';
-		isEditingCardName.value = false;
 	} catch (error) {
 		console.error(error);
 	}
-}
-
-const handleKeyDown = (event: KeyboardEvent) => {
-	if (event.key === 'Enter') {
-		event.preventDefault();
-		handleStopEditingCardName();
-	}
-}
+};
 
 const baseClass = 'rounded-md flex-shrink-0 p-2 opacity-50 hover:opacity-100 transition-opacity duration-200 ease-in-out';
 const dimensionClass = 'w-full h-fit min-h-13'
@@ -49,9 +46,14 @@ const darkThemeClass = 'dark:bg-gray-600';
 
 <template>
 	<div :class="[baseClass, dimensionClass, lightThemeClass, darkThemeClass]">
-		<UTextarea ref="createCardInputRef" v-model="cardNameInput" placeholder="Add a card..." color="secondary"
-			icon="heroicons:plus-solid" :highlight="isEditingCardName" class="w-full font-bold" size="lg"
-			:variant="isEditingCardName ? 'soft' : 'ghost'" :rows="1" :maxrows="0" autoresize :autoresizeDelay="0"
-			@focus="handleStartEditingCardName" @blur="handleStopEditingCardName" @keydown="handleKeyDown" />
+		<UForm ref="createCardForm" :schema="createCardFormSchema" :state="createCardFormState" @submit="handleSubmit">
+			<UFormField name="name" size="lg">
+				<UTextarea v-model="createCardFormState.name" placeholder="Add a card..." color="secondary"
+					icon="heroicons:plus-solid" :highlight="isEditingCardName" class="w-full font-bold" size="lg"
+					:variant="isEditingCardName ? 'soft' : 'ghost'" :rows="1" :maxrows="0" autoresize
+					:autoresizeDelay="0" @focus="handleStartEditingCardName" @blur="handleStopEditingCardName"
+					@keydown.enter.prevent="handleStopEditingCardName" />
+			</UFormField>
+		</UForm>
 	</div>
 </template>
