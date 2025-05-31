@@ -28,7 +28,8 @@ const handleStartEditingCardName = () => {
 	isEditingCardName.value = true;
 };
 
-const handleStopEditingCardName = () => {
+const handleStopEditingCardName = (event: KeyboardEvent) => {
+	(event.target as HTMLTextAreaElement).blur();
 	isEditingCardName.value = false;
 	cardForm.value?.submit();
 };
