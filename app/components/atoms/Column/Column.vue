@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, useTemplateRef, ref, watch } from 'vue';
+import { computed, reactive, useTemplateRef, ref, onMounted, watch } from 'vue';
 import * as v from 'valibot';
 import { useColumnsStore } from '~/stores';
 import * as columnSchema from '~/schemas/columnSchema';
@@ -16,8 +16,12 @@ const columnsStore = useColumnsStore();
 const column = computed(() => columnsStore.getColumnById(props.columnId)!);
 const columnForm = useTemplateRef<HTMLFormElement>('columnForm');
 const columnFormSchema = v.object({ name: columnSchema.getNameValidator() });
-const columnFormState = reactive({ name: column.value.name });
+const columnFormState = reactive({ name: '' });
 const isEditingColumnName = ref(false);
+
+onMounted(() => {
+	columnFormState.name = column.value.name;
+});
 
 watch(column, updatedColumn => {
 	columnFormState.name = updatedColumn.name;
