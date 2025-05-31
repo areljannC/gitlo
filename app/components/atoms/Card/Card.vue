@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { computed, useTemplateRef, ref, watch } from 'vue';
+import { computed, reactive, useTemplateRef, ref, watch } from 'vue';
+import * as v from 'valibot';
 import { useCardsStore } from '~/stores';
+import * as cardSchema from '~/schemas/cardSchema';
+import type { FormSubmitEvent } from '@nuxt/ui';
 
 const props = defineProps({
 	cardId: {
@@ -11,57 +14,56 @@ const props = defineProps({
 
 const cardsStore = useCardsStore();
 const card = computed(() => cardsStore.getCardById(props.cardId)!);
-
-const editCardNameInputRef = useTemplateRef<HTMLInputElement>('editCardNameInputRef');
-const cardNameInput = ref(card.value.name);
+const cardForm = useTemplateRef<HTMLFormElement>('cardForm');
+const cardFormSchema = v.object({ name: cardSchema.getNameValidator() });
+const cardFormState = reactive({ name: card.value.name });
 const isEditingCardName = ref(false);
 
 watch(card, updatedCard => {
-	cardNameInput.value = updatedCard.name
+	cardFormState.name = updatedCard.name
 });
 
 const handleStartEditingCardName = () => {
-	cardNameInput.value = card.value.name;
 	isEditingCardName.value = true;
-}
+};
 
-// TODO: use `valibot` to validate the name
-// TODO: wrap this in a try-catch block
-const handleStopEditingCardName = () => {
+const handleStopEditingCardName = (event: KeyboardEvent) => {
+	(event.target as HTMLTextAreaElement).blur();
+	isEditingCardName.value = false;
+	cardForm.value?.submit();
+};
+
+const handleSubmit = (event: FormSubmitEvent<v.InferOutput<typeof cardFormSchema>>) => {
 	try {
-		const cardName = cardNameInput.value.trim();
-		cardsStore.updateCard(props.cardId, { name: cardName });
-		isEditingCardName.value = false;
+		cardsStore.updateCard(props.cardId, { name: event.data.name.trim() });
 	} catch (error) {
 		console.error(error);
 	}
-}
-
-// TODO: make this better
-const handleKeyDown = (event: KeyboardEvent) => {
-	if (event.key === 'Enter') {
-		event.preventDefault();
-		handleStopEditingCardName();
-	}
-}
+};
 
 const handleExpandCard = () => {
 	cardsStore.expandCard(props.cardId);
-}
+};
 
 const baseClass = 'rounded-md flex-shrink-0 p-2';
-const dimensionClass = 'w-full h-fit min-h-13 max'
-const lightThemeClass = 'bg-gray-100'
+const dimensionClass = 'w-full h-fit min-h-13 max';
+const lightThemeClass = 'bg-gray-100';
 const darkThemeClass = 'dark:bg-gray-600';
 </script>
 
 <template>
 	<div :class="[baseClass, dimensionClass, lightThemeClass, darkThemeClass]">
 		<div class="w-full flex justify-between items-start gap-1 pr-2">
-			<UTextarea ref="editCardNameInputRef" v-model="cardNameInput" placeholder="Enter card name..."
-				color="secondary" :highlight="isEditingCardName" class="w-full font-bold" size="lg"
-				:variant="isEditingCardName ? 'soft' : 'ghost'" :rows="1" :maxrows="0" autoresize :autoresizeDelay="0"
-				@focus="handleStartEditingCardName" @blur="handleStopEditingCardName" @keydown="handleKeyDown" />
+			<UForm ref="cardForm" :schema="cardFormSchema" :state="cardFormState" @submit="handleSubmit">
+				<UFormField name="name" size="lg">
+					<UTextarea v-model="cardFormState.name" placeholder="Enter card name..." color="secondary"
+						:highlight="isEditingCardName" class="w-full font-bold" size="lg"
+						:variant="isEditingCardName ? 'soft' : 'ghost'" :rows="1" :maxrows="0" autoresize
+						:autoresizeDelay="0" @focus="handleStartEditingCardName" @blur="handleStopEditingCardName"
+						@keydown.enter.prevent="handleStopEditingCardName" />
+				</UFormField>
+			</UForm>
+
 			<div class="w-fit h-fit flex gap-1 items-center">
 				<UButton icon="heroicons:arrows-pointing-out-20-solid" class="size-5 w-fit h-fit cursor-pointer"
 					variant="ghost" color="neutral" @click="handleExpandCard" />

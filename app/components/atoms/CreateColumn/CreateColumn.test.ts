@@ -174,7 +174,7 @@ describe('CreateColumn', () => {
 		expect(columnsStore.isValidColumnId(MOCK_HASH[6])).toBe(false);
 
 		vi.mocked(generateHash).mockReturnValueOnce(MOCK_HASH[6]);
-		await columnNameInput.trigger('keyup', { key: 'Enter' });
+		await columnNameInput.trigger('keydown', { key: 'Enter' });
 		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
@@ -272,7 +272,7 @@ describe('CreateColumn', () => {
 		expect(columnNameInput.element.value).toBe('New Column');
 
 		vi.mocked(generateHash).mockReturnValueOnce(MOCK_HASH[6]);
-		await columnNameInput.trigger('keyup', { key: 'Enter' });
+		await columnNameInput.trigger('keydown', { key: 'Enter' });
 		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
 

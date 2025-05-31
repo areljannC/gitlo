@@ -147,13 +147,14 @@ describe('Card', () => {
 		});
 
 		const cardNameInput = wrapper.get('textarea');
-		cardNameInput.trigger('focus');
+		await cardNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		cardNameInput.setValue('Updated Card Name');
+		await cardNameInput.setValue('Updated Card Name');
 		await wrapper.vm.$nextTick();
 
-		cardNameInput.trigger('blur');
+		await cardNameInput.trigger('blur');
+		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
 
 		expect(cardNameInput.element.value).toBe('Updated Card Name');
@@ -168,13 +169,14 @@ describe('Card', () => {
 		});
 
 		const cardNameInput = wrapper.get('textarea');
-		cardNameInput.trigger('focus');
+		await cardNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		cardNameInput.setValue('Updated Card Name');
+		await cardNameInput.setValue('Updated Card Name');
 		await wrapper.vm.$nextTick();
 
-		cardNameInput.trigger('keydown', { key: 'Enter' });
+		await cardNameInput.trigger('keydown', { key: 'Enter' });
+		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
 
 		expect(cardNameInput.element.value).toBe('Updated Card Name');
@@ -194,13 +196,14 @@ describe('Card', () => {
 		});
 
 		const cardNameInput = wrapper.get('textarea');
-		cardNameInput.trigger('focus');
+		await cardNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		cardNameInput.setValue('Invalid Name');
+		await cardNameInput.setValue('Invalid Name');
 		await wrapper.vm.$nextTick();
 
-		cardNameInput.trigger('blur');
+		await cardNameInput.trigger('blur');
+		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
 
 		expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error));

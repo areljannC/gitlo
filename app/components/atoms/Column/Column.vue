@@ -27,7 +27,8 @@ const handleStartEditingColumnName = () => {
 	isEditingColumnName.value = true;
 };
 
-const handleStopEditingColumnName = () => {
+const handleStopEditingColumnName = (event: KeyboardEvent) => {
+	(event.target as HTMLTextAreaElement).blur();
 	isEditingColumnName.value = false;
 	columnForm.value?.submit();
 };
@@ -54,7 +55,7 @@ const darkThemeClass = 'dark:bg-gray-800';
 					<UInput v-model="columnFormState.name" type="text" placeholder="Enter column name..."
 						color="secondary" :highlight="isEditingColumnName" class='w-full font-bold' size="lg"
 						:variant="isEditingColumnName ? 'soft' : 'ghost'" @focus="handleStartEditingColumnName"
-						@blur="handleStopEditingColumnName" @keyup.enter="handleStopEditingColumnName" />
+						@blur="handleStopEditingColumnName" @keydown.enter.prevent="handleStopEditingColumnName" />
 				</UFormField>
 			</UForm>
 			<UIcon name="heroicons:arrows-up-down-solid"

@@ -1,30 +1,30 @@
 import { describe, it, expect } from 'vitest';
 import * as v from 'valibot';
-import * as columnSchema from './columnSchema';
+import * as cardSchema from './cardSchema';
 
-describe('Column Schema Validators', () => {
+describe('Card Schema Validators', () => {
 	describe('getIdValidator', () => {
 		it('should validate a valid ID', () => {
-			const result = v.safeParse(columnSchema.getIdValidator(), 'valid-id');
+			const result = v.safeParse(cardSchema.getIdValidator(), 'valid-id');
 			expect(result.success).toBe(true);
 		});
 
 		it('should invalidate an invalid ID', () => {
-			const result = v.safeParse(columnSchema.getIdValidator(), undefined);
+			const result = v.safeParse(cardSchema.getIdValidator(), undefined);
 			expect(result.success).toBe(false);
 		});
 	});
 
 	describe('getNameValidator', () => {
 		it('should validate a valid name', () => {
-			const result = v.safeParse(columnSchema.getNameValidator(), 'Valid Column Name');
+			const result = v.safeParse(cardSchema.getNameValidator(), 'Valid Card Name');
 			expect(result.success).toBe(true);
 		});
 
 		it('should invalidate a name that is too long', () => {
-			const result = v.safeParse(columnSchema.getNameValidator(), 'a'.repeat(33));
+			const result = v.safeParse(cardSchema.getNameValidator(), 'a'.repeat(65));
 			expect(result.success).toBe(false);
-			expect(result.issues![0].message).toContain(columnSchema.ERROR.NAME.MAX_LENGTH);
+			expect(result.issues![0].message).toContain(cardSchema.ERROR.NAME.MAX_LENGTH);
 		});
 	});
 });
