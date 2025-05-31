@@ -5,7 +5,6 @@ import { useCardsStore } from '~/stores';
 import * as cardSchema from '~/schemas/cardSchema';
 import type { FormSubmitEvent } from '@nuxt/ui';
 
-
 const props = defineProps({
 	cardId: {
 		type: String,
