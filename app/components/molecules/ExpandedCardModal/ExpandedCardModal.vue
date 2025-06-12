@@ -12,40 +12,50 @@ const form = useTemplateRef('form');
 const state = reactive({
 	name: expandedCard.value?.name,
 	description: expandedCard.value?.description
-})
+});
 
 watch(expandedCard, (card) => {
 	state.name = card?.name;
 	state.description = card?.description;
 });
 
-const handleNameInputKeyDown = (event: KeyboardEvent) => {
-	if (event.key === 'Enter') {
-		event.preventDefault();
-		(event.target as HTMLTextAreaElement).blur();
-	}
-}
+const handleCardNameInputKeyDown = (event: KeyboardEvent) => {
+	(event.target as HTMLTextAreaElement).blur();
+};
+
+const handleArchiveCard = () => {
+	cardsStore.archiveCard(expandedCard.value!.id);
+};
+
+const handleUnarchiveCard = () => {
+	cardsStore.unarchiveCard(expandedCard.value!.id);
+};
 
 const handleCollapseCard = () => {
 	isEditing.value = false;
 	cardsStore.collapseCard();
-}
+};
 
-const handleCancelChanges = () => {
+const handleCancelCardChanges = () => {
 	state.name = expandedCard.value?.name;
 	state.description = expandedCard.value?.description;
 	isEditing.value = false;
-}
+};
 
-const handleStartEditing = () => {
+const handleEditCard = () => {
 	isEditing.value = true;
-}
+};
 
-const handleUpdate = () => {
+const handleDeleteCard = () => {
+	cardsStore.deleteCard(expandedCard.value!.id);
+	cardsStore.collapseCard();
+};
+
+const handleUpdateCard = () => {
 	form.value?.submit();
-}
+};
 
-const handleSubmit = () => {
+const handleSubmitCardChanges = () => {
 	cardsStore.updateCard(expandedCard.value!.id, { ...state });
 	isEditing.value = false;
 };
@@ -59,12 +69,12 @@ const handleSubmit = () => {
 			</div>
 		</template>
 		<template #body>
-			<UForm ref="form" :state="state" class="w-full h-fit flex flex-col gap-4" @submit="handleSubmit">
+			<UForm ref="form" :state="state" class="w-full h-fit flex flex-col gap-4" @submit="handleSubmitCardChanges">
 				<UFormField name="name" label="Name" size="lg">
 					<UTextarea v-model="state.name" placeholder="Enter card name..." color="secondary"
 						class="w-full font-bold" size="xl" :variant="isEditing ? 'soft' : 'ghost'" :rows="1"
 						:maxrows="0" autoresize :autoresizeDelay="0" :readonly="!isEditing"
-						@keydown="handleNameInputKeyDown" />
+						@keydown.enter.prevent="handleCardNameInputKeyDown" />
 				</UFormField>
 				<UFormField name="description" label="Description" size="lg">
 					<UTextarea v-model="state.description"
@@ -85,10 +95,23 @@ const handleSubmit = () => {
 			</UForm>
 		</template>
 		<template #footer>
-			<UButton v-if="isEditing" label="Cancel" color="error" variant="soft" @click="handleCancelChanges" />
-			<UButton v-if="isEditing" label="Update" :color="'primary'" @click="handleUpdate" />
-			<UButton v-if="!isEditing" label="Close" color="error" variant="soft" @click="handleCollapseCard" />
-			<UButton v-if="!isEditing" label="Edit" color="secondary" @click="handleStartEditing" />
+			<div class="w-full flex justify-between items-center gap-2">
+				<UButton v-if="!expandedCard?.archived" label="Archive" color="secondary" variant="ghost"
+					@click="handleArchiveCard" />
+				<UButton v-else label="Unarchive" color="secondary" variant="ghost" @click="handleUnarchiveCard" />
+				<div v-if="!expandedCard?.archived" class="flex gap-2">
+					<UButton v-if="isEditing" label="Cancel" color="error" variant="soft"
+						@click="handleCancelCardChanges" />
+					<UButton v-if="isEditing" label="Update" :color="'primary'" @click="handleUpdateCard" />
+					<UButton v-if="!isEditing" label="Close" color="neutral" variant="ghost"
+						@click="handleCollapseCard" />
+					<UButton v-if="!isEditing" label="Edit" color="secondary" @click="handleEditCard" />
+				</div>
+				<div v-else="expandedCard?.archived" class="flex gap-2">
+					<UButton label="Close" color="neutral" variant="ghost" @click="handleCollapseCard" />
+					<UButton label="Delete" color="error" variant="soft" @click="handleDeleteCard" />
+				</div>
+			</div>
 		</template>
 	</UModal>
 </template>
