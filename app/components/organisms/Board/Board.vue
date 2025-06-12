@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref, useTemplateRef, onMounted, watch } from 'vue';
+import { computed, reactive, ref, useTemplateRef, watch } from 'vue';
 import * as v from 'valibot';
 import { useBoardsStore } from '~/stores';
 import * as boardSchema from '~/schemas/boardSchema';
@@ -19,11 +19,7 @@ const isEditingBoardName = ref(false);
 const board = computed(() => boardsStore.getBoardById(boardId)!);
 const boardForm = useTemplateRef<HTMLFormElement>('boardForm');
 const boardFormSchema = v.object({ name: boardSchema.getNameValidator() });
-const boardFormState = reactive({ name: '' });
-
-onMounted(() => {
-	boardFormState.name = board.value.name;
-});
+const boardFormState = reactive({ name: board.value.name });
 
 watch(board, updatedBoard => {
 	boardFormState.name = updatedBoard.name;
