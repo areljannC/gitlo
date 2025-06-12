@@ -126,7 +126,7 @@ const handleSubmit = (event: FormSubmitEvent<v.InferOutput<typeof schema>>) => {
 			<div class="w-full flex justify-between items-center gap-2">
 				<UButton v-if="!board?.archived" label="Archive" color="neutral" variant="ghost"
 					@click="handleArchiveBoard" />
-				<UButton v-else label="Unarchive" color="secondary" variant="ghost"
+				<UButton v-else label="Unarchive" color="neutral" variant="ghost"
 					@click="handleUnarchiveBoard" />
 				<div v-if="!board?.archived" class="flex gap-2">
 					<UButton label="Cancel" color="error" variant="soft" @click="handleCancel" />
