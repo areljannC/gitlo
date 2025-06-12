@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, useTemplateRef, ref, onMounted, watch } from 'vue';
+import { computed, reactive, useTemplateRef, ref, watch } from 'vue';
 import * as v from 'valibot';
 import { useCardsStore } from '~/stores';
 import * as cardSchema from '~/schemas/cardSchema';
@@ -16,12 +16,8 @@ const cardsStore = useCardsStore();
 const card = computed(() => cardsStore.getCardById(props.cardId)!);
 const cardForm = useTemplateRef<HTMLFormElement>('cardForm');
 const cardFormSchema = v.object({ name: cardSchema.getNameValidator() });
-const cardFormState = reactive({ name: '' });
+const cardFormState = reactive({ name: card.value.name });
 const isEditingCardName = ref(false);
-
-onMounted(() => {
-	cardFormState.name = card.value.name;
-});
 
 watch(card, updatedCard => {
 	cardFormState.name = updatedCard.name
