@@ -33,7 +33,8 @@ const handleStartEditingBoardName = () => {
 	isEditingBoardName.value = true;
 };
 
-const handleStopEditingBoardName = () => {
+const handleStopEditingBoardName = (event: KeyboardEvent) => {
+	(event.target as HTMLInputElement).blur();
 	isEditingBoardName.value = false;
 	boardForm.value?.submit();
 };
@@ -85,7 +86,8 @@ const handleUpdateBoard = (updatedBoard: Partial<Board>) => {
 					<UInput v-model="boardFormState.name" type="text" placeholder="Enter board name..."
 						color="secondary" :highlight="isEditingBoardName" class='w-full font-bold' size="xl"
 						:variant="isEditingBoardName ? 'soft' : 'ghost'" :ui="{ base: 'text-2xl text-center' }"
-						@focus="handleStartEditingBoardName" @blur="handleStopEditingBoardName" />
+						@focus="handleStartEditingBoardName" @blur="handleStopEditingBoardName"
+						@keydown.enter.prevent="handleStopEditingBoardName" />
 				</UFormField>
 			</UForm>
 		</div>
