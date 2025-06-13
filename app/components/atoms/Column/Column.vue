@@ -13,14 +13,14 @@ const props = defineProps({
 });
 
 const columnsStore = useColumnsStore();
-const column = computed(() => columnsStore.getColumnById(props.columnId)!);
+const column = computed(() => columnsStore.getColumnById(props.columnId));
 const columnForm = useTemplateRef<HTMLFormElement>('columnForm');
 const columnFormSchema = v.object({ name: columnSchema.getNameValidator() });
-const columnFormState = reactive({ name: column.value.name });
+const columnFormState = reactive({ name: column.value?.name });
 const isEditingColumnName = ref(false);
 
 watch(column, updatedColumn => {
-	columnFormState.name = updatedColumn.name;
+	columnFormState.name = updatedColumn?.name;
 });
 
 const handleStartEditingColumnName = () => {
@@ -60,7 +60,7 @@ const darkThemeClass = 'dark:bg-gray-800';
 </script>
 
 <template>
-	<div :class="[baseClass, dimensionClass, lightThemeClass, darkThemeClass]">
+	<div v-if="column" :class="[baseClass, dimensionClass, lightThemeClass, darkThemeClass]">
 		<div class="w-full flex justify-between items-center gap-2">
 			<UForm ref="columnForm" :schema="columnFormSchema" :state="columnFormState"
 				@submit="handleSubmitColumnNameChange">

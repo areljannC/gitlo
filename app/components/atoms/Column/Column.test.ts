@@ -275,8 +275,6 @@ describe('Column', () => {
 
 	it('should delete the column when the delete button is clicked', async () => {
 		const columnsStore = useColumnsStore();
-		const deleteColumnSpy = vi.spyOn(columnsStore, 'deleteColumn').mockImplementation(() => {});
-
 		const wrapper = await mountSuspended(Column, {
 			global: { plugins: [pinia] },
 			props: { columnId: MOCK_HASH[2] }
@@ -308,7 +306,8 @@ describe('Column', () => {
 
 		await deleteButton.trigger('click');
 		await wrapper.vm.$nextTick();
-		expect(deleteColumnSpy).toHaveBeenCalledWith(MOCK_HASH[2]);
+		expect(columnsStore.isValidColumnId(MOCK_HASH[2])).toBe(false);
+		expect(columnsStore.getColumnById(MOCK_HASH[2])).toBeUndefined();
 	});
 
 	it('should log an error if updating the column name fails', async () => {
