@@ -33,12 +33,24 @@ const handleStopEditingColumnName = (event: KeyboardEvent) => {
 	columnForm.value?.submit();
 };
 
-const handleSubmit = (event: FormSubmitEvent<v.InferOutput<typeof columnFormSchema>>) => {
+const handleSubmitColumnNameChange = (event: FormSubmitEvent<v.InferOutput<typeof columnFormSchema>>) => {
 	try {
 		columnsStore.updateColumn(props.columnId, { name: event.data.name.trim() });
 	} catch (error) {
 		console.error(error);
 	}
+};
+
+const handleArchiveColumn = () => {
+	columnsStore.archiveColumn(props.columnId);
+};
+
+const handleUnarchiveColumn = () => {
+	columnsStore.unarchiveColumn(props.columnId);
+};
+
+const handleDeleteColumn = () => {
+	columnsStore.deleteColumn(props.columnId);
 };
 
 const baseClass = 'rounded-md flex flex-col flex-shrink-0 overflow-y-auto gap-2 p-2';
@@ -50,7 +62,8 @@ const darkThemeClass = 'dark:bg-gray-800';
 <template>
 	<div :class="[baseClass, dimensionClass, lightThemeClass, darkThemeClass]">
 		<div class="w-full flex justify-between items-center gap-2">
-			<UForm ref="columnForm" :schema="columnFormSchema" :state="columnFormState" @submit="handleSubmit">
+			<UForm ref="columnForm" :schema="columnFormSchema" :state="columnFormState"
+				@submit="handleSubmitColumnNameChange">
 				<UFormField name="name" size="lg">
 					<UInput v-model="columnFormState.name" type="text" placeholder="Enter column name..."
 						color="secondary" :highlight="isEditingColumnName" class='w-full font-bold' size="lg"
@@ -64,5 +77,11 @@ const darkThemeClass = 'dark:bg-gray-800';
 				class="size-5 draggable-column cursor-move ml-1 mr-3 hidden md:block hover:cursor-grab active:cursor-grabbing" />
 		</div>
 		<Cards :columnId="column.id" :cardIds="column.cardIds" />
+		<div class="w-full flex justify-between items-center gap-2">
+			<UButton v-if="!column.archived" label="Archive" color="secondary" variant="ghost"
+				@click="handleArchiveColumn" />
+			<UButton v-else label="Unarchive" color="secondary" variant="ghost" @click="handleUnarchiveColumn" />
+			<UButton v-if="column.archived" label="Delete" color="error" variant="soft" @click="handleDeleteColumn" />
+		</div>
 	</div>
 </template>
