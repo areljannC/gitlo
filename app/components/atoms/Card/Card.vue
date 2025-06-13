@@ -13,14 +13,14 @@ const props = defineProps({
 });
 
 const cardsStore = useCardsStore();
-const card = computed(() => cardsStore.getCardById(props.cardId)!);
+const card = computed(() => cardsStore.getCardById(props.cardId));
 const cardForm = useTemplateRef<HTMLFormElement>('cardForm');
 const cardFormSchema = v.object({ name: cardSchema.getNameValidator() });
-const cardFormState = reactive({ name: card.value.name });
+const cardFormState = reactive({ name: card.value?.name });
 const isEditingCardName = ref(false);
 
 watch(card, updatedCard => {
-	cardFormState.name = updatedCard.name
+	cardFormState.name = updatedCard?.name;
 });
 
 const handleStartEditingCardName = () => {
@@ -52,7 +52,7 @@ const darkThemeClass = 'dark:bg-gray-600';
 </script>
 
 <template>
-	<div :class="[baseClass, dimensionClass, lightThemeClass, darkThemeClass]">
+	<div v-if="card" :class="[baseClass, dimensionClass, lightThemeClass, darkThemeClass]">
 		<div class="w-full flex justify-between items-start gap-1 pr-2">
 			<UForm ref="cardForm" :schema="cardFormSchema" :state="cardFormState" @submit="handleSubmit">
 				<UFormField name="name" size="lg">
