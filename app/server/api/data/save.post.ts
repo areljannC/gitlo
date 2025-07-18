@@ -1,25 +1,63 @@
 import { defineEventHandler, readBody } from 'h3';
+import { promises as fs } from 'fs';
+import path from 'path';
+
 import { getTimestamp } from '~/shared/utils';
 import { INVALID_REQUEST_ERROR, SERVER_ERROR } from '~/constants';
+import type { Board, Column, Card } from '~/types';
 
 export default defineEventHandler(async event => {
 	try {
 		// TODO: Validate request body.
 		const body = await readBody(event);
-		const { boards, columns, cards } = body;
+		const { boardMap, columnMap, cardMap } = body;
 
-		// Create a JSON file for each board that contains their columns and cards.
-		for (const boardId in boards) {
-			// SCENARIO 1: Board ID does not have a corresponding directory.
-			// TODO: Implement logic for new board ID.
+		// Default directory path for storing data.
+		const storageDirectory = path.resolve(process.cwd(), '../../../../data');
 
-			// SCENARIO 2: Board ID already has a corresponding directory.
-			// TODO: Implement logic for existing board ID.
-
-
+		for (const boardId in boardMap) {
+			const boardDirectory = path.join(storageDirectory, boardId);
+			try {
+				await fs.access(boardDirectory); // Throws an error if the directory does not exist.
+				await overwriteBoardDirectory(boardDirectory, boardId, boardMap, columnMap, cardMap);
+			} catch (error) {
+				await createBoardDirectory(boardDirectory, boardId, boardMap, columnMap, cardMap);
+			}
 		}
 	} catch (error) {
 		setResponseStatus(event, 500);
 		return { message: SERVER_ERROR, timestamp: getTimestamp() };
 	}
 });
+
+const createBoardDirectory = async (
+	boardDirectory: string,
+	boardId: string,
+	boardMap: Partial<Record<string, Board>>,
+	columnMap: Partial<Record<string, Column>>,
+	cardMap: Partial<Record<string, Card>>
+): Promise<void> => {
+	// TODO: Handle errors.
+	// Get board details.
+	const board = boardMap[boardId];
+
+	// Filter columns that belong to this board.
+	const columns = Object.values(columnMap).filter((column: Column | undefined) => column && column.boardId === boardId);
+
+	// Filter cards that belong to these columns.
+	const columnIdSet = new Set(columns.map((column: Column | undefined) => column && column.id));
+	const cards = Object.values(cardMap).filter((card: Card | undefined) => card && columnIdSet.has(card.columnId));
+
+	// Create board directory.
+	await fs.mkdir(boardDirectory, { recursive: true });
+
+	// Create board file path.
+	const boardFilePath = path.join(boardDirectory, `${getTimestamp()}_${boardId}.json`);
+
+	// Write board data to file.
+	await fs.writeFile(boardFilePath, JSON.stringify({ board, columns, cards }, null, '\t'), 'utf-8');
+};
+
+const overwriteBoardDirectory = async (boardDirectory: string, boardId: string, boardMap: Partial<Board>, columnMap: Partial<Column>, cardMap: Partial<Card>): Promise<void> => {
+	// TODO: Implement logic to overwrite an existing board directory
+};
