@@ -51,8 +51,8 @@ const handleViewBoard = (boardId: string) => {
 
 	<!-- action menu -->
 	<ActionMenu>
-		<SaveChangesButton />
 		<CreateBoardButton @create="handleOpenCreateBoardModal" />
+		<LoadBoardButton />
 	</ActionMenu>
 
 	<!-- modals -->
