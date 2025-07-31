@@ -55,7 +55,7 @@ export const useDataStore = defineStore('data', {
 
 			// Load board data.
 			boardsStore.$patch({
-				boardIds: [...boardsStore.boardIds, json.board.id],
+				boardIds: Array.from(new Set([...boardsStore.boardIds, json.board.id])),
 				boardMap: {
 					...boardsStore.boardMap,
 					[json.board.id]: json.board
