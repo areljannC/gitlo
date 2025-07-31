@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { useBoardsStore, useColumnsStore, useCardsStore } from '~/stores';
 import { getTimestamp } from '~/shared/utils';
 import { DATA_ERROR } from '~/constants';
-import type { SavePostBody } from '~/types';
+import type { Board, Column, Card } from '~/types';
 
 export const useDataStore = defineStore('data', {
 	persist: {
@@ -48,7 +48,7 @@ export const useDataStore = defineStore('data', {
 				throw error;
 			}
 		},
-		async loadBoard(json: any): Promise<void> {
+		async loadBoard(json: { board: Board; columns: Column[]; cards: Card[] }): Promise<void> {
 			const boardsStore = useBoardsStore();
 			const columnsStore = useColumnsStore();
 			const cardsStore = useCardsStore();
@@ -66,7 +66,7 @@ export const useDataStore = defineStore('data', {
 			columnsStore.$patch({
 				columnMap: {
 					...columnsStore.columnMap,
-					...Object.fromEntries(json.columns.map((column: any) => [column.id, column]))
+					...Object.fromEntries(json.columns.map((column: Column) => [column.id, column]))
 				}
 			});
 
@@ -74,7 +74,7 @@ export const useDataStore = defineStore('data', {
 			cardsStore.$patch({
 				cardMap: {
 					...cardsStore.cardMap,
-					...Object.fromEntries(json.cards.map((card: any) => [card.id, card]))
+					...Object.fromEntries(json.cards.map((card: Card) => [card.id, card]))
 				}
 			});
 		}
