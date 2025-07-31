@@ -16,7 +16,7 @@
 		],
 		"archived": false,
 		"createdAt": "2025-05-22T21:07:45.237Z",
-		"updatedAt": "2025-07-18T18:48:24.816Z"
+		"updatedAt": "2025-07-31T14:29:55.371Z"
 	},
 	"columns": [
 		{
@@ -24,21 +24,22 @@
 			"id": "vxs30gu2",
 			"name": "to do",
 			"cardIds": [
-				"zoiel3do",
 				"37wbz9de"
 			],
 			"archived": false,
 			"createdAt": "2025-05-22T21:07:45.237Z",
-			"updatedAt": "2025-07-18T18:40:53.786Z"
+			"updatedAt": "2025-07-31T14:28:37.581Z"
 		},
 		{
 			"boardId": "5xt9kfy1",
 			"id": "blsesox1",
 			"name": "doing",
-			"cardIds": [],
+			"cardIds": [
+				"zoiel3do"
+			],
 			"archived": false,
 			"createdAt": "2025-05-22T21:07:45.237Z",
-			"updatedAt": "2025-07-18T18:48:24.816Z"
+			"updatedAt": "2025-07-31T14:29:55.371Z"
 		},
 		{
 			"boardId": "5xt9kfy1",
@@ -112,13 +113,13 @@
 			"updatedAt": "2025-07-18T18:48:24.816Z"
 		},
 		{
-			"columnId": "vxs30gu2",
+			"columnId": "blsesox1",
 			"id": "zoiel3do",
-			"name": "v0.0.6 - load data",
-			"description": "",
+			"name": "v0.0.6 - data persistence",
+			"description": "- rework the logic so we no longer need to use Nuxt's API\n- save and load logic should all be the done on the client\n- should be able to save and load boards as JSON files",
 			"archived": false,
 			"createdAt": "2025-06-13T05:56:24.914Z",
-			"updatedAt": "2025-06-13T05:56:24.914Z"
+			"updatedAt": "2025-07-31T14:29:55.371Z"
 		},
 		{
 			"columnId": "vxs30gu2",

@@ -87,12 +87,13 @@ const handleUpdateBoard = (updatedBoard: Partial<Board>) => {
 				</UFormField>
 			</UForm>
 		</div>
-		<Columns :boardId="board.id" :columnIds="board.columnIds" />
+		<Columns :boardId="boardId" :columnIds="board.columnIds" />
 	</div>
 
 	<!-- action menu -->
 	<ActionMenu>
 		<EditBoardButton @edit="handleOpenEditBoardModal" />
+		<SaveBoardButton :boardId="boardId" />
 	</ActionMenu>
 
 	<!-- modals -->
