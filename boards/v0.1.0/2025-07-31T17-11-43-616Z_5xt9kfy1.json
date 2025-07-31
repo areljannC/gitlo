@@ -16,7 +16,7 @@
 		],
 		"archived": false,
 		"createdAt": "2025-05-22T21:07:45.237Z",
-		"updatedAt": "2025-07-31T14:29:55.371Z"
+		"updatedAt": "2025-07-31T17:11:42.241Z"
 	},
 	"columns": [
 		{
@@ -28,18 +28,16 @@
 			],
 			"archived": false,
 			"createdAt": "2025-05-22T21:07:45.237Z",
-			"updatedAt": "2025-07-31T14:28:37.581Z"
+			"updatedAt": "2025-07-31T17:11:42.241Z"
 		},
 		{
 			"boardId": "5xt9kfy1",
 			"id": "blsesox1",
 			"name": "doing",
-			"cardIds": [
-				"zoiel3do"
-			],
+			"cardIds": [],
 			"archived": false,
 			"createdAt": "2025-05-22T21:07:45.237Z",
-			"updatedAt": "2025-07-31T14:29:55.371Z"
+			"updatedAt": "2025-07-31T17:10:45.862Z"
 		},
 		{
 			"boardId": "5xt9kfy1",
@@ -50,11 +48,12 @@
 				"o9hb95l6",
 				"f9jtlits",
 				"6hjk275o",
-				"vy0ox77v"
+				"vy0ox77v",
+				"zoiel3do"
 			],
 			"archived": false,
 			"createdAt": "2025-05-22T21:07:45.237Z",
-			"updatedAt": "2025-07-18T18:48:24.816Z"
+			"updatedAt": "2025-07-31T17:10:45.862Z"
 		},
 		{
 			"boardId": "5xt9kfy1",
@@ -113,22 +112,22 @@
 			"updatedAt": "2025-07-18T18:48:24.816Z"
 		},
 		{
-			"columnId": "blsesox1",
+			"columnId": "ltjsso7b",
 			"id": "zoiel3do",
 			"name": "v0.0.6 - data persistence",
 			"description": "- rework the logic so we no longer need to use Nuxt's API\n- save and load logic should all be the done on the client\n- should be able to save and load boards as JSON files",
 			"archived": false,
 			"createdAt": "2025-06-13T05:56:24.914Z",
-			"updatedAt": "2025-07-31T14:29:55.371Z"
+			"updatedAt": "2025-07-31T17:10:45.862Z"
 		},
 		{
 			"columnId": "vxs30gu2",
 			"id": "37wbz9de",
-			"name": "v0.0.7 - ux/ui improvements",
+			"name": "v0.0.7 - setup repo for release",
 			"description": "",
 			"archived": false,
 			"createdAt": "2025-06-13T06:47:05.799Z",
-			"updatedAt": "2025-06-13T06:47:35.701Z"
+			"updatedAt": "2025-07-31T17:11:42.241Z"
 		}
 	]
 }
