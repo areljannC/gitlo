@@ -24,10 +24,11 @@ const handleSelectDirectory = async (event: Event): Promise<void> => {
 		const json = JSON.parse(text);
 		await dataStore.loadBoard(json);
 	} catch (error) {
+		// TODO: Handle error more gracefully.
 		alert('Invalid JSON file');
+	} finally {
+		isLoadingBoard.value = false;
 	}
-
-	isLoadingBoard.value = false;
 };
 
 const buttonClass = 'text-lg';
