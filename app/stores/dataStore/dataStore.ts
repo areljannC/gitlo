@@ -49,6 +49,10 @@ export const useDataStore = defineStore('data', {
 			}
 		},
 		async loadBoard(json: { board: Board; columns: Column[]; cards: Card[] }): Promise<void> {
+			// TODO: Add validation for the JSON structure.
+			// TODO: Add validation for the board, columns, and cards.
+			// Validation code here...
+
 			const boardsStore = useBoardsStore();
 			const columnsStore = useColumnsStore();
 			const cardsStore = useCardsStore();
