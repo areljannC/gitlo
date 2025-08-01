@@ -3,7 +3,7 @@ import { setActivePinia, createPinia } from 'pinia';
 import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { BoardPreview, CreateBoardModal } from '#components';
 import { useBoardsStore } from '~/stores';
-import { MOCK_BOARD, MOCK_HASH } from '~/constants';
+import { MOCK_BOARD } from '~/constants';
 import Boards from './Boards.vue';
 
 // Hoist and mock navigateTo globally for all tests using vi.hoisted
