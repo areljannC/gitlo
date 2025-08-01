@@ -106,7 +106,6 @@ const handleSubmit = (event: FormSubmitEvent<v.InferOutput<typeof schema>>) => {
 		emit('update');
 	} catch (error) {
 		console.error('Error submitting form:', error);
-
 	}
 };
 </script>
