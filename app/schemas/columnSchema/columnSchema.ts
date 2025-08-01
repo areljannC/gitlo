@@ -7,7 +7,7 @@ export const ERROR = Object.freeze({
 		NON_EMPTY: 'Column ID is required.'
 	},
 	NAME: Object.freeze({
-		MAX_LENGTH: 'Board name must be shorter than 32 characters.'
+		MAX_LENGTH: 'Column name must be shorter than 32 characters.'
 	})
 });
 
