@@ -15,7 +15,7 @@ const props = defineProps({
 		required: true
 	}
 });
-const emit = defineEmits(['cancel', 'archive', 'unarchive', 'update', 'delete']);
+const emit = defineEmits(['cancel', 'update']);
 
 const boardsStore = useBoardsStore();
 const board = computed(() => boardsStore.getBoardById(props.boardId));
@@ -68,15 +68,28 @@ const handleCancel = () => {
 };
 
 const handleArchiveBoard = () => {
-	emit('archive');
+	try {
+		boardsStore.archiveBoard(props.boardId);
+	} catch (error) {
+		console.error('Error archiving board:', error);
+	}
 };
 
 const handleUnarchiveBoard = () => {
-	emit('unarchive');
+	try {
+		boardsStore.unarchiveBoard(props.boardId);
+	} catch (error) {
+		console.error('Error unarchiving board:', error);
+	}
 };
 
-const handleDeleteBoard = () => {
-	emit('delete');
+const handleDeleteBoard = async () => {
+	try {
+		await navigateTo('/boards');
+		boardsStore.deleteBoard(props.boardId);
+	} catch (error) {
+		console.error('Error deleting board:', error);
+	}
 };
 
 const handleUpdateBoard = () => {
@@ -84,12 +97,17 @@ const handleUpdateBoard = () => {
 };
 
 const handleSubmit = (event: FormSubmitEvent<v.InferOutput<typeof schema>>) => {
-	emit('update', {
-		name: event.data.name,
-		description: event.data.description,
-		tags: [...state.tags]
-	});
-	resetState();
+	try {
+		boardsStore.updateBoard(props.boardId, {
+			name: event.data.name,
+			description: event.data.description,
+			tags: [...state.tags]
+		});
+		emit('update');
+	} catch (error) {
+		console.error('Error submitting form:', error);
+
+	}
 };
 </script>
 
@@ -126,8 +144,7 @@ const handleSubmit = (event: FormSubmitEvent<v.InferOutput<typeof schema>>) => {
 			<div class="w-full flex justify-between items-center gap-2">
 				<UButton v-if="!board?.archived" label="Archive" color="neutral" variant="ghost"
 					@click="handleArchiveBoard" />
-				<UButton v-else label="Unarchive" color="neutral" variant="ghost"
-					@click="handleUnarchiveBoard" />
+				<UButton v-else label="Unarchive" color="neutral" variant="ghost" @click="handleUnarchiveBoard" />
 				<div v-if="!board?.archived" class="flex gap-2">
 					<UButton label="Cancel" color="error" variant="soft" @click="handleCancel" />
 					<UButton label="Update" color="primary" @click="handleUpdateBoard" />

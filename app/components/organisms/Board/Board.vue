@@ -4,7 +4,6 @@ import * as v from 'valibot';
 import { useBoardsStore } from '~/stores';
 import * as boardSchema from '~/schemas/boardSchema';
 import type { FormSubmitEvent } from '@nuxt/ui';
-import type { Board } from '~/types';
 
 const boardsStore = useBoardsStore();
 const route = useRoute();
@@ -46,32 +45,6 @@ const handleOpenEditBoardModal = () => {
 const handleCloseEditBoardModal = () => {
 	isEditBoardModalOpen.value = false;
 };
-
-// TODO: Move this to `EditBoardModal.vue`.
-const handleArchiveBoard = () => {
-	boardsStore.archiveBoard(boardId);
-};
-
-// TODO: Move this to `EditBoardModal.vue`.
-const handleUnarchiveBoard = () => {
-	boardsStore.unarchiveBoard(boardId);
-}
-
-// TODO: Move this to `EditBoardModal.vue`.
-const handleDeleteBoard = async () => {
-	await navigateTo('/boards');
-	boardsStore.deleteBoard(boardId);
-};
-
-// TODO: Move this to `EditBoardModal.vue`.
-const handleUpdateBoard = (updatedBoard: Partial<Board>) => {
-	try {
-		boardsStore.updateBoard(boardId, updatedBoard);
-		isEditBoardModalOpen.value = false;
-	} catch (error) {
-		console.error("Error updating board:", error);
-	}
-};
 </script>
 
 <template>
@@ -98,7 +71,6 @@ const handleUpdateBoard = (updatedBoard: Partial<Board>) => {
 
 	<!-- modals -->
 	<EditBoardModal v-model:open="isEditBoardModalOpen" @cancel="handleCloseEditBoardModal"
-		@archive="handleArchiveBoard" @unarchive="handleUnarchiveBoard" @update="handleUpdateBoard"
-		@delete="handleDeleteBoard" :boardId="boardId" />
+		@update="handleCloseEditBoardModal" :boardId="boardId" />
 	<ExpandedCardModal />
 </template>
