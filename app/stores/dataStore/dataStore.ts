@@ -24,7 +24,10 @@ export const useDataStore = defineStore('data', {
 				const cardsStore = useCardsStore();
 
 				// Get board details.
-				const board = boardsStore.boardMap[boardId];
+				if (!boardsStore.isValidBoardId(boardId)) {
+					throw new Error(DATA_ERROR.SAVE(boardId));
+				}
+				const board = boardsStore.getBoardById(boardId);
 
 				// Filter columns that belong to this board.
 				const columns = Object.values(columnsStore.columnMap).filter(column => column && column.boardId === boardId);
