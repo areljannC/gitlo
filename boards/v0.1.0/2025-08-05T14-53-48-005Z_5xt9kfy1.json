@@ -16,19 +16,17 @@
 		],
 		"archived": false,
 		"createdAt": "2025-05-22T21:07:45.237Z",
-		"updatedAt": "2025-07-31T17:11:42.241Z"
+		"updatedAt": "2025-08-05T14:53:43.717Z"
 	},
 	"columns": [
 		{
 			"boardId": "5xt9kfy1",
 			"id": "vxs30gu2",
 			"name": "to do",
-			"cardIds": [
-				"37wbz9de"
-			],
+			"cardIds": [],
 			"archived": false,
 			"createdAt": "2025-05-22T21:07:45.237Z",
-			"updatedAt": "2025-07-31T17:11:42.241Z"
+			"updatedAt": "2025-08-05T14:53:43.717Z"
 		},
 		{
 			"boardId": "5xt9kfy1",
@@ -119,15 +117,6 @@
 			"archived": false,
 			"createdAt": "2025-06-13T05:56:24.914Z",
 			"updatedAt": "2025-07-31T17:10:45.862Z"
-		},
-		{
-			"columnId": "vxs30gu2",
-			"id": "37wbz9de",
-			"name": "v0.0.7 - setup repo for release",
-			"description": "",
-			"archived": false,
-			"createdAt": "2025-06-13T06:47:05.799Z",
-			"updatedAt": "2025-07-31T17:11:42.241Z"
 		}
 	]
 }
