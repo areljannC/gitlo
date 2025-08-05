@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
 import { useBoardsStore, useColumnsStore, useCardsStore } from '~/stores';
+import { getTimestamp } from '~/shared/utils';
 import { DATA_ERROR } from '~/constants';
-import type { SavePostBody } from '~/types';
+import type { Board, Column, Card } from '~/types';
 
 export const useDataStore = defineStore('data', {
 	persist: {
@@ -16,29 +17,73 @@ export const useDataStore = defineStore('data', {
 		recordChange(): void {
 			this.changes++;
 		},
-		async save(): Promise<void> {
+		async saveBoard(boardId: string): Promise<void> {
 			try {
 				const boardsStore = useBoardsStore();
 				const columnsStore = useColumnsStore();
 				const cardsStore = useCardsStore();
 
-				const body: SavePostBody = {
-					boardMap: boardsStore.boardMap,
-					columnMap: columnsStore.columnMap,
-					cardMap: cardsStore.cardMap
-				};
+				// Get board details.
+				if (!boardsStore.isValidBoardId(boardId)) {
+					throw new Error(DATA_ERROR.SAVE(boardId));
+				}
+				const board = boardsStore.getBoardById(boardId);
 
-				await $fetch('/api/data/save', {
-					body,
-					method: 'POST'
-				});
+				// Filter columns that belong to this board.
+				const columns = Object.values(columnsStore.columnMap).filter(column => column && column.boardId === boardId);
 
-				this.changes = 0;
+				// Filter cards that belong to these columns.
+				const columnIdSet = new Set(columns.map(column => column && column.id));
+				const cards = Object.values(cardsStore.cardMap).filter(card => card && columnIdSet.has(card.columnId));
+
+				// Create a JSON blob and trigger a download.
+				const jsonBlob = new Blob([JSON.stringify({ board, columns, cards }, null, '\t')], { type: 'application/json' });
+				const url = URL.createObjectURL(jsonBlob);
+				const a = document.createElement('a');
+				a.href = url;
+				a.download = `${getTimestamp().replace(/[:.]/g, '-')}_${boardId}.json`;
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a);
+				URL.revokeObjectURL(url);
 			} catch (error) {
-				console.error(DATA_ERROR.SAVE);
+				console.error(DATA_ERROR.SAVE(boardId));
 				throw error;
 			}
 		},
-		async load(): Promise<void> {}
+		async loadBoard(json: { board: Board; columns: Column[]; cards: Card[] }): Promise<void> {
+			// TODO: Add validation for the JSON structure.
+			// TODO: Add validation for the board, columns, and cards.
+			// Validation code here...
+
+			const boardsStore = useBoardsStore();
+			const columnsStore = useColumnsStore();
+			const cardsStore = useCardsStore();
+
+			// Load board data.
+			boardsStore.$patch({
+				boardIds: Array.from(new Set([...boardsStore.boardIds, json.board.id])),
+				boardMap: {
+					...boardsStore.boardMap,
+					[json.board.id]: json.board
+				}
+			});
+
+			// Load board columns.
+			columnsStore.$patch({
+				columnMap: {
+					...columnsStore.columnMap,
+					...Object.fromEntries(json.columns.map((column: Column) => [column.id, column]))
+				}
+			});
+
+			// Load board cards.
+			cardsStore.$patch({
+				cardMap: {
+					...cardsStore.cardMap,
+					...Object.fromEntries(json.cards.map((card: Card) => [card.id, card]))
+				}
+			});
+		}
 	}
 });

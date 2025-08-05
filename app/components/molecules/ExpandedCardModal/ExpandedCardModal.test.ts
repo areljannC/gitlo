@@ -158,13 +158,17 @@ describe('ExpandedCardModal', () => {
 		expect((cardCreatedAtInput.element as HTMLInputElement).value).toBe(MOCK_PARSE_TIMESTAMP[1]);
 
 		const buttons = wrapper.findAll('button');
-		expect(buttons).toHaveLength(2);
+		expect(buttons).toHaveLength(3);
 
-		const closeButton = buttons[0];
+		const archiveButton = buttons[0];
+		expect(archiveButton.exists()).toBe(true);
+		expect(archiveButton.text()).toBe('Archive');
+
+		const closeButton = buttons[1];
 		expect(closeButton.exists()).toBe(true);
 		expect(closeButton.text()).toBe('Close');
 
-		const editButton = buttons[1];
+		const editButton = buttons[2];
 		expect(editButton.exists()).toBe(true);
 		expect(editButton.text()).toBe('Edit');
 	});
@@ -198,13 +202,17 @@ describe('ExpandedCardModal', () => {
 		expect((cardCreatedAtInput.element as HTMLInputElement).value).toBe(MOCK_PARSE_TIMESTAMP[1]);
 
 		let buttons = wrapper.findAll('button');
-		expect(buttons).toHaveLength(2);
+		expect(buttons).toHaveLength(3);
 
-		const closeButton = buttons[0];
+		const archiveButton = buttons[0];
+		expect(archiveButton.exists()).toBe(true);
+		expect(archiveButton.text()).toBe('Archive');
+
+		const closeButton = buttons[1];
 		expect(closeButton.exists()).toBe(true);
 		expect(closeButton.text()).toBe('Close');
 
-		const editButton = buttons[1];
+		const editButton = buttons[2];
 		expect(editButton.exists()).toBe(true);
 		expect(editButton.text()).toBe('Edit');
 
@@ -215,7 +223,7 @@ describe('ExpandedCardModal', () => {
 		expect(cardCreatedAtInput.attributes('readonly')).toBeDefined();
 
 		buttons = wrapper.findAll('button');
-		expect(buttons).toHaveLength(2);
+		expect(buttons).toHaveLength(3);
 
 		await cardNameInput.trigger('focus');
 		await vm.$nextTick();
@@ -237,7 +245,7 @@ describe('ExpandedCardModal', () => {
 		await cardDescriptionInput.trigger('blur');
 		await vm.$nextTick();
 
-		const cancelButton = buttons[0];
+		const cancelButton = buttons[1];
 		expect(cancelButton.exists()).toBe(true);
 		expect(cancelButton.text()).toBe('Cancel');
 
@@ -280,24 +288,29 @@ describe('ExpandedCardModal', () => {
 		expect((cardCreatedAtInput.element as HTMLInputElement).value).toBe(MOCK_PARSE_TIMESTAMP[1]);
 
 		let buttons = wrapper.findAll('button');
-		expect(buttons).toHaveLength(2);
+		expect(buttons).toHaveLength(3);
 
-		const closeButton = buttons[0];
+		const archiveButton = buttons[0];
+		expect(archiveButton.exists()).toBe(true);
+		expect(archiveButton.text()).toBe('Archive');
+
+		const closeButton = buttons[1];
 		expect(closeButton.exists()).toBe(true);
 		expect(closeButton.text()).toBe('Close');
 
-		const editButton = buttons[1];
+		const editButton = buttons[2];
 		expect(editButton.exists()).toBe(true);
 		expect(editButton.text()).toBe('Edit');
 
 		await editButton.trigger('click');
+		await vm.$nextTick();
 		expect(cardNameInput.attributes('readonly')).toBeUndefined();
 		expect(cardDescriptionInput.attributes('readonly')).toBeUndefined();
 		expect(cardUpdatedAtInput.attributes('readonly')).toBeDefined();
 		expect(cardCreatedAtInput.attributes('readonly')).toBeDefined();
 
 		buttons = wrapper.findAll('button');
-		expect(buttons).toHaveLength(2);
+		expect(buttons).toHaveLength(3);
 
 		await cardNameInput.trigger('focus');
 		await vm.$nextTick();
@@ -319,7 +332,7 @@ describe('ExpandedCardModal', () => {
 		await cardDescriptionInput.trigger('blur');
 		await vm.$nextTick();
 
-		const updateButton = buttons[1];
+		const updateButton = buttons[2];
 		expect(updateButton.exists()).toBe(true);
 		expect(updateButton.text()).toBe('Update');
 
@@ -362,24 +375,29 @@ describe('ExpandedCardModal', () => {
 		expect((cardCreatedAtInput.element as HTMLInputElement).value).toBe(MOCK_PARSE_TIMESTAMP[1]);
 
 		let buttons = wrapper.findAll('button');
-		expect(buttons).toHaveLength(2);
+		expect(buttons).toHaveLength(3);
 
-		const closeButton = buttons[0];
+		const archiveButton = buttons[0];
+		expect(archiveButton.exists()).toBe(true);
+		expect(archiveButton.text()).toBe('Archive');
+
+		const closeButton = buttons[1];
 		expect(closeButton.exists()).toBe(true);
 		expect(closeButton.text()).toBe('Close');
 
-		const editButton = buttons[1];
+		const editButton = buttons[2];
 		expect(editButton.exists()).toBe(true);
 		expect(editButton.text()).toBe('Edit');
 
 		await editButton.trigger('click');
+		await vm.$nextTick();
 		expect(cardNameInput.attributes('readonly')).toBeUndefined();
 		expect(cardDescriptionInput.attributes('readonly')).toBeUndefined();
 		expect(cardUpdatedAtInput.attributes('readonly')).toBeDefined();
 		expect(cardCreatedAtInput.attributes('readonly')).toBeDefined();
 
 		buttons = wrapper.findAll('button');
-		expect(buttons).toHaveLength(2);
+		expect(buttons).toHaveLength(3);
 
 		await cardNameInput.trigger('focus');
 		await vm.$nextTick();
@@ -401,7 +419,7 @@ describe('ExpandedCardModal', () => {
 		await cardDescriptionInput.trigger('blur');
 		await vm.$nextTick();
 
-		const updateButton = buttons[1];
+		const updateButton = buttons[2];
 		expect(updateButton.exists()).toBe(true);
 		expect(updateButton.text()).toBe('Update');
 
@@ -425,14 +443,206 @@ describe('ExpandedCardModal', () => {
 		expect(wrapper.findAll('input[type="text"]')).toHaveLength(2);
 
 		const buttons = wrapper.findAll('button');
-		expect(buttons).toHaveLength(2);
+		expect(buttons).toHaveLength(3);
 
-		const closeButton = buttons[0];
+		const closeButton = buttons[1];
 		expect(closeButton.exists()).toBe(true);
 		expect(closeButton.text()).toBe('Close');
 
 		await closeButton.trigger('click');
 		await vm.$nextTick();
+		expect(cardsStore.expandedCardId).toBeNull();
+	});
+
+	it('should archive the card when the archive button is clicked', async () => {
+		const { vm } = await mountSuspended(ExpandedCardModal, {
+			global: { plugins: [pinia] }
+		});
+		const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
+		expect(wrapper.findAll('textarea')).toHaveLength(2);
+		expect(wrapper.findAll('input[type="text"]')).toHaveLength(2);
+
+		const cardNameInput = wrapper.find('textarea[name="name"]')!;
+		expect(cardNameInput.exists()).toBe(true);
+		expect(cardNameInput.attributes('readonly')).toBeDefined();
+		expect((cardNameInput.element as HTMLTextAreaElement).value).toBe(MOCK_CARD[1].name);
+
+		const cardDescriptionInput = wrapper.find('textarea[name="description"]');
+		expect(cardDescriptionInput.exists()).toBe(true);
+		expect(cardDescriptionInput.attributes('readonly')).toBeDefined();
+		expect((cardDescriptionInput.element as HTMLTextAreaElement).value).toBe(MOCK_CARD[1].description);
+
+		const cardUpdatedAtInput = wrapper.find('input[name="updatedAt"]');
+		expect(cardUpdatedAtInput.exists()).toBe(true);
+		expect(cardUpdatedAtInput.attributes('readonly')).toBeDefined();
+		expect((cardUpdatedAtInput.element as HTMLInputElement).value).toBe(MOCK_PARSE_TIMESTAMP[1]);
+
+		const cardCreatedAtInput = wrapper.find('input[name="createdAt"]');
+		expect(cardCreatedAtInput.exists()).toBe(true);
+		expect(cardCreatedAtInput.attributes('readonly')).toBeDefined();
+		expect((cardCreatedAtInput.element as HTMLInputElement).value).toBe(MOCK_PARSE_TIMESTAMP[1]);
+
+		let buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(3);
+
+		const archiveButton = buttons[0];
+		expect(archiveButton.exists()).toBe(true);
+		expect(archiveButton.text()).toBe('Archive');
+
+		const closeButton = buttons[1];
+		expect(closeButton.exists()).toBe(true);
+		expect(closeButton.text()).toBe('Close');
+
+		const editButton = buttons[2];
+		expect(editButton.exists()).toBe(true);
+		expect(editButton.text()).toBe('Edit');
+
+		await archiveButton.trigger('click');
+		await vm.$nextTick();
+
+		buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(3);
+
+		const unarchiveButton = buttons[0];
+		expect(unarchiveButton.exists()).toBe(true);
+		expect(unarchiveButton.text()).toBe('Unarchive');
+
+		const deleteButton = buttons[2];
+		expect(deleteButton.exists()).toBe(true);
+		expect(deleteButton.text()).toBe('Delete');
+	});
+
+	it('should unarchive the card when the unarchive button is clicked', async () => {
+		const { vm } = await mountSuspended(ExpandedCardModal, {
+			global: { plugins: [pinia] }
+		});
+		const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
+		expect(wrapper.findAll('textarea')).toHaveLength(2);
+		expect(wrapper.findAll('input[type="text"]')).toHaveLength(2);
+
+		const cardNameInput = wrapper.find('textarea[name="name"]')!;
+		expect(cardNameInput.exists()).toBe(true);
+		expect(cardNameInput.attributes('readonly')).toBeDefined();
+		expect((cardNameInput.element as HTMLTextAreaElement).value).toBe(MOCK_CARD[1].name);
+
+		const cardDescriptionInput = wrapper.find('textarea[name="description"]');
+		expect(cardDescriptionInput.exists()).toBe(true);
+		expect(cardDescriptionInput.attributes('readonly')).toBeDefined();
+		expect((cardDescriptionInput.element as HTMLTextAreaElement).value).toBe(MOCK_CARD[1].description);
+
+		const cardUpdatedAtInput = wrapper.find('input[name="updatedAt"]');
+		expect(cardUpdatedAtInput.exists()).toBe(true);
+		expect(cardUpdatedAtInput.attributes('readonly')).toBeDefined();
+		expect((cardUpdatedAtInput.element as HTMLInputElement).value).toBe(MOCK_PARSE_TIMESTAMP[1]);
+
+		const cardCreatedAtInput = wrapper.find('input[name="createdAt"]');
+		expect(cardCreatedAtInput.exists()).toBe(true);
+		expect(cardCreatedAtInput.attributes('readonly')).toBeDefined();
+		expect((cardCreatedAtInput.element as HTMLInputElement).value).toBe(MOCK_PARSE_TIMESTAMP[1]);
+
+		let buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(3);
+
+		let archiveButton = buttons[0];
+		expect(archiveButton.exists()).toBe(true);
+		expect(archiveButton.text()).toBe('Archive');
+
+		const closeButton = buttons[1];
+		expect(closeButton.exists()).toBe(true);
+		expect(closeButton.text()).toBe('Close');
+
+		const editButton = buttons[2];
+		expect(editButton.exists()).toBe(true);
+		expect(editButton.text()).toBe('Edit');
+
+		await archiveButton.trigger('click');
+		await vm.$nextTick();
+
+		buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(3);
+
+		const unarchiveButton = buttons[0];
+		expect(unarchiveButton.exists()).toBe(true);
+		expect(unarchiveButton.text()).toBe('Unarchive');
+
+		const deleteButton = buttons[2];
+		expect(deleteButton.exists()).toBe(true);
+		expect(deleteButton.text()).toBe('Delete');
+
+		await unarchiveButton.trigger('click');
+		await vm.$nextTick();
+
+		buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(3);
+
+		archiveButton = buttons[0];
+		expect(archiveButton.exists()).toBe(true);
+		expect(archiveButton.text()).toBe('Archive');
+	});
+
+	it('should delete the card when the delete button is clicked', async () => {
+		const cardsStore = useCardsStore();
+		const { vm } = await mountSuspended(ExpandedCardModal, {
+			global: { plugins: [pinia] }
+		});
+		const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
+		expect(wrapper.findAll('textarea')).toHaveLength(2);
+		expect(wrapper.findAll('input[type="text"]')).toHaveLength(2);
+
+		const cardNameInput = wrapper.find('textarea[name="name"]')!;
+		expect(cardNameInput.exists()).toBe(true);
+		expect(cardNameInput.attributes('readonly')).toBeDefined();
+		expect((cardNameInput.element as HTMLTextAreaElement).value).toBe(MOCK_CARD[1].name);
+
+		const cardDescriptionInput = wrapper.find('textarea[name="description"]');
+		expect(cardDescriptionInput.exists()).toBe(true);
+		expect(cardDescriptionInput.attributes('readonly')).toBeDefined();
+		expect((cardDescriptionInput.element as HTMLTextAreaElement).value).toBe(MOCK_CARD[1].description);
+
+		const cardUpdatedAtInput = wrapper.find('input[name="updatedAt"]');
+		expect(cardUpdatedAtInput.exists()).toBe(true);
+		expect(cardUpdatedAtInput.attributes('readonly')).toBeDefined();
+		expect((cardUpdatedAtInput.element as HTMLInputElement).value).toBe(MOCK_PARSE_TIMESTAMP[1]);
+
+		const cardCreatedAtInput = wrapper.find('input[name="createdAt"]');
+		expect(cardCreatedAtInput.exists()).toBe(true);
+		expect(cardCreatedAtInput.attributes('readonly')).toBeDefined();
+		expect((cardCreatedAtInput.element as HTMLInputElement).value).toBe(MOCK_PARSE_TIMESTAMP[1]);
+
+		let buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(3);
+
+		const archiveButton = buttons[0];
+		expect(archiveButton.exists()).toBe(true);
+		expect(archiveButton.text()).toBe('Archive');
+
+		const closeButton = buttons[1];
+		expect(closeButton.exists()).toBe(true);
+		expect(closeButton.text()).toBe('Close');
+
+		const editButton = buttons[2];
+		expect(editButton.exists()).toBe(true);
+		expect(editButton.text()).toBe('Edit');
+
+		await archiveButton.trigger('click');
+		await vm.$nextTick();
+
+		buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(3);
+
+		const unarchiveButton = buttons[0];
+		expect(unarchiveButton.exists()).toBe(true);
+		expect(unarchiveButton.text()).toBe('Unarchive');
+
+		const deleteButton = buttons[2];
+		expect(deleteButton.exists()).toBe(true);
+		expect(deleteButton.text()).toBe('Delete');
+
+		await deleteButton.trigger('click');
+		await vm.$nextTick();
+
+		expect(cardsStore.isValidCardId(MOCK_HASH[4])).toBe(false);
+		expect(cardsStore.getCardById(MOCK_HASH[4])).toBeUndefined();
 		expect(cardsStore.expandedCardId).toBeNull();
 	});
 

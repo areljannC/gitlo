@@ -1,6 +1,6 @@
 import { vi, describe, beforeEach, it, expect } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
-import { mountSuspended } from '@nuxt/test-utils/runtime';
+import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { DOMWrapper } from '@vue/test-utils';
 import { useBoardsStore, useColumnsStore, useCardsStore } from '~/stores';
 import { generateHash, getTimestamp } from '~/shared/utils';
@@ -17,6 +17,12 @@ vi.mock('~/shared/utils', async () => {
 		parseTimestamp: vi.fn(() => MOCK_PARSE_TIMESTAMP[1])
 	};
 });
+
+// Hoist and mock navigateTo globally for all tests using vi.hoisted
+const { navigateToSpy } = vi.hoisted(() => ({
+	navigateToSpy: vi.fn()
+}));
+mockNuxtImport('navigateTo', () => navigateToSpy);
 
 let pinia: any;
 
@@ -302,72 +308,6 @@ describe('EditBoardModal', () => {
 			});
 		});
 
-		describe('archive', () => {
-			it('should emit `archive` when the archive button is clicked', async () => {
-				const modal = await mountSuspended(EditBoardModal, {
-					global: { plugins: [pinia] },
-					props: {
-						open: true,
-						boardId: MOCK_HASH[1]
-					}
-				});
-				const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
-				expect(wrapper.exists()).toBe(true);
-				expect(wrapper.findAll('input')).toHaveLength(3);
-
-				const buttons = wrapper.findAll('button');
-				expect(buttons).toHaveLength(6);
-
-				const cancelButton = buttons[3];
-				expect(cancelButton.exists()).toBe(true);
-				expect(cancelButton.text()).toBe('Archive');
-
-				await cancelButton.trigger('click');
-				expect(modal.emitted()).toHaveProperty('archive');
-				expect(modal.emitted().archive).toHaveLength(1);
-			});
-		});
-
-		describe('unarchive', () => {
-			it('should emit `unarchive` when the unarchive button is clicked', async () => {
-				const modal = await mountSuspended(EditBoardModal, {
-					global: { plugins: [pinia] },
-					props: {
-						open: true,
-						boardId: MOCK_HASH[1]
-					}
-				});
-				const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
-				expect(wrapper.exists()).toBe(true);
-				expect(wrapper.findAll('input')).toHaveLength(3);
-
-				let buttons = wrapper.findAll('button');
-				expect(buttons).toHaveLength(6);
-
-				const cancelButton = buttons[3];
-				expect(cancelButton.exists()).toBe(true);
-				expect(cancelButton.text()).toBe('Archive');
-
-				await cancelButton.trigger('click');
-				expect(modal.emitted()).toHaveProperty('archive');
-				expect(modal.emitted().archive).toHaveLength(1);
-
-				const boardsStore = useBoardsStore();
-				boardsStore.archiveBoard(MOCK_HASH[1]);
-				await modal.vm.$nextTick();
-				expect(boardsStore.getBoardById(MOCK_HASH[1])?.archived).toBe(true);
-
-				buttons = wrapper.findAll('button');
-				const unarchiveButton = buttons[3];
-				expect(unarchiveButton.exists()).toBe(true);
-				expect(unarchiveButton.text()).toBe('Unarchive');
-
-				await unarchiveButton.trigger('click');
-				expect(modal.emitted()).toHaveProperty('unarchive');
-				expect(modal.emitted().unarchive).toHaveLength(1);
-			});
-		});
-
 		describe('update', () => {
 			it('should emit `update` when the update button is clicked', async () => {
 				const modal = await mountSuspended(EditBoardModal, {
@@ -378,63 +318,156 @@ describe('EditBoardModal', () => {
 					}
 				});
 				const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
-				expect(wrapper.exists()).toBe(true);
-				expect(wrapper.findAll('input')).toHaveLength(3);
-
-				const buttons = wrapper.findAll('button');
-				expect(buttons).toHaveLength(6);
-
-				const updateButton = buttons[5];
-				expect(updateButton.exists()).toBe(true);
-				expect(updateButton.text()).toBe('Update');
-
-				// I have no clue why `.$nextTick` is needed to be called twice to submit the form... wtf.
-				await updateButton.trigger('click');
+				const updateButton = wrapper.findAll('button').find(btn => btn.text() === 'Update');
+				expect(updateButton).toBeTruthy();
+				await updateButton!.trigger('click');
 				await modal.vm.$nextTick();
 				await modal.vm.$nextTick();
 				expect(modal.emitted()).toHaveProperty('update');
 				expect(modal.emitted().update).toHaveLength(1);
 			});
 		});
+	});
 
-		describe('delete', () => {
-			it('should emit `delete` when the delete button is clicked', async () => {
-				const modal = await mountSuspended(EditBoardModal, {
-					global: { plugins: [pinia] },
-					props: {
-						open: true,
-						boardId: MOCK_HASH[1]
-					}
-				});
-				const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
-				expect(wrapper.exists()).toBe(true);
-				expect(wrapper.findAll('input')).toHaveLength(3);
+	it('archives and deletes the board (unarchive not possible after delete)', async () => {
+		const boardsStore = useBoardsStore();
+		const archiveSpy = vi.spyOn(boardsStore, 'archiveBoard');
+		const deleteSpy = vi.spyOn(boardsStore, 'deleteBoard');
+		const modal = await mountSuspended(EditBoardModal, {
+			global: { plugins: [pinia] },
+			props: { open: true, boardId: MOCK_HASH[1] }
+		});
+		const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
+		let buttons = wrapper.findAll('button');
+		// Archive
+		const archiveButton = buttons.find(btn => btn.text() === 'Archive');
+		await archiveButton!.trigger('click');
+		expect(archiveSpy).toHaveBeenCalledWith(MOCK_HASH[1]);
+		// Delete (should now be visible)
+		await modal.vm.$nextTick();
+		buttons = wrapper.findAll('button');
+		const deleteButton = buttons.find(btn => btn.text() === 'Delete');
+		expect(deleteButton).toBeTruthy();
+		await deleteButton!.trigger('click');
+		expect(deleteSpy).toHaveBeenCalledWith(MOCK_HASH[1]);
+		// --- assert navigation on delete ---
+		expect(navigateToSpy).toHaveBeenCalled();
+	});
 
-				let buttons = wrapper.findAll('button');
-				expect(buttons).toHaveLength(6);
+	it('archives, unarchives, and updates the board (no delete)', async () => {
+		const boardsStore = useBoardsStore();
+		const archiveSpy = vi.spyOn(boardsStore, 'archiveBoard');
+		const unarchiveSpy = vi.spyOn(boardsStore, 'unarchiveBoard');
+		const updateSpy = vi.spyOn(boardsStore, 'updateBoard');
+		const modal = await mountSuspended(EditBoardModal, {
+			global: { plugins: [pinia] },
+			props: { open: true, boardId: MOCK_HASH[1] }
+		});
+		const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
+		let buttons = wrapper.findAll('button');
+		// Archive
+		const archiveButton = buttons.find(btn => btn.text() === 'Archive');
+		await archiveButton!.trigger('click');
+		expect(archiveSpy).toHaveBeenCalledWith(MOCK_HASH[1]);
+		await modal.vm.$nextTick();
+		buttons = wrapper.findAll('button');
+		// Unarchive (should now be visible)
+		const unarchiveButton = buttons.find(btn => btn.text() === 'Unarchive');
+		expect(unarchiveButton).toBeTruthy();
+		await unarchiveButton!.trigger('click');
+		expect(unarchiveSpy).toHaveBeenCalledWith(MOCK_HASH[1]);
+		await modal.vm.$nextTick();
+		buttons = wrapper.findAll('button');
+		// Update should still be available
+		const updateButton = buttons.find(btn => btn.text() === 'Update');
+		expect(updateButton).toBeTruthy();
+		await updateButton!.trigger('click');
+		await modal.vm.$nextTick();
+		await modal.vm.$nextTick();
+		expect(updateSpy).toHaveBeenCalledWith(MOCK_HASH[1], expect.objectContaining({ name: expect.any(String) }));
+	});
 
-				const cancelButton = buttons[3];
-				expect(cancelButton.exists()).toBe(true);
-				expect(cancelButton.text()).toBe('Archive');
-
-				await cancelButton.trigger('click');
-				expect(modal.emitted()).toHaveProperty('archive');
-				expect(modal.emitted().archive).toHaveLength(1);
-
-				const boardsStore = useBoardsStore();
-				boardsStore.archiveBoard(MOCK_HASH[1]);
-				await modal.vm.$nextTick();
-				expect(boardsStore.getBoardById(MOCK_HASH[1])?.archived).toBe(true);
-
-				buttons = wrapper.findAll('button');
-				const deleteButton = buttons[4];
-				expect(deleteButton.exists()).toBe(true);
-				expect(deleteButton.text()).toBe('Delete');
-
-				await deleteButton.trigger('click');
-				expect(modal.emitted()).toHaveProperty('delete');
-				expect(modal.emitted().delete).toHaveLength(1);
+	describe('error handling', () => {
+		it('shows error when archiving fails', async () => {
+			const boardsStore = useBoardsStore();
+			vi.spyOn(boardsStore, 'archiveBoard').mockImplementation(() => {
+				throw new Error('fail');
 			});
+			const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+			const modal = await mountSuspended(EditBoardModal, {
+				global: { plugins: [pinia] },
+				props: { open: true, boardId: MOCK_HASH[1] }
+			});
+			const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
+			let buttons = wrapper.findAll('button');
+			await buttons.find(btn => btn.text() === 'Archive')!.trigger('click');
+			await modal.vm.$nextTick();
+			expect(errorSpy).toHaveBeenCalledTimes(1);
+			errorSpy.mockRestore();
+		});
+
+		it('shows error when unarchiving fails', async () => {
+			const boardsStore = useBoardsStore();
+			vi.spyOn(boardsStore, 'unarchiveBoard').mockImplementation(() => {
+				throw new Error('fail');
+			});
+			const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+			const modal = await mountSuspended(EditBoardModal, {
+				global: { plugins: [pinia] },
+				props: { open: true, boardId: MOCK_HASH[1] }
+			});
+			const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
+			let buttons = wrapper.findAll('button');
+			await buttons.find(btn => btn.text() === 'Archive')!.trigger('click');
+			await modal.vm.$nextTick();
+			buttons = wrapper.findAll('button');
+			await buttons.find(btn => btn.text() === 'Unarchive')!.trigger('click');
+			await modal.vm.$nextTick();
+			expect(errorSpy).toHaveBeenCalledTimes(1);
+			errorSpy.mockRestore();
+		});
+
+		it('shows error when deleting fails', async () => {
+			const boardsStore = useBoardsStore();
+			vi.spyOn(boardsStore, 'deleteBoard').mockImplementation(() => {
+				throw new Error('fail');
+			});
+			const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+			const modal = await mountSuspended(EditBoardModal, {
+				global: { plugins: [pinia] },
+				props: { open: true, boardId: MOCK_HASH[1] }
+			});
+			const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
+			let buttons = wrapper.findAll('button');
+			await buttons.find(btn => btn.text() === 'Archive')!.trigger('click');
+			await modal.vm.$nextTick();
+			buttons = wrapper.findAll('button');
+			await buttons.find(btn => btn.text() === 'Delete')!.trigger('click');
+			await modal.vm.$nextTick();
+			expect(errorSpy).toHaveBeenCalledTimes(1);
+			errorSpy.mockRestore();
+		});
+
+		it('shows error when updating fails', async () => {
+			const boardsStore = useBoardsStore();
+			vi.spyOn(boardsStore, 'updateBoard').mockImplementation(() => {
+				throw new Error('fail');
+			});
+			const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+			const modal = await mountSuspended(EditBoardModal, {
+				global: { plugins: [pinia] },
+				props: { open: true, boardId: MOCK_HASH[1] }
+			});
+			const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
+			let buttons = wrapper.findAll('button');
+			const updateButton = buttons.find(btn => btn.text() === 'Update');
+			if (updateButton) {
+				await updateButton.trigger('click');
+				await modal.vm.$nextTick();
+				await modal.vm.$nextTick();
+				expect(errorSpy).toHaveBeenCalledTimes(1);
+			}
+			errorSpy.mockRestore();
 		});
 	});
 });

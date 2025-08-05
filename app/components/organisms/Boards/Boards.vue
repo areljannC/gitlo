@@ -45,15 +45,14 @@ const handleViewBoard = (boardId: string) => {
 		<h1 class="font-bold text-3xl">Boards</h1>
 		<div class="w-full flex flex-wrap gap-4 justify-start">
 			<BoardPreview v-for="boardId of boardIds" :key="boardId" :name="boardMap[boardId].name"
-				:description="boardMap[boardId].description" :tags="boardMap[boardId].tags"
-				@view="handleViewBoard(boardId)" />
+				:description="boardMap[boardId].description" :tags="boardMap[boardId].tags" @view="handleViewBoard(boardId)" />
 		</div>
 	</UContainer>
 
 	<!-- action menu -->
 	<ActionMenu>
-		<SaveChangesButton />
 		<CreateBoardButton @create="handleOpenCreateBoardModal" />
+		<LoadBoardButton />
 	</ActionMenu>
 
 	<!-- modals -->
