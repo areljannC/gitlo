@@ -96,10 +96,11 @@ const handleSubmitCardChanges = () => {
 		</template>
 		<template #footer>
 			<div class="w-full flex justify-between items-center gap-2">
-				<UButton v-if="!expandedCard?.archived" label="Archive" color="secondary" variant="ghost"
+				<UButton v-if="!expandedCard?.archived && !isEditing" label="Archive" color="secondary" variant="ghost"
 					@click="handleArchiveCard" />
-				<UButton v-else label="Unarchive" color="secondary" variant="ghost" @click="handleUnarchiveCard" />
-				<div v-if="!expandedCard?.archived" class="flex gap-2">
+				<UButton v-else-if="expandedCard?.archived && !isEditing" label="Unarchive" color="secondary"
+					variant="ghost" @click="handleUnarchiveCard" />
+				<div v-if="!expandedCard?.archived" class="flex gap-2 ml-auto">
 					<UButton v-if="isEditing" label="Cancel" color="error" variant="soft"
 						@click="handleCancelCardChanges" />
 					<UButton v-if="isEditing" label="Update" :color="'primary'" @click="handleUpdateCard" />
