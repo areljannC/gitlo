@@ -2,8 +2,8 @@ import { describe, beforeEach, it, vi, expect } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { generateHash, getTimestamp } from '~/shared/utils';
 import { BoardError, ColumnError } from '~/shared/errors';
+import { useBoardsStore, useColumnsStore, useCardsStore } from '~/stores';
 import { BOARD_ERROR, COLUMN_ERROR } from '~/constants';
-import { useBoardsStore, useColumnsStore, useCardsStore } from '../';
 
 const MOCK_HASH = 'MOCK_HASH';
 const MOCK_TIMESTAMP = 'MOCK_TIMESTAMP';

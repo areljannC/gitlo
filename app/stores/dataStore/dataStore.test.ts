@@ -1,7 +1,7 @@
 import { describe, beforeEach, it, vi, expect } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
-import { useDataStore, useBoardsStore, useColumnsStore, useCardsStore } from '~/stores';
 import { getTimestamp } from '~/shared/utils';
+import { useDataStore, useBoardsStore, useColumnsStore, useCardsStore } from '~/stores';
 import { MOCK_HASH, MOCK_TIMESTAMP, MOCK_BOARD, MOCK_COLUMN, MOCK_CARD } from '~/constants';
 
 vi.mock('~/shared/utils', async () => {
