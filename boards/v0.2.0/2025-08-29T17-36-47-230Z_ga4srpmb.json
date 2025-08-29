@@ -1,0 +1,104 @@
+{
+	"board": {
+		"id": "ga4srpmb",
+		"name": "v0.2.0",
+		"description": "Tasks for gitlo v0.2.0.",
+		"tags": [
+			"gitlo",
+			"kanban",
+			"tasks"
+		],
+		"columnIds": [
+			"u6l2oizn",
+			"dy49ha5e",
+			"cr1ft81t",
+			"x7nypu03"
+		],
+		"archived": false,
+		"createdAt": "2025-08-05T15:00:04.465Z",
+		"updatedAt": "2025-08-29T17:36:44.439Z"
+	},
+	"columns": [
+		{
+			"boardId": "ga4srpmb",
+			"id": "u6l2oizn",
+			"name": "to do",
+			"cardIds": [
+				"ecqy2kh9",
+				"ysmobz24",
+				"8knvdsju",
+				"o9ibwnwu"
+			],
+			"archived": false,
+			"createdAt": "2025-08-05T15:00:04.465Z",
+			"updatedAt": "2025-08-29T17:13:32.996Z"
+		},
+		{
+			"boardId": "ga4srpmb",
+			"id": "dy49ha5e",
+			"name": "doing",
+			"cardIds": [],
+			"archived": false,
+			"createdAt": "2025-08-05T15:00:04.465Z",
+			"updatedAt": "2025-08-29T17:36:44.439Z"
+		},
+		{
+			"boardId": "ga4srpmb",
+			"id": "cr1ft81t",
+			"name": "done",
+			"cardIds": [
+				"emy911ft"
+			],
+			"archived": false,
+			"createdAt": "2025-08-05T15:00:04.465Z",
+			"updatedAt": "2025-08-29T17:36:44.439Z"
+		},
+		{
+			"boardId": "ga4srpmb",
+			"id": "x7nypu03",
+			"name": "blockers",
+			"cardIds": [],
+			"archived": false,
+			"createdAt": "2025-08-05T15:00:27.548Z",
+			"updatedAt": "2025-08-05T15:00:27.548Z"
+		}
+	],
+	"cards": [
+		{
+			"columnId": "cr1ft81t",
+			"id": "emy911ft",
+			"name": "v0.1.2 - card archive functionality",
+			"description": "- when user is in edit mode, hide the the `Archive`/`Unarchive` button\n- when a card is archived, it should be hidden from the column\n- action menu should have a toggle to show archived cards",
+			"archived": false,
+			"createdAt": "2025-08-05T15:00:50.030Z",
+			"updatedAt": "2025-08-29T17:36:44.439Z"
+		},
+		{
+			"columnId": "u6l2oizn",
+			"id": "ecqy2kh9",
+			"name": "v0.1.3 - column archive functionality",
+			"description": "- when a column is archived, it should be hidden from the board\n- action menu should have a toggle to show archived columns",
+			"archived": false,
+			"createdAt": "2025-08-05T15:00:52.668Z",
+			"updatedAt": "2025-08-29T17:04:59.467Z"
+		},
+		{
+			"columnId": "u6l2oizn",
+			"id": "ysmobz24",
+			"name": "v0.1.4 - ???",
+			"description": "",
+			"archived": false,
+			"createdAt": "2025-08-05T15:00:59.601Z",
+			"updatedAt": "2025-08-29T17:05:18.265Z"
+		},
+		{
+			"columnId": "u6l2oizn",
+			"id": "8knvdsju",
+			"name": "v0.1.5 - ???",
+			"description": "",
+			"archived": false,
+			"createdAt": "2025-08-05T15:01:27.130Z",
+			"updatedAt": "2025-08-29T17:13:32.996Z"
+		}
+	]
+}
