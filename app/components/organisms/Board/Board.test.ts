@@ -2,9 +2,9 @@ import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { DOMWrapper } from '@vue/test-utils';
-import { Columns, ActionMenu, EditBoardButton } from '#components';
-import { useBoardsStore } from '~/stores';
-import { generateHash, getTimestamp } from '~/shared/utils';
+import { Columns, ActionMenu, EditBoardButton, ToggleArchivedCardsButton } from '#components';
+import { generateHash } from '~/shared/utils';
+import { useSettingsStore, useBoardsStore } from '~/stores';
 import { MOCK_HASH, MOCK_BOARD } from '~/constants';
 import Board from './Board.vue';
 
@@ -78,7 +78,7 @@ describe('Board', () => {
 		expect((input.element as HTMLInputElement).value).toBe('Changed Name');
 	});
 
-	it('opens and closes th via ActionMenu', async () => {
+	it('opens and closes the `ActionMenu`', async () => {
 		const wrapper = await mountSuspended(Board, { global: { plugins: [pinia] } });
 		// Open ActionMenu first
 		const actionMenu = wrapper.findComponent(ActionMenu);
@@ -103,7 +103,7 @@ describe('Board', () => {
 		expect(editBoardModal.exists()).toBe(false);
 	});
 
-	it('updates the board name via EditBoardModal', async () => {
+	it('updates the board name via `EditBoardModal`', async () => {
 		const wrapper = await mountSuspended(Board, { global: { plugins: [pinia] } });
 		// Open ActionMenu
 		const actionMenu = wrapper.findComponent(ActionMenu);
@@ -142,7 +142,7 @@ describe('Board', () => {
 		expect((boardNameInput.element as HTMLInputElement).value).toBe('New board name');
 	});
 
-	it('navigates away if boardId is invalid', async () => {
+	it('navigates away if `boardId` is invalid', async () => {
 		// Mock boardsStore.isValidBoardId to always return false
 		const boardsStore = useBoardsStore();
 		Object.defineProperty(boardsStore, 'isValidBoardId', {
@@ -151,6 +151,25 @@ describe('Board', () => {
 		});
 		await mountSuspended(Board, { global: { plugins: [pinia] } });
 		expect(navigateToSpy).toHaveBeenCalledWith('/boards');
+	});
+
+	it('shows and toggles the `ToggleArchivedCardsButton` via `ActionMenu`', async () => {
+		const wrapper = await mountSuspended(Board, { global: { plugins: [pinia] } });
+		const settingsStore = useSettingsStore();
+		// Open ActionMenu
+		const actionMenu = wrapper.findComponent(ActionMenu);
+		expect(actionMenu.exists()).toBe(true);
+		await actionMenu.find('button').trigger('click');
+		await wrapper.vm.$nextTick();
+		// ToggleArchivedCardsButton should now be visible
+		const toggleButton = wrapper.findComponent(ToggleArchivedCardsButton);
+		expect(toggleButton.exists()).toBe(true);
+		// Initially false
+		expect(settingsStore.showArchivedCards).toBe(false);
+		await toggleButton.find('button').trigger('click');
+		expect(settingsStore.showArchivedCards).toBe(true);
+		await toggleButton.find('button').trigger('click');
+		expect(settingsStore.showArchivedCards).toBe(false);
 	});
 
 	// TODO: Add more test cases that simulate user interactions with a board.
