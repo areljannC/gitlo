@@ -6,7 +6,7 @@ const settingsStore = useSettingsStore();
 const showArchivedCards = computed(() => settingsStore.showArchivedCards);
 const toggleArchivedCards = () => {
 	settingsStore.setShowArchivedCards(!showArchivedCards.value);
-}
+};
 
 const buttonClass = 'text-lg';
 const hoverEffectClass = 'hover:shadow-md hover:-translate-y-0.25 transition-transform duration-50 ease-in-out';
