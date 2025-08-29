@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import draggable from 'vuedraggable';
-import { useCardsStore } from '~/stores';
+import { useSettingsStore, useCardsStore } from '~/stores';
 
 const props = defineProps({
 	columnId: {
@@ -14,7 +14,14 @@ const props = defineProps({
 	}
 });
 
+const settingsStore = useSettingsStore();
 const cardsStore = useCardsStore();
+
+const isCardVisible = (cardId: string) => {
+	if (settingsStore.showArchivedCards) return true;
+	const card = cardsStore.getCardById(cardId);
+	return card && !card.archived;
+};
 
 // TODO: add better logging
 const handleMoveCard = (event: any) => {
@@ -36,7 +43,7 @@ const handleMoveCard = (event: any) => {
 			<draggable :list="cardIds" :item-key="(cardId: string) => cardId" handle=".draggable-card" group="cards"
 				class="flex flex-col gap-4 mb-4" @change="handleMoveCard">
 				<template #item="{ element }">
-					<Card :cardId="element" />
+					<Card v-if="isCardVisible(element)" :cardId="element" />
 				</template>
 			</draggable>
 			<CreateCard :columnId="columnId" />
