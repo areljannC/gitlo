@@ -65,6 +65,7 @@ const handleCloseEditBoardModal = () => {
 
 	<!-- action menu -->
 	<ActionMenu>
+		<ToggleArchivedColumnsButton />
 		<ToggleArchivedCardsButton />
 		<EditBoardButton @edit="handleOpenEditBoardModal" />
 		<SaveBoardButton :boardId="boardId" />
