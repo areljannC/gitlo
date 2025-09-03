@@ -1,7 +1,7 @@
 import { vi, describe, beforeEach, it, expect } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { mountSuspended } from '@nuxt/test-utils/runtime';
-import { useBoardsStore, useColumnsStore, useCardsStore } from '~/stores';
+import { useSettingsStore, useBoardsStore, useColumnsStore, useCardsStore } from '~/stores';
 import { generateHash, getTimestamp } from '~/shared/utils';
 import { MOCK_HASH, MOCK_TIMESTAMP, MOCK_BOARD, MOCK_COLUMN, MOCK_CARD } from '~/constants';
 import { Column, CreateColumn } from '#components';
@@ -149,5 +149,40 @@ describe('Columns', () => {
 			}
 		});
 		expect(wrapper.findComponent(CreateColumn).exists()).toBe(true);
+	});
+
+	it('should show archived columns when `showArchivedColumns` is `true`', async () => {
+		const settingsStore = useSettingsStore();
+		const boardsStore = useBoardsStore();
+		const columnsStore = useColumnsStore();
+		const board = boardsStore.getBoardById(MOCK_HASH[1])!;
+
+		// Archive one column
+		columnsStore.updateColumn(board.columnIds![0], { archived: true });
+
+		// By default, archived columns are hidden
+		let wrapper = await mountSuspended(Columns, {
+			global: { plugins: [pinia] },
+			props: {
+				boardId: board.id,
+				columnIds: board.columnIds
+			}
+		});
+
+		// Only one column should be visible
+		expect(wrapper.findAllComponents(Column)).toHaveLength(1);
+
+		// Show archived columns
+		settingsStore.setShowArchivedColumns(true);
+		wrapper = await mountSuspended(Columns, {
+			global: { plugins: [pinia] },
+			props: {
+				boardId: board.id,
+				columnIds: board.columnIds
+			}
+		});
+
+		// Both columns should be visible
+		expect(wrapper.findAllComponents(Column)).toHaveLength(2);
 	});
 });
