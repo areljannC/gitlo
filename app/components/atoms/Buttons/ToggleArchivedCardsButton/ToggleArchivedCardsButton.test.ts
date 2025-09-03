@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { mount } from '@vue/test-utils';
-import { useSettingsStore } from '~/stores/settingsStore/settingsStore';
+import { useSettingsStore } from '~/stores';
 import ToggleArchivedCardsButton from './ToggleArchivedCardsButton.vue';
 
 describe('ToggleArchivedCardsButton', () => {
