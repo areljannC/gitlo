@@ -4,7 +4,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime';
 import draggable from 'vuedraggable';
 import { Card, CreateCard } from '#components';
 import { generateHash, getTimestamp } from '~/shared/utils';
-import { useBoardsStore, useColumnsStore, useCardsStore } from '~/stores';
+import { useSettingsStore, useBoardsStore, useColumnsStore, useCardsStore } from '~/stores';
 import { MOCK_HASH, MOCK_TIMESTAMP, MOCK_BOARD, MOCK_COLUMN, MOCK_CARD } from '~/constants';
 import Cards from './Cards.vue';
 
@@ -212,9 +212,9 @@ describe('Cards', () => {
 	});
 
 	it('should render all cards when `showArchivedCards` is `true`', async () => {
+		const settingsStore = useSettingsStore();
 		const columnsStore = useColumnsStore();
 		const cardsStore = useCardsStore();
-		const settingsStore = useSettingsStore();
 		const column = columnsStore.getColumnById(MOCK_HASH[2])!;
 		// Archive one card
 		cardsStore.cardMap[MOCK_HASH[4]].archived = true;
