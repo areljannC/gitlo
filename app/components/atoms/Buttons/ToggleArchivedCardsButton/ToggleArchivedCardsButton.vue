@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useSettingsStore } from '~/stores/settingsStore/settingsStore';
+import { useSettingsStore } from '~/stores';
 
 const settingsStore = useSettingsStore();
 const showArchivedCards = computed(() => settingsStore.showArchivedCards);
