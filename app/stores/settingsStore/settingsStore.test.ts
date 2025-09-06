@@ -15,6 +15,7 @@ describe('Settings Store', () => {
 			const settingsStore = useSettingsStore();
 			expect(settingsStore.showArchivedColumns).toBe(false);
 			expect(settingsStore.showArchivedCards).toBe(false);
+			expect(settingsStore.showArchivedBoards).toBe(false);
 		});
 	});
 
@@ -48,6 +49,22 @@ describe('Settings Store', () => {
 				expect(settingsStore.showArchivedCards).toBe(true);
 				settingsStore.setShowArchivedCards(false);
 				expect(settingsStore.showArchivedCards).toBe(false);
+			});
+		});
+
+		describe('setShowArchivedBoards', () => {
+			it('should set `showArchivedBoards` to `true`', () => {
+				const settingsStore = useSettingsStore();
+				settingsStore.setShowArchivedBoards(true);
+				expect(settingsStore.showArchivedBoards).toBe(true);
+			});
+
+			it('should set `showArchivedBoards` to `false`', () => {
+				const settingsStore = useSettingsStore();
+				settingsStore.setShowArchivedBoards(true);
+				expect(settingsStore.showArchivedBoards).toBe(true);
+				settingsStore.setShowArchivedBoards(false);
+				expect(settingsStore.showArchivedBoards).toBe(false);
 			});
 		});
 	});
