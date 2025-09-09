@@ -53,6 +53,7 @@ const handleViewBoard = (boardId: string) => {
 	<ActionMenu>
 		<CreateBoardButton @create="handleOpenCreateBoardModal" />
 		<LoadBoardButton />
+		<ToggleArchivedBoardsButton />
 	</ActionMenu>
 
 	<!-- modals -->
