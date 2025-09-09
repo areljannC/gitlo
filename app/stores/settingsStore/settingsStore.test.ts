@@ -13,13 +13,30 @@ describe('Settings Store', () => {
 	describe('state', () => {
 		it('should have the correct initial state', () => {
 			const settingsStore = useSettingsStore();
+			expect(settingsStore.showArchivedBoards).toBe(false);
 			expect(settingsStore.showArchivedColumns).toBe(false);
 			expect(settingsStore.showArchivedCards).toBe(false);
 		});
 	});
 
 	describe('actions', () => {
-		describe('setShowArchivedColumns', () => {
+		describe('`setShowArchivedBoards`', () => {
+			it('should set `setShowArchivedBoards` to `true`', () => {
+				const settingsStore = useSettingsStore();
+				settingsStore.setShowArchivedBoards(true);
+				expect(settingsStore.showArchivedBoards).toBe(true);
+			});
+
+			it('should set `showArchivedBoards` to `false`', () => {
+				const settingsStore = useSettingsStore();
+				settingsStore.setShowArchivedBoards(true);
+				expect(settingsStore.showArchivedBoards).toBe(true);
+				settingsStore.setShowArchivedBoards(false);
+				expect(settingsStore.showArchivedBoards).toBe(false);
+			});
+		});
+
+		describe('`setShowArchivedColumns`', () => {
 			it('should set `showArchivedColumns` to `true`', () => {
 				const settingsStore = useSettingsStore();
 				settingsStore.setShowArchivedColumns(true);
@@ -35,7 +52,7 @@ describe('Settings Store', () => {
 			});
 		});
 
-		describe('setShowArchivedCards', () => {
+		describe('`setShowArchivedCards`', () => {
 			it('should set `showArchivedCards` to `true`', () => {
 				const settingsStore = useSettingsStore();
 				settingsStore.setShowArchivedCards(true);
