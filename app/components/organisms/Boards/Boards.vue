@@ -63,6 +63,6 @@ const handleViewBoard = (boardId: string) => {
 	</ActionMenu>
 
 	<!-- modals -->
-	<CreateBoardModal v-model:open="isCreateBoardModalOpen" @cancel="handleCloseCreateBoardModal"
+	<CreateBoardModal v-model:open="isCreateBoardModalOpen" @close="handleCloseCreateBoardModal"
 		@create="handleCreateBoard" />
 </template>
