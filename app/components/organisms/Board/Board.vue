@@ -34,7 +34,7 @@ const handleStopEditingBoardName = (event: KeyboardEvent) => {
 	boardForm.value?.submit();
 };
 
-const handleSubmit = (event: FormSubmitEvent<v.InferOutput<typeof boardFormSchema>>) => {
+const handleSubmitBoardNameChanges = (event: FormSubmitEvent<v.InferOutput<typeof boardFormSchema>>) => {
 	boardsStore.updateBoard(boardId, { name: event.data.name });
 };
 
@@ -50,7 +50,8 @@ const handleCloseEditBoardModal = () => {
 <template>
 	<div class="w-screen h-screen flex flex-col items-center gap-4 p-4">
 		<div class="w-fit min-w-68">
-			<UForm ref="boardForm" :schema="boardFormSchema" :state="boardFormState" @submit="handleSubmit">
+			<UForm ref="boardForm" :schema="boardFormSchema" :state="boardFormState"
+				@submit="handleSubmitBoardNameChanges">
 				<UFormField name="name" size="lg" :ui="{ error: 'text-center' }">
 					<UInput v-model="boardFormState.name" type="text" placeholder="Enter board name..."
 						color="secondary" :highlight="isEditingBoardName" class='w-full font-bold' size="xl"
@@ -72,7 +73,6 @@ const handleCloseEditBoardModal = () => {
 	</ActionMenu>
 
 	<!-- modals -->
-	<EditBoardModal v-model:open="isEditBoardModalOpen" @cancel="handleCloseEditBoardModal"
-		@update="handleCloseEditBoardModal" :boardId="boardId" />
+	<EditBoardModal v-model:open="isEditBoardModalOpen" @close="handleCloseEditBoardModal" :boardId="boardId" />
 	<ExpandedCardModal />
 </template>
