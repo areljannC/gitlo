@@ -78,10 +78,9 @@ const darkThemeClass = 'dark:bg-gray-800';
 		</div>
 		<Cards :columnId="column.id" :cardIds="column.cardIds" />
 		<div class="w-full flex justify-between items-center gap-2">
-			<UButton v-if="!column.archived" label="Archive" color="secondary" variant="ghost"
-				@click="handleArchiveColumn" />
-			<UButton v-else label="Unarchive" color="secondary" variant="ghost" @click="handleUnarchiveColumn" />
-			<UButton v-if="column.archived" label="Delete" color="error" variant="soft" @click="handleDeleteColumn" />
+			<ArchiveButton v-if="!column.archived" @archive="handleArchiveColumn" />
+			<UnarchiveButton v-else @unarchive="handleUnarchiveColumn" />
+			<DeleteButton v-if="column.archived" @delete="handleDeleteColumn" />
 		</div>
 	</div>
 </template>
