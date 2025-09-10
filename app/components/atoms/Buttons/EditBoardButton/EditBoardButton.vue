@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const emit = defineEmits(['edit']);
+
 const handleEdit = () => {
 	emit('edit');
 };

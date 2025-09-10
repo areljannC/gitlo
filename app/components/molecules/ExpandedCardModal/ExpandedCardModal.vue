@@ -101,21 +101,17 @@ const handleSubmitCardChanges = () => {
 		</template>
 		<template #footer>
 			<div class="w-full flex justify-between items-center gap-2">
-				<UButton v-if="!expandedCard?.archived && !isEditing" label="Archive" color="secondary" variant="ghost"
-					@click="handleArchiveCard" />
-				<UButton v-else-if="expandedCard?.archived && !isEditing" label="Unarchive" color="secondary"
-					variant="ghost" @click="handleUnarchiveCard" />
+				<ArchiveButton v-if="!expandedCard?.archived && !isEditing" @archive="handleArchiveCard" />
+				<UnarchiveButton v-else-if="expandedCard?.archived && !isEditing" @unarchive="handleUnarchiveCard" />
 				<div v-if="!expandedCard?.archived" class="flex gap-2 ml-auto">
-					<UButton v-if="isEditing" label="Cancel" color="error" variant="soft"
-						@click="handleCancelCardChanges" />
-					<UButton v-else label="Close" color="neutral" variant="ghost"
-						@click="handleCloseCardModal" />
-					<UButton v-if="isEditing" label="Update" :color="'primary'" @click="handleUpdateCard" />
-					<UButton v-else label="Edit" color="secondary" @click="handleEditCard" />
+					<CancelButton v-if="isEditing" @cancel="handleCancelCardChanges" />
+					<CloseButton v-else @close="handleCloseCardModal" />
+					<UpdateButton v-if="isEditing" @update="handleUpdateCard" />
+					<EditButton v-else @edit="handleEditCard" />
 				</div>
 				<div v-else class="flex gap-2">
-					<UButton label="Close" color="neutral" variant="ghost" @click="handleCloseCardModal" />
-					<UButton label="Delete" color="error" variant="soft" @click="handleDeleteCard" />
+					<CloseButton @close="handleCloseCardModal" />
+					<DeleteButton @delete="handleDeleteCard" />
 				</div>
 			</div>
 		</template>

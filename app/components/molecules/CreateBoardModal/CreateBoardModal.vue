@@ -10,6 +10,7 @@ const props = defineProps({
 		required: true
 	},
 });
+
 const emit = defineEmits(['close', 'create']);
 
 const form = useTemplateRef('form');
@@ -37,14 +38,11 @@ const resetFormState = () => {
 
 const handleCreateBoardTag = () => {
 	form.value?.validate({ name: 'tag', silent: true });
-	const rawTag = (formState.tag ?? '').trim();
-	const result = v.safeParse(v.pipe(v.string(), v.trim(), v.minLength(2), v.maxLength(16)), rawTag);
+	const result = v.safeParse(v.pipe(v.string(), v.trim(), v.minLength(2), v.maxLength(16)), formState.tag);
 	if (result.success) {
-		formState.tags.add(rawTag);
+		formState.tags.add(formState.tag!);
 		formState.tag = undefined;
 	}
-	// TODO: Figure out why this is not being covered by coverage report
-	/* c8 ignore next */
 };
 
 const handleDeleteBoardTag = (tag: string) => {
@@ -106,7 +104,7 @@ const handleSubmit = (event: FormSubmitEvent<v.InferOutput<typeof formSchema>>) 
 			</UForm>
 		</template>
 		<template #footer>
-			<UButton label="Cancel" color="error" variant="soft" @click="handleCloseCreateBoardModal" />
+			<CancelButton @cancel="handleCloseCreateBoardModal" />
 			<UButton label="Create board" color="primary" @click="handleSubmitCreateBoard" />
 		</template>
 	</UModal>

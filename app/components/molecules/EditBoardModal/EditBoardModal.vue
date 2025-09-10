@@ -15,6 +15,7 @@ const props = defineProps({
 		required: true
 	}
 });
+
 const emit = defineEmits(['close']);
 
 const boardsStore = useBoardsStore();
@@ -49,14 +50,11 @@ const resetFormState = () => {
 
 const handleCreateBoardTag = () => {
 	form.value?.validate({ name: 'tag', silent: true });
-	const rawTag = (formState.tag ?? '').trim();
-	const result = v.safeParse(v.pipe(v.string(), v.trim(), v.minLength(2), v.maxLength(16)), rawTag);
+	const result = v.safeParse(v.pipe(v.string(), v.trim(), v.minLength(2), v.maxLength(16)), formState.tag);
 	if (result.success) {
-		formState.tags.add(rawTag);
+		formState.tags.add(formState.tag!);
 		formState.tag = undefined;
 	}
-	// TODO: Figure out why this is not being covered by coverage report
-	/* c8 ignore next */
 };
 
 const handleDeleteBoardTag = (tag: string) => {
@@ -121,7 +119,7 @@ const handleSubmitBoardChanges = (event: FormSubmitEvent<v.InferOutput<typeof fo
 </script>
 
 <template>
-	<UModal v-model:open="props.open" :dismissable="false" :close="false">
+	<UModal :open="props.open" :dismissable="false" :close="false">
 		<template #header>
 			<div class="w-full flex justify-center">
 				<h2 class="font-bold text-xl">{{ isEditing ? 'Editing Board' : 'Board Overview' }}</h2>
@@ -130,19 +128,19 @@ const handleSubmitBoardChanges = (event: FormSubmitEvent<v.InferOutput<typeof fo
 		<template #body>
 			<UForm ref="form" :schema="formSchema" :state="formState" class="w-full h-fit flex flex-col gap-4"
 				@submit="handleSubmitBoardChanges">
-				<UFormField name="name" label="Name" :description="isEditing && 'A short, clear title for this board.'"
-					size="lg">
+				<UFormField name="name" label="Name"
+					:description="isEditing ? 'A short, clear title for this board.' : ''" size="lg">
 					<UInput v-model="formState.name" type="text" placeholder="e.g. Sprint 3 - Frontend Tasks"
 						class="w-full" :variant="isEditing ? 'soft' : 'ghost'" :readonly="!isEditing" />
 				</UFormField>
 				<UFormField name="description" label="Description"
-					:description="isEditing && 'Optional context about this board\'s purpose.'" size="lg">
+					:description="isEditing ? 'Optional context about this board\'s purpose.' : ''" size="lg">
 					<UInput v-model="formState.description" type="text"
 						placeholder="e.g. Optional context about what this board is for." class="w-full"
 						:variant="isEditing ? 'soft' : 'ghost'" :readonly="!isEditing" />
 				</UFormField>
 				<UFormField name="tag" label="Tags"
-					:description="isEditing && 'Add tags to help organize and filter your board.'" size="lg">
+					:description="isEditing ? 'Add tags to help organize and filter your board.' : ''" size="lg">
 					<UInput v-if="isEditing" v-model="formState.tag" type="text"
 						placeholder="e.g. frontend, urgent, personal" @keydown.enter.prevent="handleCreateBoardTag"
 						class="w-full" />
@@ -155,20 +153,17 @@ const handleSubmitBoardChanges = (event: FormSubmitEvent<v.InferOutput<typeof fo
 		</template>
 		<template #footer>
 			<div class="w-full flex justify-between items-center gap-2">
-				<UButton v-if="!board?.archived && !isEditing" label="Archive" color="secondary" variant="ghost"
-					@click="handleArchiveBoard" />
-				<UButton v-else-if="board?.archived && !isEditing" label="Unarchive" color="secondary" variant="ghost"
-					@click="handleUnarchiveBoard" />
+				<ArchiveButton v-if="!board?.archived && !isEditing" @archive="handleArchiveBoard" />
+				<UnarchiveButton v-else-if="board?.archived && !isEditing" @unarchive="handleUnarchiveBoard" />
 				<div v-if="!board?.archived" class="flex gap-2 ml-auto">
-					<UButton v-if="isEditing" label="Cancel" color="error" variant="soft"
-						@click="handleCancelBoardChanges" />
-					<UButton v-else label="Close" color="neutral" variant="ghost" @click="handleCloseBoardModal" />
-					<UButton v-if="isEditing" label="Update" color="primary" @click="handleUpdateBoard" />
-					<UButton v-else label="Edit" color="secondary" @click="handleEditBoard" />
+					<CancelButton v-if="isEditing" @cancel="handleCancelBoardChanges" />
+					<CloseButton v-else @close="handleCloseBoardModal" />
+					<UpdateButton v-if="isEditing" @update="handleUpdateBoard" />
+					<EditButton v-else @edit="handleEditBoard" />
 				</div>
 				<div v-else class="flex gap-2">
-					<UButton label="Close" color="neutral" variant="ghost" @click="handleCloseBoardModal" />
-					<UButton label="Delete" color="error" variant="soft" @click="handleDeleteBoard" />
+					<CloseButton @close="handleCloseBoardModal" />
+					<DeleteButton @delete="handleDeleteBoard" />
 				</div>
 			</div>
 		</template>
