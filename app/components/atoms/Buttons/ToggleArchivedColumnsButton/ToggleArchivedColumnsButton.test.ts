@@ -1,33 +1,36 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
-import { mount } from '@vue/test-utils';
+import { mountSuspended } from '@nuxt/test-utils/runtime';
 import { useSettingsStore } from '~/stores';
 import ToggleArchivedColumnsButton from './ToggleArchivedColumnsButton.vue';
 
 describe('ToggleArchivedColumnsButton', () => {
-	let settingsStore: ReturnType<typeof useSettingsStore>;
+	let pinia: any;
 
 	beforeEach(() => {
-		setActivePinia(createPinia());
-		settingsStore = useSettingsStore();
-		settingsStore.setShowArchivedColumns(false);
+		vi.resetAllMocks();
+		pinia = createPinia();
+		setActivePinia(pinia);
 	});
 
-	it('renders "Show archived columns" when `showArchivedColumns` is `false`', () => {
-		const wrapper = mount(ToggleArchivedColumnsButton);
+	it('renders "Show archived columns" when `showArchivedColumns` is `false`', async () => {
+		const settingsStore = useSettingsStore();
+		const wrapper = await mountSuspended(ToggleArchivedColumnsButton, { global: { plugins: [pinia] } });
 		expect(wrapper.text()).toContain('Show archived columns');
 		expect(settingsStore.showArchivedColumns).toBe(false);
 	});
 
 	it('renders "Hide archived columns" when `showArchivedColumns` is `true`', async () => {
+		const settingsStore = useSettingsStore();
 		settingsStore.setShowArchivedColumns(true);
-		const wrapper = mount(ToggleArchivedColumnsButton);
+		const wrapper = await mountSuspended(ToggleArchivedColumnsButton, { global: { plugins: [pinia] } });
 		expect(wrapper.text()).toContain('Hide archived columns');
 		expect(settingsStore.showArchivedColumns).toBe(true);
 	});
 
 	it('toggles `showArchivedColumns` on click', async () => {
-		const wrapper = mount(ToggleArchivedColumnsButton);
+		const settingsStore = useSettingsStore();
+		const wrapper = await mountSuspended(ToggleArchivedColumnsButton, { global: { plugins: [pinia] } });
 		const button = wrapper.find('button');
 		await button.trigger('click');
 		expect(settingsStore.showArchivedColumns).toBe(true);

@@ -1,33 +1,36 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
-import { mount } from '@vue/test-utils';
+import { mountSuspended } from '@nuxt/test-utils/runtime';
 import { useSettingsStore } from '~/stores';
 import ToggleArchivedBoardsButton from './ToggleArchivedBoardsButton.vue';
 
 describe('ToggleArchivedBoardsButton', () => {
-	let settingsStore: ReturnType<typeof useSettingsStore>;
+	let pinia: any;
 
 	beforeEach(() => {
-		setActivePinia(createPinia());
-		settingsStore = useSettingsStore();
-		settingsStore.setShowArchivedBoards(false);
+		vi.resetAllMocks();
+		pinia = createPinia();
+		setActivePinia(pinia);
 	});
 
-	it('renders "Show archived boards" when `showArchivedBoards` is `false`', () => {
-		const wrapper = mount(ToggleArchivedBoardsButton);
+	it('renders "Show archived boards" when `showArchivedBoards` is `false`', async () => {
+		const settingsStore = useSettingsStore();
+		const wrapper = await mountSuspended(ToggleArchivedBoardsButton, { global: { plugins: [pinia] } });
 		expect(wrapper.text()).toContain('Show archived boards');
 		expect(settingsStore.showArchivedBoards).toBe(false);
 	});
 
 	it('renders "Hide archived boards" when `showArchivedBoards` is `true`', async () => {
+		const settingsStore = useSettingsStore();
 		settingsStore.setShowArchivedBoards(true);
-		const wrapper = mount(ToggleArchivedBoardsButton);
+		const wrapper = await mountSuspended(ToggleArchivedBoardsButton, { global: { plugins: [pinia] } });
 		expect(wrapper.text()).toContain('Hide archived boards');
 		expect(settingsStore.showArchivedBoards).toBe(true);
 	});
 
 	it('toggles `showArchivedBoards` on click', async () => {
-		const wrapper = mount(ToggleArchivedBoardsButton);
+		const settingsStore = useSettingsStore();
+		const wrapper = await mountSuspended(ToggleArchivedBoardsButton, { global: { plugins: [pinia] } });
 		const button = wrapper.find('button');
 		await button.trigger('click');
 		expect(settingsStore.showArchivedBoards).toBe(true);
