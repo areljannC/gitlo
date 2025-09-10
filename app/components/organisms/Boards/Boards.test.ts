@@ -2,11 +2,11 @@ import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { BoardPreview, CreateBoardModal } from '#components';
-import { useBoardsStore } from '~/stores';
+import { useSettingsStore, useBoardsStore } from '~/stores';
 import { MOCK_BOARD } from '~/constants';
 import Boards from './Boards.vue';
 
-// Hoist and mock navigateTo globally for all tests using vi.hoisted
+// Hoist and mock `navigateTo` globally for all tests using `vi.hoisted`
 const { navigateToSpy } = vi.hoisted(() => ({
   navigateToSpy: vi.fn()
 }));
@@ -55,8 +55,8 @@ describe('Boards', () => {
 		// Modal should be open
 		const modal = wrapper.findComponent(CreateBoardModal);
 		expect(modal.exists()).toBe(true);
-		// Simulate cancel
-		await modal.vm.$emit('cancel');
+		// Simulate close
+		await modal.vm.$emit('close');
 		await wrapper.vm.$nextTick();
 		// Modal should be closed
 		// (v-model:open is false, so modal should not be visible)
@@ -88,7 +88,7 @@ describe('Boards', () => {
 		}
 	});
 
-	it('navigates to board on BoardPreview @view', async () => {
+	it('navigates to board on `BoardPreview` @view', async () => {
 		createBoardsInStore(1);
 		const wrapper = await mountSuspended(Boards, { global: { plugins: [pinia] } });
 		const preview = wrapper.findComponent(BoardPreview);
@@ -99,7 +99,7 @@ describe('Boards', () => {
 		expect(navigateToSpy).toHaveBeenCalledWith(`/boards/${boardId}`);
 	});
 
-	it('logs error if createBoard throws', async () => {
+	it('logs error if `createBoard` throws', async () => {
 		const wrapper = await mountSuspended(Boards, { global: { plugins: [pinia] } });
 		const createBtn = wrapper.find('button');
 		await createBtn.trigger('click');
@@ -112,5 +112,37 @@ describe('Boards', () => {
 		await wrapper.vm.$nextTick();
 		expect(errorSpy).toHaveBeenCalledWith('Error creating board:', expect.any(Error));
 		errorSpy.mockRestore();
+	});
+
+	it('shows archived boards when `showArchivedBoards` is toggled', async () => {
+		// Create two boards
+		createBoardsInStore(2);
+
+		// Archive the second board
+		const boardsStore = useBoardsStore();
+		boardsStore.archiveBoard(boardsStore.boardIds[1]);
+
+		// By default, only active board is shown
+		const wrapper = await mountSuspended(Boards, { global: { plugins: [pinia] } });
+		let boardPreviews = wrapper.findAllComponents(BoardPreview);
+		expect(boardPreviews.length).toBe(1);
+		expect(wrapper.text()).toContain(MOCK_BOARD[1].name);
+
+		// Toggle `showArchivedBoards`
+		const settingsStore = useSettingsStore();
+		settingsStore.showArchivedBoards = true;
+		await wrapper.vm.$nextTick();
+
+		// Now both boards should be shown
+		boardPreviews = wrapper.findAllComponents(BoardPreview);
+		expect(boardPreviews.length).toBe(2);
+		expect(wrapper.text()).toContain(MOCK_BOARD[1].name);
+
+		// Toggle back off
+		settingsStore.showArchivedBoards = false;
+		await wrapper.vm.$nextTick();
+		boardPreviews = wrapper.findAllComponents(BoardPreview);
+		expect(boardPreviews.length).toBe(1);
+		expect(wrapper.text()).toContain(MOCK_BOARD[1].name);
 	});
 });
