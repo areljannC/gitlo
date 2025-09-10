@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useSettingsStore, useBoardsStore } from '~/stores';
 import type { Board } from '~/types';
 
@@ -18,6 +18,7 @@ const isCreateBoardModalOpen = ref(false);
 const handleOpenCreateBoardModal = () => {
 	isCreateBoardModalOpen.value = true;
 };
+
 const handleCloseCreateBoardModal = () => {
 	isCreateBoardModalOpen.value = false;
 };
