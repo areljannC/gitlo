@@ -283,10 +283,13 @@ describe('EditBoardModal', () => {
 				expect(buttons[1].text()).toBe('Close');
 				expect(buttons[2].text()).toBe('Edit');
 
+				expect(wrapper.find('h2').text()).toBe('Board Overview');
 				const editButton = buttons.find(btn => btn.text() === 'Edit');
 				expect(editButton).toBeTruthy();
 				await editButton!.trigger('click');
 				await modal.vm.$nextTick();
+				expect(wrapper.find('h2').text()).toBe('Editing Board');
+
 
 				inputs = wrapper.findAll('input');
 				for (const input of inputs) {
@@ -446,6 +449,7 @@ describe('EditBoardModal', () => {
 		});
 
 		const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
+		expect(wrapper.find('h2').text()).toBe('Board Overview');
 
 		// Enter edit mode
 		let buttons = wrapper.findAll('button');
@@ -453,6 +457,7 @@ describe('EditBoardModal', () => {
 		expect(editButton).toBeTruthy();
 		await editButton!.trigger('click');
 		await modal.vm.$nextTick();
+		expect(wrapper.find('h2').text()).toBe('Editing Board');
 
 		// Change name and description
 		let inputs = wrapper.findAll('input');
@@ -465,7 +470,7 @@ describe('EditBoardModal', () => {
 		await modal.vm.$nextTick();
 
 		// Add a tag
-		const tagInput = inputs.find(input => (input.element as HTMLInputElement).name === 'tag');
+		let tagInput = inputs.find(input => (input.element as HTMLInputElement).name === 'tag');
 		expect(tagInput).toBeTruthy();
 		await tagInput!.setValue('newtag');
 		await tagInput!.trigger('keydown', { key: 'Enter' });
@@ -476,6 +481,7 @@ describe('EditBoardModal', () => {
 		const updateButton = buttons.find(btn => btn.text() === 'Update');
 		expect(updateButton).toBeTruthy();
 		await updateButton!.trigger('click');
+		await modal.vm.$nextTick();
 		await modal.vm.$nextTick();
 		await modal.vm.$nextTick();
 		await modal.vm.$nextTick();
@@ -491,6 +497,7 @@ describe('EditBoardModal', () => {
 		);
 
 		// Should exit edit mode (inputs become readonly again)
+		expect(wrapper.find('h2').text()).toBe('Board Overview');
 		inputs = wrapper.findAll('input');
 		for (const input of inputs) {
 			expect((input.element as HTMLInputElement).readOnly).toBe(true);
