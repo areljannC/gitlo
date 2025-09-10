@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const emit = defineEmits(['create']);
+
 const handleCreate = () => {
 	emit('create');
 };
