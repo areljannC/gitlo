@@ -15,6 +15,7 @@ defineProps({
 });
 
 const emit = defineEmits(['view']);
+
 const handleViewBoard = (() => {
 	emit('view')
 });
