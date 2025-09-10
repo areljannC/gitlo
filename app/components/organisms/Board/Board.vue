@@ -73,6 +73,6 @@ const handleCloseEditBoardModal = () => {
 	</ActionMenu>
 
 	<!-- modals -->
-	<EditBoardModal v-model:open="isEditBoardModalOpen" @close="handleCloseEditBoardModal" :boardId="boardId" />
+	<EditBoardModal :open="isEditBoardModalOpen" @close="handleCloseEditBoardModal" :boardId="boardId" />
 	<ExpandedCardModal />
 </template>
