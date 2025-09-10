@@ -21,7 +21,7 @@ describe('Settings Store', () => {
 
 	describe('actions', () => {
 		describe('`setShowArchivedBoards`', () => {
-			it('should set `setShowArchivedBoards` to `true`', () => {
+			it('should set `showArchivedBoards` to `true`', () => {
 				const settingsStore = useSettingsStore();
 				settingsStore.setShowArchivedBoards(true);
 				expect(settingsStore.showArchivedBoards).toBe(true);
