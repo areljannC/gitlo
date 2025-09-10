@@ -33,8 +33,8 @@ describe('CreateBoardModal', () => {
 	});
 
 	describe('emits', () => {
-		describe('cancel', () => {
-			it('should emit `cancel` when the cancel button is clicked', async () => {
+		describe('close', () => {
+			it('should emit `close` when the close button is clicked', async () => {
 				const modal = await mountSuspended(CreateBoardModal, {
 					props: { open: true }
 				});
@@ -44,11 +44,11 @@ describe('CreateBoardModal', () => {
 				expect(wrapper.findAll('button')).toHaveLength(2);
 
 				const buttons = wrapper.findAll('button');
-				const cancelButton = buttons[0];
+				const closeButton = buttons[0];
 
-				await cancelButton.trigger('click');
-				expect(modal.emitted()).toHaveProperty('cancel');
-				expect(modal.emitted().cancel).toHaveLength(1);
+				await closeButton.trigger('click');
+				expect(modal.emitted()).toHaveProperty('close');
+				expect(modal.emitted().close).toHaveLength(1);
 			});
 		});
 
