@@ -1,33 +1,36 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
-import { mount } from '@vue/test-utils';
+import { mountSuspended } from '@nuxt/test-utils/runtime';
 import { useSettingsStore } from '~/stores';
 import ToggleArchivedCardsButton from './ToggleArchivedCardsButton.vue';
 
 describe('ToggleArchivedCardsButton', () => {
-	let settingsStore: ReturnType<typeof useSettingsStore>;
+	let pinia: any;
 
 	beforeEach(() => {
-		setActivePinia(createPinia());
-		settingsStore = useSettingsStore();
-		settingsStore.setShowArchivedCards(false);
+		vi.resetAllMocks();
+		pinia = createPinia();
+		setActivePinia(pinia);
 	});
 
-	it('renders "Show archived cards" when `showArchivedCards` is `false`', () => {
-		const wrapper = mount(ToggleArchivedCardsButton);
-		expect(wrapper.text()).toContain('Show archived cards');
+	it('renders "Show archived cards" when `showArchivedCards` is `false`', async () => {
+		const settingsStore = useSettingsStore();
+		const wrapper = await mountSuspended(ToggleArchivedCardsButton, { global: { plugins: [pinia] } });
 		expect(settingsStore.showArchivedCards).toBe(false);
+		expect(wrapper.text()).toContain('Show archived cards');
 	});
 
 	it('renders "Hide archived cards" when `showArchivedCards` is `true`', async () => {
+		const settingsStore = useSettingsStore();
 		settingsStore.setShowArchivedCards(true);
-		const wrapper = mount(ToggleArchivedCardsButton);
+		const wrapper = await mountSuspended(ToggleArchivedCardsButton, { global: { plugins: [pinia] } });
 		expect(wrapper.text()).toContain('Hide archived cards');
 		expect(settingsStore.showArchivedCards).toBe(true);
 	});
 
 	it('toggles `showArchivedCards` on click', async () => {
-		const wrapper = mount(ToggleArchivedCardsButton);
+		const settingsStore = useSettingsStore();
+		const wrapper = await mountSuspended(ToggleArchivedCardsButton, { global: { plugins: [pinia] } });
 		const button = wrapper.find('button');
 		await button.trigger('click');
 		expect(settingsStore.showArchivedCards).toBe(true);
