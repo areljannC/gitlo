@@ -22,7 +22,7 @@ watch(expandedCard, (card) => {
 const resetFormState = () => {
 	formState.name = expandedCard.value?.name;
 	formState.description = expandedCard.value?.description;
-}
+};
 
 const handleCardNameInputKeyDown = (event: KeyboardEvent) => {
 	(event.target as HTMLTextAreaElement).blur();
