@@ -16,7 +16,7 @@
 		],
 		"archived": false,
 		"createdAt": "2025-08-05T15:00:04.465Z",
-		"updatedAt": "2025-09-10T15:46:30.490Z"
+		"updatedAt": "2025-09-10T15:56:38.144Z"
 	},
 	"columns": [
 		{
@@ -24,12 +24,13 @@
 			"id": "u6l2oizn",
 			"name": "to do",
 			"cardIds": [
+				"wm0jbmtv",
 				"8knvdsju",
 				"o9ibwnwu"
 			],
 			"archived": false,
 			"createdAt": "2025-08-05T15:00:04.465Z",
-			"updatedAt": "2025-09-09T17:21:32.197Z"
+			"updatedAt": "2025-09-10T15:56:38.144Z"
 		},
 		{
 			"boardId": "ga4srpmb",
@@ -94,11 +95,20 @@
 		{
 			"columnId": "u6l2oizn",
 			"id": "8knvdsju",
-			"name": "v0.1.5 - document titles",
+			"name": "v0.1.6 - document titles",
 			"description": "- add proper document titles to each page in app\n- `/`: gitlo\n- `/boards`: gitlo | Boards\n- `/boards/<board_id>`: gitlo | <board_name>",
 			"archived": false,
 			"createdAt": "2025-08-05T15:01:27.130Z",
-			"updatedAt": "2025-08-29T18:23:51.801Z"
+			"updatedAt": "2025-09-10T15:56:38.144Z"
+		},
+		{
+			"columnId": "u6l2oizn",
+			"id": "wm0jbmtv",
+			"name": "v0.1.5 - reusable atom components",
+			"description": "extract the following buttons so it can be reused in various molecule and organism components:\n- archive\n- unarchive\n- close\n- cancel\n- edit\n- update",
+			"archived": false,
+			"createdAt": "2025-09-10T15:55:07.692Z",
+			"updatedAt": "2025-09-10T15:56:20.623Z"
 		}
 	]
 }
