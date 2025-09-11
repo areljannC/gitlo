@@ -2,10 +2,10 @@ import { vi, describe, beforeEach, it, expect } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { mountSuspended } from '@nuxt/test-utils/runtime';
 import draggable from 'vuedraggable';
-import { useBoardsStore, useColumnsStore, useCardsStore } from '~/stores';
-import { generateHash, getTimestamp } from '~/shared/utils';
-import { MOCK_HASH, MOCK_TIMESTAMP, MOCK_BOARD, MOCK_COLUMN, MOCK_CARD } from '~/constants';
 import { Card, CreateCard } from '#components';
+import { generateHash, getTimestamp } from '~/shared/utils';
+import { useSettingsStore, useBoardsStore, useColumnsStore, useCardsStore } from '~/stores';
+import { MOCK_HASH, MOCK_TIMESTAMP, MOCK_BOARD, MOCK_COLUMN, MOCK_CARD } from '~/constants';
 import Cards from './Cards.vue';
 
 vi.mock('~/shared/utils', async () => {
@@ -189,5 +189,45 @@ describe('Cards', () => {
 			}
 		});
 		expect(wrapper.findComponent(CreateCard).exists()).toBe(true);
+	});
+
+	it('should render only non-archived cards when `showArchivedCards` is `false`', async () => {
+		const columnsStore = useColumnsStore();
+		const cardsStore = useCardsStore();
+		const column = columnsStore.getColumnById(MOCK_HASH[2])!;
+		// Archive one card
+		cardsStore.cardMap[MOCK_HASH[4]].archived = true;
+		const wrapper = await mountSuspended(Cards, {
+			global: { plugins: [pinia] },
+			props: {
+				columnId: column.id,
+				cardIds: column.cardIds
+			}
+		});
+		// Only one card should be rendered
+		const cardComponents = wrapper.findAllComponents(Card);
+		expect(cardComponents).toHaveLength(1);
+		// The visible card should be the non-archived one
+		expect(cardComponents[0].props('cardId')).toBe(MOCK_HASH[5]);
+	});
+
+	it('should render all cards when `showArchivedCards` is `true`', async () => {
+		const settingsStore = useSettingsStore();
+		const columnsStore = useColumnsStore();
+		const cardsStore = useCardsStore();
+		const column = columnsStore.getColumnById(MOCK_HASH[2])!;
+		// Archive one card
+		cardsStore.cardMap[MOCK_HASH[4]].archived = true;
+		settingsStore.setShowArchivedCards(true);
+		const wrapper = await mountSuspended(Cards, {
+			global: { plugins: [pinia] },
+			props: {
+				columnId: column.id,
+				cardIds: column.cardIds
+			}
+		});
+		// Both cards should be rendered
+		const cardComponents = wrapper.findAllComponents(Card);
+		expect(cardComponents).toHaveLength(2);
 	});
 });

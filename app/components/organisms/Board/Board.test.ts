@@ -2,13 +2,13 @@ import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime';
 import { DOMWrapper } from '@vue/test-utils';
-import { Columns, ActionMenu, EditBoardButton } from '#components';
-import { useBoardsStore } from '~/stores';
-import { generateHash, getTimestamp } from '~/shared/utils';
+import { Columns, ActionMenu, EditBoardButton, ToggleArchivedCardsButton } from '#components';
+import { generateHash } from '~/shared/utils';
+import { useSettingsStore, useBoardsStore } from '~/stores';
 import { MOCK_HASH, MOCK_BOARD } from '~/constants';
 import Board from './Board.vue';
 
-// Mock navigateTo and useRoute
+// Mock `navigateTo` and `useRoute`
 const { navigateToSpy } = vi.hoisted(() => ({ navigateToSpy: vi.fn() }));
 mockNuxtImport('navigateTo', () => navigateToSpy);
 mockNuxtImport('useRoute', () => () => ({ params: { id: MOCK_HASH[1] } }));
@@ -78,46 +78,61 @@ describe('Board', () => {
 		expect((input.element as HTMLInputElement).value).toBe('Changed Name');
 	});
 
-	it('opens and closes th via ActionMenu', async () => {
+	it('opens and closes the `ActionMenu`', async () => {
 		const wrapper = await mountSuspended(Board, { global: { plugins: [pinia] } });
-		// Open ActionMenu first
+
+		// Open `ActionMenu` first
 		const actionMenu = wrapper.findComponent(ActionMenu);
 		expect(actionMenu).toBeTruthy();
 		await actionMenu.find('button').trigger('click');
 		await wrapper.vm.$nextTick();
-		// Now EditBoardButton should be visible
+
+		// Now `EditBoardButton` should be visible
 		const editBoardButton = wrapper.findComponent(EditBoardButton);
 		expect(editBoardButton).toBeTruthy();
 		await editBoardButton.find('button').trigger('click');
 		await wrapper.vm.$nextTick();
+
 		// Modal should be open
 		let editBoardModal = new DOMWrapper(document.querySelector('[role="dialog"]'));
 		expect(editBoardModal.exists()).toBe(true);
-		// Close modal via Cancel button
-		const editBoardModalCancelButton = editBoardModal.findAll('button').find(btn => btn.text() === 'Cancel');
-		expect(editBoardModalCancelButton!.exists()).toBe(true);
-		await editBoardModalCancelButton!.trigger('click');
+
+		// Close modal via close button
+		const editBoardModalCloseButton = editBoardModal.findAll('button').find(btn => btn.text() === 'Close');
+		expect(editBoardModalCloseButton!.exists()).toBe(true);
+		await editBoardModalCloseButton!.trigger('click');
 		await wrapper.vm.$nextTick();
-		// Modal should be closed open
+
+		// Modal should be closed
 		editBoardModal = new DOMWrapper(document.querySelector('[role="dialog"]'));
 		expect(editBoardModal.exists()).toBe(false);
 	});
 
-	it('updates the board name via EditBoardModal', async () => {
+	it('updates the board name via `EditBoardModal`', async () => {
 		const wrapper = await mountSuspended(Board, { global: { plugins: [pinia] } });
+
 		// Open ActionMenu
 		const actionMenu = wrapper.findComponent(ActionMenu);
 		expect(actionMenu.exists()).toBe(true);
 		await actionMenu.find('button').trigger('click');
 		await wrapper.vm.$nextTick();
+
 		// Open EditBoardModal
 		const editBoardButton = wrapper.findComponent(EditBoardButton);
 		expect(editBoardButton.exists()).toBe(true);
 		await editBoardButton.find('button').trigger('click');
 		await wrapper.vm.$nextTick();
+
 		// Modal should be open
 		let editBoardModal = new DOMWrapper(document.querySelector('[role="dialog"]'));
 		expect(editBoardModal.exists()).toBe(true);
+
+		// Click the edit button
+		const editButton = editBoardModal.findAll('button').find(btn => btn.text() === 'Edit');
+		expect(editButton).toBeTruthy();
+		await editButton!.trigger('click');
+		await wrapper.vm.$nextTick();
+
 		// Find the name input inside the modal (should have label 'Name')
 		const editBoardModalBoardNameInput = wrapper.find('input[name="name"]');
 		expect(editBoardModalBoardNameInput.exists()).toBe(true);
@@ -129,21 +144,23 @@ describe('Board', () => {
 		editBoardModalBoardNameInput.trigger('blur');
 		await wrapper.vm.$nextTick();
 		expect((editBoardModalBoardNameInput.element as HTMLInputElement).value).toBe('New board name');
-		// Click the Update button
+
+		// Click the update button
 		const updateButton = editBoardModal.findAll('button').find(btn => btn.text() === 'Update');
 		expect(updateButton).toBeTruthy();
 		await updateButton!.trigger('click');
 		await wrapper.vm.$nextTick();
 		const boardsStore = useBoardsStore();
 		expect(boardsStore.getBoardById(boardId ?? MOCK_HASH[1])?.name).toBe('New board name');
+
 		// Board name input should also be updated
 		const boardNameInput = wrapper.find('input');
 		expect(boardNameInput.exists()).toBe(true);
 		expect((boardNameInput.element as HTMLInputElement).value).toBe('New board name');
 	});
 
-	it('navigates away if boardId is invalid', async () => {
-		// Mock boardsStore.isValidBoardId to always return false
+	it('navigates away if `boardId` is invalid', async () => {
+		// Mock `boardsStore.isValidBoardId` to always return false
 		const boardsStore = useBoardsStore();
 		Object.defineProperty(boardsStore, 'isValidBoardId', {
 			value: () => false,
@@ -151,6 +168,28 @@ describe('Board', () => {
 		});
 		await mountSuspended(Board, { global: { plugins: [pinia] } });
 		expect(navigateToSpy).toHaveBeenCalledWith('/boards');
+	});
+
+	it('shows and toggles the `ToggleArchivedCardsButton` via `ActionMenu`', async () => {
+		const wrapper = await mountSuspended(Board, { global: { plugins: [pinia] } });
+		const settingsStore = useSettingsStore();
+
+		// Open `ActionMenu`
+		const actionMenu = wrapper.findComponent(ActionMenu);
+		expect(actionMenu.exists()).toBe(true);
+		await actionMenu.find('button').trigger('click');
+		await wrapper.vm.$nextTick();
+
+		// `ToggleArchivedCardsButton` should now be visible
+		const toggleButton = wrapper.findComponent(ToggleArchivedCardsButton);
+		expect(toggleButton.exists()).toBe(true);
+
+		// Initially `false`
+		expect(settingsStore.showArchivedCards).toBe(false);
+		await toggleButton.find('button').trigger('click');
+		expect(settingsStore.showArchivedCards).toBe(true);
+		await toggleButton.find('button').trigger('click');
+		expect(settingsStore.showArchivedCards).toBe(false);
 	});
 
 	// TODO: Add more test cases that simulate user interactions with a board.

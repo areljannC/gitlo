@@ -9,15 +9,20 @@ const expandedCard = computed(() => expandedCardId.value !== null ? cardsStore.g
 
 const isEditing = ref(false);
 const form = useTemplateRef('form');
-const state = reactive({
+const formState = reactive({
 	name: expandedCard.value?.name,
 	description: expandedCard.value?.description
 });
 
 watch(expandedCard, (card) => {
-	state.name = card?.name;
-	state.description = card?.description;
+	formState.name = card?.name;
+	formState.description = card?.description;
 });
+
+const resetFormState = () => {
+	formState.name = expandedCard.value?.name;
+	formState.description = expandedCard.value?.description;
+};
 
 const handleCardNameInputKeyDown = (event: KeyboardEvent) => {
 	(event.target as HTMLTextAreaElement).blur();
@@ -31,14 +36,13 @@ const handleUnarchiveCard = () => {
 	cardsStore.unarchiveCard(expandedCard.value!.id);
 };
 
-const handleCollapseCard = () => {
+const handleCloseCardModal = () => {
 	isEditing.value = false;
 	cardsStore.collapseCard();
 };
 
 const handleCancelCardChanges = () => {
-	state.name = expandedCard.value?.name;
-	state.description = expandedCard.value?.description;
+	resetFormState();
 	isEditing.value = false;
 };
 
@@ -56,7 +60,7 @@ const handleUpdateCard = () => {
 };
 
 const handleSubmitCardChanges = () => {
-	cardsStore.updateCard(expandedCard.value!.id, { ...state });
+	cardsStore.updateCard(expandedCard.value!.id, { ...formState });
 	isEditing.value = false;
 };
 </script>
@@ -69,15 +73,16 @@ const handleSubmitCardChanges = () => {
 			</div>
 		</template>
 		<template #body>
-			<UForm ref="form" :state="state" class="w-full h-fit flex flex-col gap-4" @submit="handleSubmitCardChanges">
+			<UForm ref="form" :state="formState" class="w-full h-fit flex flex-col gap-4"
+				@submit="handleSubmitCardChanges">
 				<UFormField name="name" label="Name" size="lg">
-					<UTextarea v-model="state.name" placeholder="Enter card name..." color="secondary"
+					<UTextarea v-model="formState.name" placeholder="Enter card name..." color="secondary"
 						class="w-full font-bold" size="xl" :variant="isEditing ? 'soft' : 'ghost'" :rows="1"
 						:maxrows="0" autoresize :autoresizeDelay="0" :readonly="!isEditing"
 						@keydown.enter.prevent="handleCardNameInputKeyDown" />
 				</UFormField>
 				<UFormField name="description" label="Description" size="lg">
-					<UTextarea v-model="state.description"
+					<UTextarea v-model="formState.description"
 						:placeholder="isEditing ? 'Enter card description...' : 'No description.'" color="secondary"
 						class="w-full" size="xl" :variant="isEditing ? 'soft' : 'ghost'" :rows="1" :maxrows="0"
 						autoresize :autoresizeDelay="0" :readonly="!isEditing" />
@@ -96,20 +101,17 @@ const handleSubmitCardChanges = () => {
 		</template>
 		<template #footer>
 			<div class="w-full flex justify-between items-center gap-2">
-				<UButton v-if="!expandedCard?.archived" label="Archive" color="secondary" variant="ghost"
-					@click="handleArchiveCard" />
-				<UButton v-else label="Unarchive" color="secondary" variant="ghost" @click="handleUnarchiveCard" />
-				<div v-if="!expandedCard?.archived" class="flex gap-2">
-					<UButton v-if="isEditing" label="Cancel" color="error" variant="soft"
-						@click="handleCancelCardChanges" />
-					<UButton v-if="isEditing" label="Update" :color="'primary'" @click="handleUpdateCard" />
-					<UButton v-if="!isEditing" label="Close" color="neutral" variant="ghost"
-						@click="handleCollapseCard" />
-					<UButton v-if="!isEditing" label="Edit" color="secondary" @click="handleEditCard" />
+				<ArchiveButton v-if="!expandedCard?.archived && !isEditing" @archive="handleArchiveCard" />
+				<UnarchiveButton v-else-if="expandedCard?.archived && !isEditing" @unarchive="handleUnarchiveCard" />
+				<div v-if="!expandedCard?.archived" class="flex gap-2 ml-auto">
+					<CancelButton v-if="isEditing" @cancel="handleCancelCardChanges" />
+					<CloseButton v-else @close="handleCloseCardModal" />
+					<UpdateButton v-if="isEditing" @update="handleUpdateCard" />
+					<EditButton v-else @edit="handleEditCard" />
 				</div>
-				<div v-else="expandedCard?.archived" class="flex gap-2">
-					<UButton label="Close" color="neutral" variant="ghost" @click="handleCollapseCard" />
-					<UButton label="Delete" color="error" variant="soft" @click="handleDeleteCard" />
+				<div v-else class="flex gap-2">
+					<CloseButton @close="handleCloseCardModal" />
+					<DeleteButton @delete="handleDeleteCard" />
 				</div>
 			</div>
 		</template>

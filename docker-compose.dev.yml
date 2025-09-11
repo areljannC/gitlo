@@ -9,7 +9,6 @@ services:
       - "3000:3000"  # localhost to container port
     volumes:
       - ./app:/app   # hot reload with live file sync
-      - ./data:/data # persist data state
     environment:
       - HOST=0.0.0.0 # required so Nuxt.js listens on all interfaces
     command: pnpm dev
