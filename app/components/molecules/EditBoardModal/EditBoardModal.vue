@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, reactive, watch } from 'vue';
 import * as v from 'valibot';
+import { navigateTo } from '#app';
 import { useBoardsStore } from '~/stores';
 import * as boardSchema from '~/schemas/boardSchema';
 import type { FormSubmitEvent } from '@nuxt/ui';

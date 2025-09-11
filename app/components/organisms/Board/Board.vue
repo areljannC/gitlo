@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref, useTemplateRef, watch } from 'vue';
 import * as v from 'valibot';
+import { useHead, navigateTo } from '#app';
 import { useBoardsStore } from '~/stores';
 import * as boardSchema from '~/schemas/boardSchema';
 import type { FormSubmitEvent } from '@nuxt/ui';
@@ -10,7 +11,7 @@ const route = useRoute();
 
 const boardId = route.params.id as string;
 if (!boardsStore.isValidBoardId(route.params.id as string)) {
-	navigateTo('/boards')
+	navigateTo('/boards');
 }
 
 const isEditBoardModalOpen = ref(false);
@@ -19,6 +20,8 @@ const board = computed(() => boardsStore.getBoardById(boardId)!);
 const boardForm = useTemplateRef<HTMLFormElement>('boardForm');
 const boardFormSchema = v.object({ name: boardSchema.getNameValidator() });
 const boardFormState = reactive({ name: board.value.name });
+
+useHead({ title: computed(() => `${board.value.name} · gitlo.app`) });
 
 watch(board, updatedBoard => {
 	boardFormState.name = updatedBoard.name;
