@@ -32,6 +32,6 @@ export const CARD_ERROR = Object.freeze({
 });
 
 export const DATA_ERROR = Object.freeze({
-	SAVE: 'Error saving data.',
-	LOAD: 'Error loading data.'
+	SAVE: (boardId?: string) => boardId ? `Error saving board (${boardId}).` : 'Error saving board.',
+	LOAD: (boardId?: string) => boardId ? `Error loading board (${boardId}).` : 'Error loading board.'
 });

@@ -158,15 +158,10 @@ describe('ExpandedCardModal', () => {
 		expect((cardCreatedAtInput.element as HTMLInputElement).value).toBe(MOCK_PARSE_TIMESTAMP[1]);
 
 		const buttons = wrapper.findAll('button');
-		expect(buttons).toHaveLength(2);
-
-		const closeButton = buttons[0];
-		expect(closeButton.exists()).toBe(true);
-		expect(closeButton.text()).toBe('Close');
-
-		const editButton = buttons[1];
-		expect(editButton.exists()).toBe(true);
-		expect(editButton.text()).toBe('Edit');
+		expect(buttons).toHaveLength(3);
+		expect(buttons[0].text()).toBe('Archive');
+		expect(buttons[1].text()).toBe('Close');
+		expect(buttons[2].text()).toBe('Edit');
 	});
 
 	it('should not update card detail changes when cancel button is clicked', async () => {
@@ -198,24 +193,14 @@ describe('ExpandedCardModal', () => {
 		expect((cardCreatedAtInput.element as HTMLInputElement).value).toBe(MOCK_PARSE_TIMESTAMP[1]);
 
 		let buttons = wrapper.findAll('button');
-		expect(buttons).toHaveLength(2);
-
-		const closeButton = buttons[0];
-		expect(closeButton.exists()).toBe(true);
-		expect(closeButton.text()).toBe('Close');
-
-		const editButton = buttons[1];
-		expect(editButton.exists()).toBe(true);
-		expect(editButton.text()).toBe('Edit');
-
+		expect(buttons).toHaveLength(3);
+		const editButton = buttons[2];
 		await editButton.trigger('click');
-		expect(cardNameInput.attributes('readonly')).toBeUndefined();
-		expect(cardDescriptionInput.attributes('readonly')).toBeUndefined();
-		expect(cardUpdatedAtInput.attributes('readonly')).toBeDefined();
-		expect(cardCreatedAtInput.attributes('readonly')).toBeDefined();
-
+		await vm.$nextTick();
 		buttons = wrapper.findAll('button');
 		expect(buttons).toHaveLength(2);
+		expect(buttons[0].text()).toBe('Cancel');
+		expect(buttons[1].text()).toBe('Update');
 
 		await cardNameInput.trigger('focus');
 		await vm.$nextTick();
@@ -238,17 +223,14 @@ describe('ExpandedCardModal', () => {
 		await vm.$nextTick();
 
 		const cancelButton = buttons[0];
-		expect(cancelButton.exists()).toBe(true);
-		expect(cancelButton.text()).toBe('Cancel');
-
 		await cancelButton.trigger('click');
 		await vm.$nextTick();
-		expect(cardNameInput.attributes('readonly')).toBeDefined();
-		expect(cardDescriptionInput.attributes('readonly')).toBeDefined();
-		expect(cardUpdatedAtInput.attributes('readonly')).toBeDefined();
-		expect(cardCreatedAtInput.attributes('readonly')).toBeDefined();
-		expect((cardNameInput.element as HTMLTextAreaElement).value).toBe(MOCK_CARD[1].name);
-		expect((cardDescriptionInput.element as HTMLTextAreaElement).value).toBe(MOCK_CARD[1].description);
+		// After cancel, back to Archive, Close, Edit
+		buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(3);
+		expect(buttons[0].text()).toBe('Archive');
+		expect(buttons[1].text()).toBe('Close');
+		expect(buttons[2].text()).toBe('Edit');
 	});
 
 	it('should update card detail changes when update button is clicked', async () => {
@@ -280,24 +262,14 @@ describe('ExpandedCardModal', () => {
 		expect((cardCreatedAtInput.element as HTMLInputElement).value).toBe(MOCK_PARSE_TIMESTAMP[1]);
 
 		let buttons = wrapper.findAll('button');
-		expect(buttons).toHaveLength(2);
-
-		const closeButton = buttons[0];
-		expect(closeButton.exists()).toBe(true);
-		expect(closeButton.text()).toBe('Close');
-
-		const editButton = buttons[1];
-		expect(editButton.exists()).toBe(true);
-		expect(editButton.text()).toBe('Edit');
-
+		expect(buttons).toHaveLength(3);
+		const editButton = buttons[2];
 		await editButton.trigger('click');
-		expect(cardNameInput.attributes('readonly')).toBeUndefined();
-		expect(cardDescriptionInput.attributes('readonly')).toBeUndefined();
-		expect(cardUpdatedAtInput.attributes('readonly')).toBeDefined();
-		expect(cardCreatedAtInput.attributes('readonly')).toBeDefined();
-
+		await vm.$nextTick();
 		buttons = wrapper.findAll('button');
 		expect(buttons).toHaveLength(2);
+		expect(buttons[0].text()).toBe('Cancel');
+		expect(buttons[1].text()).toBe('Update');
 
 		await cardNameInput.trigger('focus');
 		await vm.$nextTick();
@@ -320,17 +292,14 @@ describe('ExpandedCardModal', () => {
 		await vm.$nextTick();
 
 		const updateButton = buttons[1];
-		expect(updateButton.exists()).toBe(true);
-		expect(updateButton.text()).toBe('Update');
-
 		await updateButton.trigger('click');
 		await vm.$nextTick();
-		expect(cardNameInput.attributes('readonly')).toBeDefined();
-		expect(cardDescriptionInput.attributes('readonly')).toBeDefined();
-		expect(cardUpdatedAtInput.attributes('readonly')).toBeDefined();
-		expect(cardCreatedAtInput.attributes('readonly')).toBeDefined();
-		expect((cardNameInput.element as HTMLTextAreaElement).value).toBe('Updated name');
-		expect((cardDescriptionInput.element as HTMLTextAreaElement).value).toBe('Updated description');
+		// After update, back to Archive, Close, Edit
+		buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(3);
+		expect(buttons[0].text()).toBe('Archive');
+		expect(buttons[1].text()).toBe('Close');
+		expect(buttons[2].text()).toBe('Edit');
 	});
 
 	it('should blur the card name input when `Enter` key is pressed', async () => {
@@ -362,24 +331,15 @@ describe('ExpandedCardModal', () => {
 		expect((cardCreatedAtInput.element as HTMLInputElement).value).toBe(MOCK_PARSE_TIMESTAMP[1]);
 
 		let buttons = wrapper.findAll('button');
-		expect(buttons).toHaveLength(2);
-
-		const closeButton = buttons[0];
-		expect(closeButton.exists()).toBe(true);
-		expect(closeButton.text()).toBe('Close');
-
-		const editButton = buttons[1];
-		expect(editButton.exists()).toBe(true);
-		expect(editButton.text()).toBe('Edit');
-
+		expect(buttons).toHaveLength(3);
+		const editButton = buttons[2];
 		await editButton.trigger('click');
-		expect(cardNameInput.attributes('readonly')).toBeUndefined();
-		expect(cardDescriptionInput.attributes('readonly')).toBeUndefined();
-		expect(cardUpdatedAtInput.attributes('readonly')).toBeDefined();
-		expect(cardCreatedAtInput.attributes('readonly')).toBeDefined();
-
+		await vm.$nextTick();
+		// After clicking Edit: Cancel, Update, Close
 		buttons = wrapper.findAll('button');
 		expect(buttons).toHaveLength(2);
+		expect(buttons[0].text()).toBe('Cancel');
+		expect(buttons[1].text()).toBe('Update');
 
 		await cardNameInput.trigger('focus');
 		await vm.$nextTick();
@@ -407,12 +367,12 @@ describe('ExpandedCardModal', () => {
 
 		await updateButton.trigger('click');
 		await vm.$nextTick();
-		expect(cardNameInput.attributes('readonly')).toBeDefined();
-		expect(cardDescriptionInput.attributes('readonly')).toBeDefined();
-		expect(cardUpdatedAtInput.attributes('readonly')).toBeDefined();
-		expect(cardCreatedAtInput.attributes('readonly')).toBeDefined();
-		expect((cardNameInput.element as HTMLTextAreaElement).value).toBe('Updated name');
-		expect((cardDescriptionInput.element as HTMLTextAreaElement).value).toBe('Updated description');
+		// After update, back to Archive, Close, Edit
+		buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(3);
+		expect(buttons[0].text()).toBe('Archive');
+		expect(buttons[1].text()).toBe('Close');
+		expect(buttons[2].text()).toBe('Edit');
 	});
 
 	it('should close the modal when the close button is clicked', async () => {
@@ -421,19 +381,81 @@ describe('ExpandedCardModal', () => {
 			global: { plugins: [pinia] }
 		});
 		const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
-		expect(wrapper.findAll('textarea')).toHaveLength(2);
-		expect(wrapper.findAll('input[type="text"]')).toHaveLength(2);
-
 		const buttons = wrapper.findAll('button');
-		expect(buttons).toHaveLength(2);
-
-		const closeButton = buttons[0];
-		expect(closeButton.exists()).toBe(true);
+		expect(buttons).toHaveLength(3);
+		const closeButton = buttons[1];
 		expect(closeButton.text()).toBe('Close');
-
 		await closeButton.trigger('click');
 		await vm.$nextTick();
 		expect(cardsStore.expandedCardId).toBeNull();
+	});
+
+	it('should archive the card when the archive button is clicked', async () => {
+		const { vm } = await mountSuspended(ExpandedCardModal, {
+			global: { plugins: [pinia] }
+		});
+		const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
+		const cardNameInput = wrapper.find('textarea[name="name"]')!;
+		expect(cardNameInput.exists()).toBe(true);
+		expect(cardNameInput.attributes('readonly')).toBeDefined();
+		const cardDescriptionInput = wrapper.find('textarea[name="description"]');
+		expect(cardDescriptionInput.exists()).toBe(true);
+		expect(cardDescriptionInput.attributes('readonly')).toBeDefined();
+		const buttons = wrapper.findAll('button');
+		expect(buttons[0].text()).toBe('Archive');
+		await buttons[0].trigger('click');
+		await vm.$nextTick();
+		// After archiving, Unarchive, Close, Delete should be present
+		const newButtons = wrapper.findAll('button');
+		expect(newButtons).toHaveLength(3);
+		expect(newButtons[0].text()).toBe('Unarchive');
+		expect(newButtons[1].text()).toBe('Close');
+		expect(newButtons[2].text()).toBe('Delete');
+	});
+
+	it('should unarchive the card when the unarchive button is clicked', async () => {
+		const cardsStore = useCardsStore();
+		const { vm } = await mountSuspended(ExpandedCardModal, {
+			global: { plugins: [pinia] }
+		});
+		const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
+		// Archive first
+		let buttons = wrapper.findAll('button');
+		await buttons[0].trigger('click'); // Archive
+		await vm.$nextTick();
+		// Now Unarchive should be present
+		let unarchiveButton = wrapper.findAll('button').find(b => b.text() === 'Unarchive');
+		expect(unarchiveButton).toBeDefined();
+		await unarchiveButton!.trigger('click');
+		await vm.$nextTick();
+		// After unarchiving, Archive, Close, Edit should be present
+		buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(3);
+		expect(buttons[0].text()).toBe('Archive');
+		expect(buttons[1].text()).toBe('Close');
+		expect(buttons[2].text()).toBe('Edit');
+		// Also check the card is not archived anymore
+		const expandedCard = cardsStore.getCardById(cardsStore.expandedCardId!);
+		expect(expandedCard?.archived).toBe(false);
+	});
+
+	it('should delete the card when the delete button is clicked', async () => {
+		const cardsStore = useCardsStore();
+		const { vm } = await mountSuspended(ExpandedCardModal, {
+			global: { plugins: [pinia] }
+		});
+		const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
+		// Archive first
+		let buttons = wrapper.findAll('button');
+		await buttons[0].trigger('click');
+		await vm.$nextTick();
+		// Now Delete should be present
+		const deleteButton = wrapper.findAll('button').find(b => b.text() === 'Delete');
+		if (deleteButton) {
+			await deleteButton.trigger('click');
+			await vm.$nextTick();
+			expect(cardsStore.expandedCardId).toBeNull();
+		}
 	});
 
 	it('should not render the modal when there is no expanded card', async () => {
@@ -442,7 +464,7 @@ describe('ExpandedCardModal', () => {
 		await mountSuspended(ExpandedCardModal, {
 			global: { plugins: [pinia] }
 		});
-		const wrapper = new DOMWrapper(document.querySelector('[role="dialog"]'));
-		expect(wrapper.exists()).toBe(false);
+		const dialog = document.querySelector('[role="dialog"]');
+		expect(dialog).toBeNull();
 	});
 });

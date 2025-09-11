@@ -164,17 +164,19 @@ describe('CreateCard', () => {
 		});
 
 		const cardNameInput = wrapper.find('textarea');
-		cardNameInput.trigger('focus');
+		await cardNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		cardNameInput.setValue('New Card Name');
+		await cardNameInput.setValue('New Card Name');
 		await wrapper.vm.$nextTick();
 		expect(cardNameInput.element.value).toBe('New Card Name');
 		expect(columnsStore.getColumnById(MOCK_HASH[2])?.cardIds).toHaveLength(1);
 		expect(cardsStore.isValidCardId(MOCK_HASH[6])).toBe(false);
 
 		vi.mocked(generateHash).mockReturnValueOnce(MOCK_HASH[6]);
-		cardNameInput.trigger('keydown', { key: 'Enter' });
+		await cardNameInput.trigger('keydown', { key: 'Enter' });
+		await wrapper.vm.$nextTick();
+		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
 
 		expect(cardNameInput.element.value).toBe('');
@@ -193,17 +195,19 @@ describe('CreateCard', () => {
 		});
 
 		const cardNameInput = wrapper.find('textarea');
-		cardNameInput.trigger('focus');
+		await cardNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		cardNameInput.setValue('New Card Name');
+		await cardNameInput.setValue('New Card Name');
 		await wrapper.vm.$nextTick();
 		expect(cardNameInput.element.value).toBe('New Card Name');
 		expect(columnsStore.getColumnById(MOCK_HASH[2])?.cardIds).toHaveLength(1);
 		expect(cardsStore.isValidCardId(MOCK_HASH[6])).toBe(false);
 
 		vi.mocked(generateHash).mockReturnValueOnce(MOCK_HASH[6]);
-		cardNameInput.trigger('blur');
+		await cardNameInput.trigger('blur');
+		await wrapper.vm.$nextTick();
+		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
 
 		expect(cardNameInput.element.value).toBe('');
@@ -222,20 +226,20 @@ describe('CreateCard', () => {
 		});
 
 		const cardNameInput = wrapper.find('textarea');
-		cardNameInput.trigger('focus');
+		await cardNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		cardNameInput.setValue('New Card Name');
+		await cardNameInput.setValue('New Card Name');
 		await wrapper.vm.$nextTick();
 		expect(cardNameInput.element.value).toBe('New Card Name');
 		expect(columnsStore.getColumnById(MOCK_HASH[2])?.cardIds).toHaveLength(1);
 		expect(cardsStore.isValidCardId(MOCK_HASH[6])).toBe(false);
 
-		cardNameInput.setValue('');
+		await cardNameInput.setValue('');
 		await wrapper.vm.$nextTick();
 		expect(cardNameInput.element.value).toBe('');
 
-		cardNameInput.trigger('blur');
+		await cardNameInput.trigger('blur');
 		await wrapper.vm.$nextTick();
 
 		expect(cardNameInput.element.value).toBe('');
@@ -255,15 +259,16 @@ describe('CreateCard', () => {
 		});
 
 		const cardNameInput = wrapper.find('textarea');
-		cardNameInput.trigger('focus');
+		await cardNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		cardNameInput.setValue('New Card Name');
+		await cardNameInput.setValue('New Card Name');
 		await wrapper.vm.$nextTick();
 		expect(cardNameInput.element.value).toBe('New Card Name');
 
 		vi.mocked(generateHash).mockReturnValueOnce(MOCK_HASH[6]);
-		cardNameInput.trigger('keydown', { key: 'Enter' });
+		await cardNameInput.trigger('keydown', { key: 'Enter' });
+		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
 
 		expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error));

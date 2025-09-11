@@ -162,13 +162,14 @@ describe('Column', () => {
 		const columnNameInput = wrapper.get('input[type="text"]');
 		expect((columnNameInput.element as HTMLInputElement).value).toBe(MOCK_COLUMN[1].name);
 
-		columnNameInput.trigger('focus');
+		await columnNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.setValue('Updated Column Name');
+		await columnNameInput.setValue('Updated Column Name');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.trigger('blur');
+		await columnNameInput.trigger('blur');
+		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
 
 		expect((columnNameInput.element as HTMLInputElement).value).toBe('Updated Column Name');
@@ -185,17 +186,128 @@ describe('Column', () => {
 		const columnNameInput = wrapper.get('input[type="text"]');
 		expect((columnNameInput.element as HTMLInputElement).value).toBe(MOCK_COLUMN[1].name);
 
-		columnNameInput.trigger('focus');
+		await columnNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.setValue('Updated Column Name');
+		await columnNameInput.setValue('Updated Column Name');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.trigger('keydown', { key: 'Enter' });
+		await columnNameInput.trigger('keydown', { key: 'Enter' });
+		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
 
 		expect((columnNameInput.element as HTMLInputElement).value).toBe('Updated Column Name');
 		expect(columnsStore.getColumnById(MOCK_HASH[2])?.name).toBe('Updated Column Name');
+	});
+
+	it('should archive the column when the archive button is clicked', async () => {
+		const columnsStore = useColumnsStore();
+		const wrapper = await mountSuspended(Column, {
+			global: { plugins: [pinia] },
+			props: { columnId: MOCK_HASH[2] }
+		});
+
+		const columnNameInput = wrapper.get('input[type="text"]');
+		expect((columnNameInput.element as HTMLInputElement).value).toBe(MOCK_COLUMN[1].name);
+
+		const cardNameInput = wrapper.get('textarea');
+		expect(cardNameInput.element.value).toBe(MOCK_CARD[1].name);
+
+		let buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(2);
+
+		const archiveButton = buttons[1];
+		expect(archiveButton.exists()).toBe(true);
+		expect(archiveButton.text()).toBe('Archive');
+
+		await archiveButton.trigger('click');
+		await wrapper.vm.$nextTick();
+		expect(columnsStore.getColumnById(MOCK_HASH[2])?.archived).toBe(true);
+
+		buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(3);
+
+		const unarchiveButton = buttons[1];
+		expect(unarchiveButton.exists()).toBe(true);
+		expect(unarchiveButton.text()).toBe('Unarchive');
+	});
+
+	it('should unarchive the column when the unarchive button is clicked', async () => {
+		const columnsStore = useColumnsStore();
+		const wrapper = await mountSuspended(Column, {
+			global: { plugins: [pinia] },
+			props: { columnId: MOCK_HASH[2] }
+		});
+
+		const columnNameInput = wrapper.get('input[type="text"]');
+		expect((columnNameInput.element as HTMLInputElement).value).toBe(MOCK_COLUMN[1].name);
+
+		const cardNameInput = wrapper.get('textarea');
+		expect(cardNameInput.element.value).toBe(MOCK_CARD[1].name);
+
+		let buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(2);
+
+		const archiveButton = buttons[1];
+		expect(archiveButton.exists()).toBe(true);
+		expect(archiveButton.text()).toBe('Archive');
+
+		await archiveButton.trigger('click');
+		await wrapper.vm.$nextTick();
+		expect(columnsStore.getColumnById(MOCK_HASH[2])?.archived).toBe(true);
+
+		buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(3);
+
+		const unarchiveButton = buttons[1];
+		expect(unarchiveButton.exists()).toBe(true);
+		expect(unarchiveButton.text()).toBe('Unarchive');
+
+		await unarchiveButton.trigger('click');
+		await wrapper.vm.$nextTick();
+		expect(columnsStore.getColumnById(MOCK_HASH[2])?.archived).toBe(false);
+
+		buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(2);
+		expect(archiveButton.exists()).toBe(true);
+		expect(archiveButton.text()).toBe('Archive');
+	});
+
+	it('should delete the column when the delete button is clicked', async () => {
+		const columnsStore = useColumnsStore();
+		const wrapper = await mountSuspended(Column, {
+			global: { plugins: [pinia] },
+			props: { columnId: MOCK_HASH[2] }
+		});
+
+		const columnNameInput = wrapper.get('input[type="text"]');
+		expect((columnNameInput.element as HTMLInputElement).value).toBe(MOCK_COLUMN[1].name);
+
+		const cardNameInput = wrapper.get('textarea');
+		expect(cardNameInput.element.value).toBe(MOCK_CARD[1].name);
+
+		let buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(2);
+
+		const archiveButton = buttons[1];
+		expect(archiveButton.exists()).toBe(true);
+		expect(archiveButton.text()).toBe('Archive');
+
+		await archiveButton.trigger('click');
+		await wrapper.vm.$nextTick();
+		expect(columnsStore.getColumnById(MOCK_HASH[2])?.archived).toBe(true);
+
+		buttons = wrapper.findAll('button');
+		expect(buttons).toHaveLength(3);
+
+		const deleteButton = buttons[2];
+		expect(deleteButton.exists()).toBe(true);
+		expect(deleteButton.text()).toBe('Delete');
+
+		await deleteButton.trigger('click');
+		await wrapper.vm.$nextTick();
+		expect(columnsStore.isValidColumnId(MOCK_HASH[2])).toBe(false);
+		expect(columnsStore.getColumnById(MOCK_HASH[2])).toBeUndefined();
 	});
 
 	it('should log an error if updating the column name fails', async () => {
@@ -213,13 +325,14 @@ describe('Column', () => {
 		const columnNameInput = wrapper.get('input[type="text"]');
 		expect((columnNameInput.element as HTMLInputElement).value).toBe(MOCK_COLUMN[1].name);
 
-		columnNameInput.trigger('focus');
+		await columnNameInput.trigger('focus');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.setValue('Updated Column Name');
+		await columnNameInput.setValue('Updated Column Name');
 		await wrapper.vm.$nextTick();
 
-		columnNameInput.trigger('blur');
+		await columnNameInput.trigger('blur');
+		await wrapper.vm.$nextTick();
 		await wrapper.vm.$nextTick();
 
 		expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error));
