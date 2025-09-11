@@ -16,7 +16,7 @@
 		],
 		"archived": false,
 		"createdAt": "2025-08-05T15:00:04.465Z",
-		"updatedAt": "2025-09-10T19:27:44.370Z"
+		"updatedAt": "2025-09-11T16:40:39.828Z"
 	},
 	"columns": [
 		{
@@ -24,12 +24,11 @@
 			"id": "u6l2oizn",
 			"name": "to do",
 			"cardIds": [
-				"8knvdsju",
 				"o9ibwnwu"
 			],
 			"archived": false,
 			"createdAt": "2025-08-05T15:00:04.465Z",
-			"updatedAt": "2025-09-10T16:22:31.521Z"
+			"updatedAt": "2025-09-11T15:40:37.114Z"
 		},
 		{
 			"boardId": "ga4srpmb",
@@ -38,7 +37,7 @@
 			"cardIds": [],
 			"archived": false,
 			"createdAt": "2025-08-05T15:00:04.465Z",
-			"updatedAt": "2025-09-10T19:27:44.370Z"
+			"updatedAt": "2025-09-11T16:40:39.828Z"
 		},
 		{
 			"boardId": "ga4srpmb",
@@ -48,11 +47,12 @@
 				"emy911ft",
 				"ecqy2kh9",
 				"ysmobz24",
-				"wm0jbmtv"
+				"wm0jbmtv",
+				"8knvdsju"
 			],
 			"archived": false,
 			"createdAt": "2025-08-05T15:00:04.465Z",
-			"updatedAt": "2025-09-10T19:27:44.370Z"
+			"updatedAt": "2025-09-11T16:40:39.828Z"
 		},
 		{
 			"boardId": "ga4srpmb",
@@ -93,13 +93,13 @@
 			"updatedAt": "2025-09-10T15:46:30.490Z"
 		},
 		{
-			"columnId": "u6l2oizn",
+			"columnId": "cr1ft81t",
 			"id": "8knvdsju",
 			"name": "v0.1.6 - document titles",
-			"description": "- add proper document titles to each page in app\n- `/`: gitlo\n- `/boards`: gitlo | Boards\n- `/boards/<board_id>`: gitlo | <board_name>",
+			"description": "- add proper document titles to each page in app\n- `/`: gitlo.app\n- `/boards`: Boards · gitlo.app\n- `/boards/<board_id>`: <board_name> · gitlo.app",
 			"archived": false,
 			"createdAt": "2025-08-05T15:01:27.130Z",
-			"updatedAt": "2025-09-10T15:56:38.144Z"
+			"updatedAt": "2025-09-11T16:40:39.828Z"
 		},
 		{
 			"columnId": "cr1ft81t",
