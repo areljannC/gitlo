@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { useHead, navigateTo } from '#app';
 import { useSettingsStore, useBoardsStore } from '~/stores';
 import type { Board } from '~/types';
 
@@ -12,6 +13,8 @@ const visibleBoardIds = computed(() => settingsStore.showArchivedBoards
 	? [...boardIds.value, ...archivedBoardIds.value]
 	: boardIds.value
 );
+
+useHead({ title: 'Boards · gitlo.app' });
 
 const isCreateBoardModalOpen = ref(false);
 
