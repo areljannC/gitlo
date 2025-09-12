@@ -19,14 +19,14 @@ const emit = defineEmits(['view']);
 const handleViewBoard = (() => {
 	emit('view')
 });
+
 const dimensionsClass = 'w-full h-fit sm:w-[calc(50%-1rem)] md:w-[calc(33.33%-1rem)] lg:w-[calc(25%-1rem)]';
-const hoverEffectClass = 'hover:shadow-md hover:-translate-y-0.25 transition-transform duration-50 ease-in-out';
 const nameClass = 'font-bold text-sm md:text-md lg:text-lg xl:text-xl';
 const descriptionClass = 'text-sm md:text-md lg:text-lg break-all';
 </script>
 
 <template>
-	<UCard v-if="description !== '' || tags.length > 0" :class="[dimensionsClass, hoverEffectClass]">
+	<UCard v-if="description !== '' || tags.length > 0" :class="[dimensionsClass]">
 		<template #header>
 			<h1 :class="nameClass">{{ name }}</h1>
 		</template>
@@ -41,7 +41,7 @@ const descriptionClass = 'text-sm md:text-md lg:text-lg break-all';
 				@click="handleViewBoard" />
 		</template>
 	</UCard>
-	<UCard v-else :class="[dimensionsClass, hoverEffectClass]">
+	<UCard v-else :class="[dimensionsClass]">
 		<template #header>
 			<h1 :class="nameClass">{{ name }}</h1>
 		</template>
