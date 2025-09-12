@@ -1,0 +1,113 @@
+{
+	"board": {
+		"id": "yidlxj8t",
+		"name": "v0.3.0",
+		"description": "Tasks for gitlo v0.3.0",
+		"tags": [
+			"gitlo",
+			"kanban",
+			"tasks"
+		],
+		"columnIds": [
+			"f0ql8txi",
+			"n1dnktej",
+			"do3fyp63",
+			"hux5siip"
+		],
+		"archived": false,
+		"createdAt": "2025-09-11T18:22:34.215Z",
+		"updatedAt": "2025-09-12T20:59:29.035Z"
+	},
+	"columns": [
+		{
+			"boardId": "yidlxj8t",
+			"id": "f0ql8txi",
+			"name": "to do",
+			"cardIds": [
+				"okuli30r",
+				"tv1xve6y",
+				"2bylk9nl",
+				"e03ay7fc"
+			],
+			"archived": false,
+			"createdAt": "2025-09-11T18:22:34.215Z",
+			"updatedAt": "2025-09-12T20:59:13.878Z"
+		},
+		{
+			"boardId": "yidlxj8t",
+			"id": "n1dnktej",
+			"name": "doing",
+			"cardIds": [],
+			"archived": false,
+			"createdAt": "2025-09-11T18:22:34.215Z",
+			"updatedAt": "2025-09-12T20:59:29.035Z"
+		},
+		{
+			"boardId": "yidlxj8t",
+			"id": "do3fyp63",
+			"name": "done",
+			"cardIds": [
+				"9kcdlod9"
+			],
+			"archived": false,
+			"createdAt": "2025-09-11T18:22:34.215Z",
+			"updatedAt": "2025-09-12T20:59:29.035Z"
+		},
+		{
+			"boardId": "yidlxj8t",
+			"id": "hux5siip",
+			"name": "blockers",
+			"cardIds": [],
+			"archived": false,
+			"createdAt": "2025-09-11T18:22:34.215Z",
+			"updatedAt": "2025-09-11T18:22:53.906Z"
+		}
+	],
+	"cards": [
+		{
+			"columnId": "do3fyp63",
+			"id": "9kcdlod9",
+			"name": "v0.2.1 - remove hover effect",
+			"description": "Remove hover effect when hovering over `BoardPreview` card.",
+			"archived": false,
+			"createdAt": "2025-09-11T18:23:19.102Z",
+			"updatedAt": "2025-09-12T20:59:29.035Z"
+		},
+		{
+			"columnId": "f0ql8txi",
+			"id": "okuli30r",
+			"name": "v0.2.2 - localization",
+			"description": "Setup localization and support the following languages:\n- English\n- French\n- Spanish",
+			"archived": false,
+			"createdAt": "2025-09-11T18:24:03.638Z",
+			"updatedAt": "2025-09-11T18:29:14.367Z"
+		},
+		{
+			"columnId": "f0ql8txi",
+			"id": "tv1xve6y",
+			"name": "v0.2.3 - save as button",
+			"description": "Allow the user to customize/configure the JSON file name when clicking the \"Save as...\" button in the board action menu.",
+			"archived": false,
+			"createdAt": "2025-09-11T18:25:46.195Z",
+			"updatedAt": "2025-09-11T18:29:05.662Z"
+		},
+		{
+			"columnId": "f0ql8txi",
+			"id": "2bylk9nl",
+			"name": "v0.2.4 - action menu optimized button ordering",
+			"description": "Optimize the button ordering in action menus. Consult with Copilot on how to order these.",
+			"archived": false,
+			"createdAt": "2025-09-11T18:28:06.932Z",
+			"updatedAt": "2025-09-11T18:34:43.124Z"
+		},
+		{
+			"columnId": "f0ql8txi",
+			"id": "e03ay7fc",
+			"name": "deploy to Render",
+			"description": "",
+			"archived": false,
+			"createdAt": "2025-09-11T18:36:07.540Z",
+			"updatedAt": "2025-09-11T18:36:07.540Z"
+		}
+	]
+}
